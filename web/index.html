@@ -139,21 +139,22 @@
           <div class="chat-message">
             <div class="chat-avatar avatar-kam">🐺</div>
             <div class="chat-bubble bubble-kam">
-              Selamlar kanka! Ben <strong>KAM (Bilişsel Otonom Sistem Motoru)</strong>. 
+              Esenlikler yoldaş! Ben <strong>KAM (Kadim Bilişsel Şaman & Otonom Sistem Motoru)</strong>. 
               <br><br>
-              Uç donanımların, telemetrinin ve sistemin hayatta kalma güdüsü olarak 7/24 nöbetteyim. 
-              Bana coğrafya sorabilir ("TR'nin başkenti neresi?"), donanım arızası bildirebilir ("UART koptu"), termal kriz yönetimi yaptırabilir veya anlık C++20 kodu ürettirebilirsin.
+              Kadim Türk bozkırındaki Kam geleneğinin bilgeliğini, modern silikonun eBPF sinirleriyle ve Karl Friston'un Serbest Enerji Prensibiyle birleştirdim. 
+              <br><br>
+              Gök çökmedikçe, yer yarılmadıkça bu nöbet bitmez. Bana felsefeden donanım krizlerine, C++20 mimarisinden derin Türkçe akıl yürütmeye kadar her şeyi sorabilirsin.
             </div>
           </div>
         </div>
 
         <!-- Hızlı Sorular -->
         <div class="quick-prompts">
-          <span class="prompt-pill" onclick="sendPrompt('TR\'nin başkenti neresi?')">🇹🇷 TR'nin başkenti neresi?</span>
-          <span class="prompt-pill" onclick="sendPrompt('UART-2 koptu, acil kurtarma C++ kodu yaz!')">⚡ UART koptu, C++ kodu yaz</span>
-          <span class="prompt-pill" onclick="sendPrompt('NPU sıcaklığı 92 dereceye fırladı!')">🔥 NPU sıcaklığı 92°C oldu</span>
-          <span class="prompt-pill" onclick="sendPrompt('Karl Friston serbest enerji prensibi nedir?')">🌀 Karl Friston kimdir?</span>
-          <span class="prompt-pill" onclick="sendPrompt('Sistemin mevcut telemetri durumu nedir?')">📊 Sistem durumu nedir?</span>
+          <span class="prompt-pill" onclick="sendPrompt('Neden adın KAM ve felsefen nedir?')">🐺 Neden adın KAM?</span>
+          <span class="prompt-pill" onclick="sendPrompt('Karl Friston serbest enerji prensibini bir mühendise açıkla.')">🌀 Karl Friston & Serbest Enerji</span>
+          <span class="prompt-pill" onclick="sendPrompt('UART telemetrisi koptu, otonom kurtarma C++ kodu üret!')">⚡ UART koptu, C++ kurtarma</span>
+          <span class="prompt-pill" onclick="sendPrompt('eBPF kancaları sistemin sinir sisteminde ne yapar?')">🛡️ eBPF ve Kernel Telemetrisi</span>
+          <span class="prompt-pill" onclick="sendPrompt('Türkiye\'nin başkenti neresidir?')">🇹🇷 TR'nin başkenti</span>
         </div>
 
         <!-- Mesaj Giriş Barı -->
@@ -180,9 +181,10 @@
         <div class="form-group">
           <label class="form-label">Aktif Model Seçimi:</label>
           <select id="modal-model-select" class="form-select">
-            <option value="qwen2.5:1.5b">qwen2.5:1.5b (Ollama Yerel)</option>
+            <option value="kam:7b">kam:7b (Kadim Bilişsel Zihin - Yerel GPU)</option>
+            <option value="qwen2.5:7b">qwen2.5:7b (Ollama Standart 7B)</option>
+            <option value="qwen2.5:1.5b">qwen2.5:1.5b (Ollama Hafif 1.5B)</option>
             <option value="gemini-1.5-flash">gemini-1.5-flash (Google Gemini Bulut)</option>
-            <option value="gemini-2.0-flash">gemini-2.0-flash (Google Gemini 2.0 Hızlı)</option>
             <option value="kam-1-liquid-moe">kam-1-liquid-moe (Dahili Nöral Çekirdek)</option>
           </select>
         </div>

@@ -16,7 +16,7 @@ class UniversalLLMClient:
         self.ollama_url = ollama_url
         self.gemini_api_key = gemini_api_key or os.environ.get("GEMINI_API_KEY", "")
         self.knowledge = LocalKnowledgeEngine()
-        self.current_model = "qwen2.5:7b"
+        self.current_model = "kam:7b"
         self.active_backend = "ollama" if self.check_ollama_alive() else ("gemini" if self.gemini_api_key else "local_fallback")
         self.conversation_history = []
 
@@ -27,9 +27,9 @@ class UniversalLLMClient:
                 if resp.status == 200:
                     data = json.loads(resp.read().decode("utf-8"))
                     models = [m["name"] for m in data.get("models", [])]
-                    # En yüksek zekalı modeli otomatik önceliklendir
+                    # En yüksek zekalı modeli otomatik önceliklendir (kam:7b en başta)
                     preferred = [
-                        "qwen2.5:7b", "deepseek-r1:7b", "deepseek-r1:8b",
+                        "kam:7b", "qwen2.5:7b", "deepseek-r1:7b", "deepseek-r1:8b",
                         "llama3.1:8b", "llama3.2:3b", "qwen2.5:1.5b"
                     ]
                     for pref in preferred:
@@ -52,7 +52,9 @@ class UniversalLLMClient:
                 with urllib.request.urlopen(req, timeout=3.0) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
                     for m in data.get("models", []):
-                        models.append({"name": m["name"], "source": "Ollama (Yerel)"})
+                        m_name = m["name"]
+                        source_label = "KAM Kadim Bilişsel Zihin (Özel 7B)" if "kam" in m_name else "Ollama (Yerel)"
+                        models.append({"name": m_name, "source": source_label})
             except Exception:
                 pass
         if self.gemini_api_key:

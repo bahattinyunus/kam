@@ -16,14 +16,23 @@ class LocalKnowledgeEngine:
         self.load_dataset()
 
     def load_dataset(self):
-        if os.path.exists(self.dataset_path):
-            try:
-                with open(self.dataset_path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    self.knowledge_base = data.get("entries", [])
-            except Exception:
-                self.knowledge_base = []
-        else:
+        self.knowledge_base = []
+        data_dir = os.path.dirname(self.dataset_path)
+        target_files = [
+            self.dataset_path,
+            os.path.join(data_dir, "kam_lore_dataset.json")
+        ]
+
+        for path in target_files:
+            if os.path.exists(path):
+                try:
+                    with open(path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                        self.knowledge_base.extend(data.get("entries", []))
+                except Exception:
+                    pass
+
+        if not self.knowledge_base:
             # Fallback yerleşik bilgiler
             self.knowledge_base = [
                 {
