@@ -1,0 +1,29 @@
+# Derleme dizinleri
+build/
+bin/
+lib/
+kam_jit_temp/
+/tmp/kam_jit/
+
+# Obje ve Kütüphaneler
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+.pytest_cache/
+
+# IDE & Editör
+.vscode/
+.idea/
+*.swp
+*~
