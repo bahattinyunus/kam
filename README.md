@@ -403,4 +403,4 @@ KAM, kaynakların kısıtlı ama görevin hayati olduğu ortamlarda çalışmak 
 KAM, **Arat Labs** çatısı altında açık kaynak vizyonuyla geliştirilmektedir. Bellek sızıntılarını önleyen, mikro-gecikmeleri azaltan veya yepyeni bir uç donanım sürücüsü ekleyen nitelikli Pull Request'ler başımızın tacıdır.
 
 - **Lisans:** [Apache License 2.0](LICENSE)
-- **Geliştirici ve Baş Mimar:** [@arch-yunus](https://github.com/arch-yunus) | Founder @ Budak & Lead Researcher @ MERL
+- **Geliştirici ve Baş Mimar:** [Bahattin Yunus ÇETİN (@bahattinyunus)](https://github.com/bahattinyunus) | Founder @ Budak & Lead Researcher @ MERL
