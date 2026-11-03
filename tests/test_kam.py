@@ -15,6 +15,7 @@ from kam.sensor_fusion import SensorFusionEKF
 from kam.swarm_mesh import SwarmMeshController
 from kam.models.liquid_moe import KamLiquidFoundationModel
 from kam.models.trainer import ActiveInferenceTrainer
+from kam.knowledge_engine import LocalKnowledgeEngine
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -122,6 +123,16 @@ class TestKam(unittest.TestCase):
         history = trainer.run_training_cycle(steps=2)
         self.assertEqual(len(history), 2)
         self.assertIn("mean_free_energy", history[0])
+
+    def test_local_knowledge_engine(self):
+        ke = LocalKnowledgeEngine()
+        ans = ke.query("tr nin başkentii neresi")
+        self.assertIsNotNone(ans)
+        self.assertIn("Ankara", ans)
+
+        ans_paris = ke.query("Fransa başkenti")
+        self.assertIsNotNone(ans_paris)
+        self.assertIn("Paris", ans_paris)
 
 if __name__ == "__main__":
     unittest.main()

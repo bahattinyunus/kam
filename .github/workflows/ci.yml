@@ -28,6 +28,8 @@ jobs:
 
     - name: Python Birim Testleri ve Simülasyon
       run: |
+        python scripts/fetch_open_datasets.py
+        python scripts/setup_local_brain.py
         python -m unittest discover tests
         python cli.py --scenario uav_failure
         python cli.py --scenario swarm_loss

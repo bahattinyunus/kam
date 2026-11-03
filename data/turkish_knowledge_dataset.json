@@ -1,0 +1,160 @@
+{
+  "dataset_name": "KAM-Open-Knowledge-TR-Universal",
+  "total_records": 16,
+  "language": "tr",
+  "entries": [
+    {
+      "keywords": [
+        "türkiye",
+        "başkent",
+        "ankara",
+        "tr"
+      ],
+      "question": "Türkiye'nin başkenti neresidir?",
+      "answer": "Türkiye Cumhuriyeti'nin başkenti Ankara'dır. 13 Ekim 1923 tarihinde Türkiye Büyük Millet Meclisi kararıyla başkent ilan edilmiştir."
+    },
+    {
+      "keywords": [
+        "türkiye",
+        "cumhurbaşkanı",
+        "kurucu",
+        "atatürk"
+      ],
+      "question": "Türkiye Cumhuriyeti'nin kurucusu kimdir?",
+      "answer": "Türkiye Cumhuriyeti'nin kurucusu ve ilk Cumhurbaşkanı Gazi Mustafa Kemal Atatürk'tür."
+    },
+    {
+      "keywords": [
+        "ankara",
+        "nüfus",
+        "iç anadolu"
+      ],
+      "question": "Ankara hangi bölgededir?",
+      "answer": "Ankara, Türkiye'nin İç Anadolu Bölgesi'nde yer alır ve İstanbul'dan sonra ülkenin en kalabalık ikinci şehridir."
+    },
+    {
+      "keywords": [
+        "karl friston",
+        "serbest enerji",
+        "active inference"
+      ],
+      "question": "Karl Friston'un serbest enerji prensibi nedir?",
+      "answer": "Serbest Enerji Prensibi; canlı veya otonom sistemlerin hayatta kalabilmek için çevresel sürprizleri ve duyusal durumlarının entropisini minimize etmesi gerektiğini savunan sibernetik ve nörobiyolojik bir kuramdır."
+    },
+    {
+      "keywords": [
+        "ebpf",
+        "linux",
+        "kernel",
+        "kprobe"
+      ],
+      "question": "eBPF nedir ve ne işe yarar?",
+      "answer": "eBPF (Extended Berkeley Packet Filter), Linux çekirdeğinin kaynak kodunu değiştirmeden veya çekirdek modülü yüklemeden çekirdek seviyesinde güvenli ve yüksek hızlı programlar (kprobe, tracepoint) çalıştırmayı sağlayan devrim niteliğinde bir sanal makinedir."
+    },
+    {
+      "keywords": [
+        "c++20",
+        "cpp",
+        "standart"
+      ],
+      "question": "C++20'nin en önemli yenilikleri nelerdir?",
+      "answer": "C++20; Concepts (Kavramlar), Coroutines (Eşyordamlar), Ranges (Aralıklar), Modules (Modüller) ve std::span gibi devasa performans ve bellek güvenliği özellikleri getirmiştir."
+    },
+    {
+      "keywords": [
+        "sdr",
+        "yazılım tanımlı radyo",
+        "fhss"
+      ],
+      "question": "SDR (Software Defined Radio) nedir?",
+      "answer": "SDR, geleneksel olarak donanım parçalarıyla (karıştırıcılar, filtreler, modülatörler) yapılan radyo sinyal işleme görevlerini yazılım üzerinden yürüten esnek telsiz teknolojisidir."
+    },
+    {
+      "keywords": [
+        "kalman",
+        "ekf",
+        "sensör füzyonu"
+      ],
+      "question": "Genişletilmiş Kalman Filtresi (EKF) ne için kullanılır?",
+      "answer": "EKF, doğrusal olmayan dinamik sistemlerde IMU, GPS ve Lidar gibi farklı ve gürültülü sensör verilerini birleştirerek aracın kesin konum ve hızını kestirmek için kullanılır."
+    },
+    {
+      "keywords": [
+        "fransa",
+        "başkent",
+        "paris"
+      ],
+      "question": "Fransa'nın başkenti neresidir?",
+      "answer": "Paris"
+    },
+    {
+      "keywords": [
+        "almanya",
+        "başkent",
+        "berlin"
+      ],
+      "question": "Almanya'nın başkenti neresidir?",
+      "answer": "Berlin"
+    },
+    {
+      "keywords": [
+        "azerbaycan",
+        "başkent",
+        "bakü",
+        "baku"
+      ],
+      "question": "Azerbaycan'ın başkenti neresidir?",
+      "answer": "Bakü"
+    },
+    {
+      "keywords": [
+        "japonya",
+        "başkent",
+        "tokyo"
+      ],
+      "question": "Japonya'nın başkenti neresidir?",
+      "answer": "Tokyo"
+    },
+    {
+      "keywords": [
+        "türkiye",
+        "kalabalık",
+        "istanbul",
+        "şehir"
+      ],
+      "question": "Türkiye'nin en kalabalık şehri neresidir?",
+      "answer": "İstanbul"
+    },
+    {
+      "keywords": [
+        "kam",
+        "nedir",
+        "motor"
+      ],
+      "question": "KAM motoru nedir?",
+      "answer": "KAM; uç donanımlar için %100 yerel, bilişsel ve kendi kendini iyileştiren otonom sistem motorudur."
+    },
+    {
+      "keywords": [
+        "karl",
+        "friston",
+        "kimdir",
+        "serbest",
+        "enerji"
+      ],
+      "question": "Karl Friston kimdir?",
+      "answer": "Karl Friston, Serbest Enerji Prensibi ve Aktif Çıkarım kuramını geliştiren dünyaca ünlü teorik nörobilimci ve sibernetikçidir."
+    },
+    {
+      "keywords": [
+        "ebpf",
+        "ne",
+        "yarar",
+        "kernel",
+        "çekirdek"
+      ],
+      "question": "eBPF ne işe yarar?",
+      "answer": "eBPF, Linux çekirdeğine dinamik kancalar (hooks) atarak çekirdek seviyesi telemetriyi sıfır gecikmeyle toplamaya yarar."
+    }
+  ]
+}
