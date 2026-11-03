@@ -27,3 +27,15 @@ dist/
 .idea/
 *.swp
 *~
+
+# Yerel Büyük Yapay Zeka Model Dosyaları (GitHub 100MB Limit Koruması)
+models/weights/
+weights/
+*.gguf
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.onnx
+*.engine
+
