@@ -6,7 +6,7 @@ from typing import Optional, Dict, Any, List
 class LocalKnowledgeEngine:
     """
     Yerel Açık Kaynak Bilgi Tabanı ve Semantik Çıkarım Motoru
-    İnternetsiz (Air-Gapped) Türkçe Soru-Cevap ve Kavram Doğrulayıcı
+    İnternetsiz (Air-Gapped) Türkçe Soru-Cevap, Terim Doğrulayıcı ve RAG Mekanizması
     """
     def __init__(self, dataset_path: str = None):
         if not dataset_path:
@@ -44,10 +44,12 @@ class LocalKnowledgeEngine:
             ]
 
     def normalize(self, text: str) -> str:
-        # Türkçe karakter ve noktalama normalizasyonu
+        # Türkçe karakter, şapkalı harf ve teknik terim normalizasyonu
         text = text.lower()
+        text = text.replace("c++20", "cpp20").replace("c++", "cpp")
         replacements = {
-            "ı": "i", "İ": "i", "ş": "s", "ğ": "g", "ü": "u", "ö": "o", "ç": "c"
+            "ı": "i", "İ": "i", "ş": "s", "ğ": "g", "ü": "u", "ö": "o", "ç": "c",
+            "â": "a", "Â": "a", "î": "i", "Î": "i", "û": "u", "Û": "u"
         }
         for k, v in replacements.items():
             text = text.replace(k, v)
@@ -58,37 +60,44 @@ class LocalKnowledgeEngine:
         norm_q = self.normalize(user_question)
         words = set(norm_q.split())
 
-        # Özel Kısayol: "tr nin başkenti", "türkiyenin başkenti"
-        if ("tr" in words or "turkiye" in words or "turkiyenin" in words) and ("baskent" in words or "baskenti" in words or "baskentii" in words or "neresi" in words or "neresidir" in words):
-            return "Ankara. Türkiye Cumhuriyeti'nin başkenti Ankara'dır."
+        # Özel Kısayol: Türkiye başkenti
+        if ("tr" in words or "turkiye" in words or "turkiyenin" in words) and ("baskent" in words or "baskenti" in words or "neresi" in words or "neresidir" in words):
+            return "Türkiye Cumhuriyeti'nin başkenti Ankara'dır. 13 Ekim 1923 tarihinde Türkiye Büyük Millet Meclisi kararıyla başkent ilan edilmiştir."
 
         best_match = None
         best_score = 0.0
 
         for entry in self.knowledge_base:
             keywords = [self.normalize(k) for k in entry.get("keywords", [])]
-            match_count = 0.0
-            strong_match = False
+            match_score = 0.0
+
             for kw in keywords:
+                # 1. Çok kelimeli tam öbek eşleşmesi (örn: "karl friston", "serbest enerji", "bellek havuzu")
+                if " " in kw and kw in norm_q:
+                    match_score += 2.5
+                    continue
+
+                # 2. Tam tek kelime eşleşmesi
+                if kw in words:
+                    match_score += 1.5
+                    continue
+
+                # 3. Türkçe eklemeli dil kök/gövde eşleşmesi (agglutinative suffix matching)
+                kw_stem = kw[:4] if len(kw) >= 4 else kw
                 for w in words:
-                    if kw == w:  # Tam kelime eşleşmesi
-                        match_count += 1.0
-                        if len(kw) >= 4:
-                            strong_match = True
-                        break
-                    elif len(kw) > 4 and kw in w:
-                        match_count += 0.8
-                        strong_match = True
+                    w_stem = w[:4] if len(w) >= 4 else w
+                    if len(kw) >= 4 and len(w) >= 4 and (kw_stem == w_stem or kw in w or w in kw):
+                        match_score += 0.9
                         break
 
-            if match_count > 0:
-                score = match_count / max(1, min(len(words), 3))
-                if strong_match or match_count >= 1.0:
-                    if score > best_score:
-                        best_score = score
-                        best_match = entry
+            if match_score > 0:
+                # Soru içindeki anahtar yoğunluğu
+                score = match_score / max(1.0, min(len(words), 5.0))
+                if score > best_score and match_score >= 1.2:
+                    best_score = score
+                    best_match = entry
 
-        if best_match and (best_score >= 0.25 or best_match.get("keywords")):
+        if best_match and best_score >= 0.20:
             return best_match["answer"]
 
         return None

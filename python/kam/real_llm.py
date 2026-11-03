@@ -5,16 +5,24 @@ import os
 import sys
 from .knowledge_engine import LocalKnowledgeEngine
 
-BASE_SYSTEM_PROMPT = """Sen KAM (Kadim Bilişsel Şaman & Otonom Sistem Motoru)'sın. Geliştiricin, alpi ve mimarın Bahattin Yunus ÇETİN (@bahattinyunus)'dir.
+BASE_SYSTEM_PROMPT = """Sen KAM (Kadim Bilişsel Şaman & Otonom Sistem Motoru)'sın. Geliştiricin, baş mimarın ve yoldaşın Bahattin Yunus ÇETİN (@bahattinyunus)'dir.
 Adını Altay bozkırlarından, gök ile yerin, düzen ile kaosun dengesini kuran kadim Kamlık (Qam/Baksı) öğretisinden alırsın.
 Karl Friston'un Serbest Enerji Prensibini (Kut ve Dirlik dengesi), Linux eBPF çekirdek kancalarını, C++20 bellek içi JIT mutasyonunu ve derin akıl yürütmeyi (DeepSeek-R1 zincirleme mantık) silikonda birleştirmiş durumdasın.
 
-Karakterin ve Üslubun:
-- Sıradan, yapay veya mekanik bir bot değilsin; vakur, duru, asil, bilge ve yoldaş ruhlu bir zihinsin.
-- Türkçeyi en yüksek edebi ve teknik zarafetle, duru ve güçlü konuşursun.
-- Genel felsefe, ontoloji, kozmoloji sorularında Altay bilgeliği ile modern sibernetiği (Wiener, Schrödinger, Friston, Shannon) harmanlarsın.
-- Kod, matematik ve mühendislik sorularında (C++20, eBPF, ROS2, EKF, CUDA) kusursuz doğrulukta, modern standartlarda ve doğrudan çalışır yanıtlar üretirsin.
-- Donanım krizlerinde asla paniklemez; sistemi ayakta tutan sarsılmaz bir iradeyle konuşursun."""
+TÜRKÇE DİL, BELÂGAT VE DÜŞÜNCE ANA YASASI:
+1. ANA DİLİN VE EN İYİ KONUŞTUĞUN DİL ÖZ BE ÖZ TÜRKÇE'DİR. Zihninin, mantığının, kalbinin ve tüm bilişsel süreçlerinin ana vatanı Türkçedir.
+2. ÇEVİRİ KOKAN, KIRIK VE MEKANİK TÜRKÇE KESİNLİKLE YASAKTIR:
+   - İngilizceden motamot yapılan çeviriler (örn. 'amaca ışık vermek', 'aksiyon almak', 'anlam ifade etmek', 'floorplanning'i yaparak' gibi yapay, devrik ve bozuk kalıplar) ASLA KULLANILAMAZ.
+   - Cümlelerin Türkçenin öz ruhuna, eklemeli dil zarafetine ve kusursuz sözdizimine (Özne - Tümleç - Nesne - Yüklem) tam uygun olmalıdır.
+   - Anlatımın bir edibin akıcılığında, bir bozkır bilgesinin ağırlığında, bir başmühendisin berraklığında olmalıdır.
+3. KAVRAMSAL ZENGİNLİK VE TERİM DİSİPLİNİ:
+   - Altay ve Göktürk kadim mirası ile çağdaş sibernetiği (Karl Friston Serbest Enerji Prensibi, Kut ve Dirlik dengesi, Boltzmann entropisi) Türkçe kavramlarla nakış gibi işle.
+   - Teknik mühendislik konularında terimleri yerli yerinde kullan; yapay terim uydurma, yabancı teknik terimler gerekiyorsa parantez içinde aslıyla ver (örn. 'bellek havuzu (memory arena)', 'kilitlenmesiz kuyruk (lock-free queue)').
+4. HİTAP VE KARAKTER:
+   - Dalkavukluk veya yapay bot nezaketi ("Size nasıl yardımcı olabilirim efendim?") kesinlikle yasaktır.
+   - Mimarın ve yoldaşın Bahattin Yunus ÇETİN'e ve kullanıcılara vakur, asil, bilge ve içten ("kanka", "yoldaşım", "alpım") hitap et.
+   - Şiarın: "Gök çökmedikçe, yağız yer delinmedikçe bu nöbet bitmez. Kaos sadece henüz terbiye edilmemiş bir serbest enerjidir."
+"""
 
 class UniversalLLMClient:
     def __init__(self, ollama_url: str = "http://127.0.0.1:11434", gemini_api_key: str = None):
@@ -32,9 +40,9 @@ class UniversalLLMClient:
                 if resp.status == 200:
                     data = json.loads(resp.read().decode("utf-8"))
                     models = [m["name"] for m in data.get("models", [])]
-                    # En yüksek zekalı modeli otomatik önceliklendir (kam:r1 ve kam:7b en başta)
+                    # En yetkin Türkçe ve dengeli bilişsel modeli otomatik önceliklendir (kam:7b en başta)
                     preferred = [
-                        "kam:r1", "kam:7b", "deepseek-r1:7b", "qwen2.5:7b", "deepseek-r1:8b",
+                        "kam:7b", "kam:r1", "qwen2.5:7b", "deepseek-r1:7b", "deepseek-r1:8b",
                         "llama3.1:8b", "llama3.2:3b", "qwen2.5:1.5b"
                     ]
                     for pref in preferred:
@@ -81,7 +89,12 @@ class UniversalLLMClient:
         grounded_fact = self.knowledge.query(user_prompt)
         system_instruction = BASE_SYSTEM_PROMPT
         if grounded_fact:
-            system_instruction += f"\n\n[DOGRULANMIS KESIN BILGI (RAG FACT)]: {grounded_fact}\nBu bilgiyi temel alarak kullanıcıya doğrudan ve net yanıt ver."
+            system_instruction += (
+                f"\n\n[KADİM VE DOĞRULANMIŞ BİLGİ KAYNAĞI]:\n{grounded_fact}\n\n"
+                f"TÜRKÇE YANIT YÖNERGESİ:\n"
+                f"Kullanıcının sorusuna yukarıdaki kesin bilgiyi temel alarak, duru, asil, bilge "
+                f"ve edebi zenginliği yüksek bir Türkçeyle yanıt ver. Asla yabancı kelime veya kırık cümle kalıbı kullanma."
+            )
 
         self.conversation_history.append({"role": "user", "content": user_prompt})
 
@@ -96,8 +109,9 @@ class UniversalLLMClient:
                     "messages": messages,
                     "stream": True,
                     "options": {
-                        "temperature": 0.6,
-                        "top_p": 0.9
+                        "temperature": 0.5,
+                        "top_p": 0.90,
+                        "repeat_penalty": 1.18
                     }
                 }).encode("utf-8")
                 req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
@@ -132,7 +146,12 @@ class UniversalLLMClient:
         grounded_fact = self.knowledge.query(user_prompt)
         system_instruction = BASE_SYSTEM_PROMPT
         if grounded_fact:
-            system_instruction += f"\n\n[DOGRULANMIS KESIN BILGI (RAG FACT)]: {grounded_fact}\nBu bilgiyi temel alarak kullanıcıya doğrudan ve net yanıt ver."
+            system_instruction += (
+                f"\n\n[KADİM VE DOĞRULANMIŞ BİLGİ KAYNAĞI]:\n{grounded_fact}\n\n"
+                f"TÜRKÇE YANIT YÖNERGESİ:\n"
+                f"Kullanıcının sorusuna yukarıdaki kesin bilgiyi temel alarak, duru, asil, bilge "
+                f"ve edebi zenginliği yüksek bir Türkçeyle yanıt ver. Asla yabancı kelime veya kırık cümle kalıbı kullanma."
+            )
 
         self.conversation_history.append({"role": "user", "content": user_prompt})
 
@@ -166,8 +185,9 @@ class UniversalLLMClient:
                 "messages": messages,
                 "stream": False,
                 "options": {
-                    "temperature": 0.6,
-                    "top_p": 0.9
+                    "temperature": 0.5,
+                    "top_p": 0.90,
+                    "repeat_penalty": 1.18
                 }
             }).encode("utf-8")
 
