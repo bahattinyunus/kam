@@ -397,22 +397,31 @@ make -j$(nproc)
 ./kam_thermal_mitigation
 ```
 
-### Python Simülasyonu ve Test
+### Python Simülasyonu, Model Çıkarımı ve Sohbet
 ```bash
-# Birim testleri çalıştırın
-python -m unittest discover tests
+# Tek komutla yerel bilişsel motoru kurun:
+python scripts/setup_local_brain.py
 
-# İHA kesintisi ve otonom SDR kurtarma ayinini yürütün
+# Doğrudan Türkçe bilişsel zihin ile interaktif terminal sohbeti:
+python cli.py --chat
+
+# KAM-1 Sıvı Sinir Ağı çıkarımı (Top-2 MoE):
+python cli.py --infer
+
+# Karl Friston serbest enerji minimizasyon eğitimi:
+python cli.py --train
+
+# HuggingFace üzerinden yerel GGUF açık kaynak modelleri indirin (Opsiyonel):
+python scripts/download_weights.py --model qwen-coder-1.5b
+
+# İHA kesintisi ve otonom SDR kurtarma ayinini yürütün:
 python cli.py --scenario uav_failure
 
-# Elektronik harp saldırı simülasyonunu yürütün
-python cli.py --scenario jamming_attack
-
-# Model çıkarım ve donanım enerji kıyaslamasını gösterin
-python cli.py --benchmark
-
-# Canlı terminal gösterge panelini açın
+# Canlı terminal gösterge panelini açın:
 python cli.py --dashboard
+
+# Birim testleri çalıştırın (11/11 test):
+python -m unittest discover tests
 ```
 
 ---

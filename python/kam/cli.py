@@ -7,6 +7,7 @@ from .model_benchmark import ModelBenchmark
 from .swarm_mesh import SwarmMeshController
 from .models.liquid_moe import KamLiquidFoundationModel
 from .models.trainer import ActiveInferenceTrainer
+from .interactive_chat import KamInteractiveChat
 
 def main():
     parser = argparse.ArgumentParser(
@@ -17,6 +18,11 @@ def main():
         choices=["uav_failure", "thermal_crisis", "jamming_attack", "can_spoofing", "thermal_runaway", "swarm_loss"],
         default="uav_failure",
         help="Yürütülecek simülasyon ve iyileştirme ayini senaryosu"
+    )
+    parser.add_argument(
+        "--chat", "-c",
+        action="store_true",
+        help="KAM yerel bilişsel zihniyle interaktif terminal sohbetini başlat"
     )
     parser.add_argument(
         "--infer",
@@ -50,6 +56,11 @@ def main():
     )
 
     args = parser.parse_args()
+
+    if args.chat:
+        chat = KamInteractiveChat()
+        chat.run()
+        return
 
     if args.infer:
         model = KamLiquidFoundationModel()

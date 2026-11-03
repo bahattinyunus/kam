@@ -1,0 +1,38 @@
+{
+  "dataset_name": "KAM-Kernel-eBPF-Anomaly-Catalog",
+  "version": "1.0.0",
+  "anomalies": [
+    {
+      "id": "ERR_UART_FD_LEAK_001",
+      "hook_type": "tracepoint/syscalls/sys_exit_close",
+      "signature": "EBADF / Socket descriptor unmapped",
+      "severity": "CRITICAL",
+      "recommended_action": "SDR_FREQUENCY_HOPPING_FALLBACK",
+      "generated_cpp_template": "sdr_fallback_node.cpp"
+    },
+    {
+      "id": "ERR_CAN_INJECTION_SPOOF_002",
+      "hook_type": "kprobe/can_rx_dispatch",
+      "signature": "CAN-ID 0x1BA high-frequency flood (>5000 fps)",
+      "severity": "CRITICAL",
+      "recommended_action": "IN_MEMORY_CAN_FIREWALL_FILTER",
+      "generated_cpp_template": "can_firewall_filter.cpp"
+    },
+    {
+      "id": "ERR_THERMAL_THROTTLE_NPU_003",
+      "hook_type": "tracepoint/thermal/thermal_temperature",
+      "signature": "Jetson NPU > 90C / Clock down 1.2GHz -> 400MHz",
+      "severity": "HIGH",
+      "recommended_action": "DYNAMIC_INT4_AWQ_PRECISION_DOWNSCALE",
+      "generated_cpp_template": "thermal_vision_fallback.cpp"
+    },
+    {
+      "id": "ERR_RADIATION_SEU_BITFLIP_004",
+      "hook_type": "raw_tracepoint/sys_enter",
+      "signature": "ECC Uncorrectable parity mismatch in L1 Cache",
+      "severity": "FATAL",
+      "recommended_action": "CORE_ISOLATION_AND_REGISTER_REMAP",
+      "generated_cpp_template": "deep_space_recovery_node.cpp"
+    }
+  ]
+}

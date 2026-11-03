@@ -1,0 +1,83 @@
+{
+  "dataset_name": "KAM-UAV-Extreme-Telemetry-v1",
+  "version": "1.0.0",
+  "total_frames": 1000,
+  "sampling_rate_hz": 50,
+  "description": "Otonom İHA ve uç donanım sensör telemetrisi, elektronik harp karıştırması ve donanım arıza kayıtları.",
+  "features": [
+    "timestamp_ms",
+    "uart_rx_bytes_sec",
+    "uart_drop_rate",
+    "sdr_frequency_mhz",
+    "sdr_rssi_dbm",
+    "imu_accel_x",
+    "imu_accel_y",
+    "imu_accel_z",
+    "imu_gyro_x",
+    "imu_gyro_y",
+    "imu_gyro_z",
+    "npu_temp_celsius",
+    "cpu_load_percent",
+    "shannon_entropy",
+    "free_energy_score",
+    "ground_truth_label"
+  ],
+  "samples": [
+    {
+      "timestamp_ms": 1000,
+      "uart_rx_bytes_sec": 11520,
+      "uart_drop_rate": 0.0,
+      "sdr_frequency_mhz": 868.1,
+      "sdr_rssi_dbm": -68.4,
+      "imu_accel_x": 0.02,
+      "imu_accel_y": 0.01,
+      "imu_accel_z": 9.81,
+      "npu_temp_celsius": 48.2,
+      "shannon_entropy": 0.03,
+      "free_energy_score": 0.08,
+      "ground_truth_label": "STABLE_CRUISE"
+    },
+    {
+      "timestamp_ms": 1500,
+      "uart_rx_bytes_sec": 11480,
+      "uart_drop_rate": 0.01,
+      "sdr_frequency_mhz": 868.1,
+      "sdr_rssi_dbm": -71.2,
+      "imu_accel_x": 0.08,
+      "imu_accel_y": -0.04,
+      "imu_accel_z": 9.85,
+      "npu_temp_celsius": 50.1,
+      "shannon_entropy": 0.06,
+      "free_energy_score": 0.12,
+      "ground_truth_label": "TURBULENCE_NORMAL"
+    },
+    {
+      "timestamp_ms": 2000,
+      "uart_rx_bytes_sec": 120,
+      "uart_drop_rate": 0.94,
+      "sdr_frequency_mhz": 868.1,
+      "sdr_rssi_dbm": -98.6,
+      "imu_accel_x": 1.45,
+      "imu_accel_y": -2.12,
+      "imu_accel_z": 12.4,
+      "npu_temp_celsius": 74.5,
+      "shannon_entropy": 0.89,
+      "free_energy_score": 1.94,
+      "ground_truth_label": "CRITICAL_UART_FAILURE_AND_EW_JAMMING"
+    },
+    {
+      "timestamp_ms": 2500,
+      "uart_rx_bytes_sec": 0,
+      "uart_drop_rate": 1.0,
+      "sdr_frequency_mhz": 869.2,
+      "sdr_rssi_dbm": -62.1,
+      "imu_accel_x": 0.12,
+      "imu_accel_y": 0.05,
+      "imu_accel_z": 9.82,
+      "npu_temp_celsius": 52.3,
+      "shannon_entropy": 0.15,
+      "free_energy_score": 0.22,
+      "ground_truth_label": "RECOVERED_SDR_FALLBACK_ACTIVE"
+    }
+  ]
+}
