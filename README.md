@@ -2,6 +2,10 @@
 ### Uç Donanımlar (Edge-AI) İçin %100 Yerel, Bilişsel ve Kendi Kendini İyileştiren Otonom Sistem Motoru
 
 <p align="center">
+  <img src="assets/kam_logo.png" alt="KAM Cyber-Shamanic Master Insignia" width="220px" style="border-radius: 50%;" />
+</p>
+
+<p align="center">
   <img src="assets/kam_hero_banner.jpg" alt="KAM Hero Banner" width="100%" style="border-radius: 8px;" />
 </p>
 
