@@ -1,13 +1,9 @@
 # KAM 🐺⚡
 ### Uç Donanımlar (Edge-AI) İçin %100 Yerel, Bilişsel ve Kendi Kendini İyileştiren Otonom Sistem Motoru
 
-```ascii
-     __        ______  ___   __  ___ 
-    / /_____ _/ __/  |/  /  / / / / / 
-   /  '_/ _ `/ _// /|_/ /  /_/ /_/ /  
-  /_/\_\\_,_/_/ /_/  /_/  (_) (_) (_)  
-  [KADİM RUH] ── [BİLİŞSEL ÇEKİRDEK] ── [OTONOM TEKAMÜL]
-```
+<p align="center">
+  <img src="assets/kam_hero_banner.jpg" alt="KAM Hero Banner" width="100%" style="border-radius: 8px;" />
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/C%2B%2B-20%20Standard-blue.svg?style=for-the-badge&logo=c%2B%2B" />
@@ -86,8 +82,16 @@ Sistemdeki yapay zeka çekirdeği (INT8 Kuantize TensorRT Modeli) tamamen yerel 
 ### II. Kökten Hissediş (eBPF Kernel Telemetry)
 Klasik RAM ve CPU izleyicileri sistemin yüzeyinde kalır. KAM, eBPF teknolojisi ile doğrudan Linux işletim sisteminin çekirdeğine (`kprobe`, `tracepoint`, `raw_tp`) tutunur. Dosya tanımlayıcı sızıntılarını, UART/SDR soket kopmalarını, NPU termal eşiklerini ve anlık işlemci entropisini mikrosaniye altında hisseder.
 
+<p align="center">
+  <img src="assets/kam_ebpf_neural_system.jpg" alt="eBPF Silicon Nervous System" width="90%" style="border-radius: 8px;" />
+</p>
+
 ### III. Canlı Tekamül (On-The-Fly Recompilation)
 Bir donanım düğümü imha olduğunda veya sinyal karıştırıldığında sistem "Güvenli Mod" adı altında çaresizce bekleyip düşmana yem olmaz. KAM devreye girer, sağlam kalan donanımlara (örneğin bozuk UART yerine SDR 868MHz bandına) göre sıfırdan C++ modülü yazar, kodu bellekte derler ve sistemi yeni bir topolojiyle ayağa kaldırır.
+
+<p align="center">
+  <img src="assets/kam_jit_self_healing.jpg" alt="JIT Self-Healing Mutation" width="90%" style="border-radius: 8px;" />
+</p>
 
 ---
 
@@ -122,6 +126,10 @@ graph TD
 
 Sistem, çevresel sürprizleri ve donanım anomalilerini Karl Friston'un **Serbest Enerji Prensibi** denklemleri ile hesaplar:
 
+<p align="center">
+  <img src="assets/kam_active_inference_chaos.jpg" alt="Active Inference & Chaos Equilibrium" width="90%" style="border-radius: 8px;" />
+</p>
+
 ### 1. Varyasyonel Serbest Enerji (VFE)
 $$F = \underbrace{D_{KL}(q(s) \parallel p(s))}_{\text{Karmaşıklık (Complexity)}} - \underbrace{\mathbb{E}_{q}[\ln p(o|s)]}_{\text{Doğruluk (Accuracy)}}$$
 
@@ -145,6 +153,10 @@ KAM'ın aktif çıkarım motoru rastgele bir karar almaz; matematiksel olarak **
 ## ⚡ Canlı Ayin: Gerçek Terminal Akışı
 
 KAM'ın sisteme müdahale ettiği kriz anında terminalde akan saf Türkçe bilişsel teşhis ve otonom iyileştirme ayini:
+
+<p align="center">
+  <img src="assets/kam_uav_tactical_edge.jpg" alt="Autonomous Tactical UAV in Electronic Warfare" width="90%" style="border-radius: 8px;" />
+</p>
 
 ```text
 =================================================================
@@ -202,15 +214,25 @@ python cli.py --dashboard
 
 ```bash
 kam/
+├── assets/                # Yüksek çözünürlüklü görsel varlıklar ve mimari şemalar
+│   ├── kam_hero_banner.jpg
+│   ├── kam_active_inference_chaos.jpg
+│   ├── kam_ebpf_neural_system.jpg
+│   ├── kam_jit_self_healing.jpg
+│   └── kam_uav_tactical_edge.jpg
 ├── core/                  # KAM çekirdek yapısı ve bellek-içi JIT derleyici (C++20)
 │   ├── include/
 │   │   ├── kam_core.hpp       # Bilişsel orkestrasyon ve ayin yürütücüsü
 │   │   ├── jit_compiler.hpp   # Dynamic JIT hot-patching & safe rollback guard
+│   │   ├── memory_arena.hpp   # O(1) Gerçek zamanlı deterministik bellek havuzu
+│   │   ├── watchdog.hpp       # Donanımsal watchdog ve zaman aşımı bekçisi
 │   │   ├── system_state.hpp   # Donanım düğümleri ve topoloji kaydı
 │   │   └── logger.hpp         # Saf Türkçe ANSI renkli telemetri günlüğü
 │   └── src/
 │       ├── kam_core.cpp
 │       ├── jit_compiler.cpp
+│       ├── memory_arena.cpp
+│       ├── watchdog.cpp
 │       ├── system_state.cpp
 │       └── logger.cpp
 ├── ebpf_hooks/            # Linux kernel dinleme modülleri (.c ve .bpf)
@@ -238,28 +260,39 @@ kam/
 │   │   ├── mcp_server.hpp        # Model Context Protocol (JSON-RPC 2.0)
 │   │   ├── code_generator.hpp    # C++ dinamik kurtarma düğüm şablonları
 │   │   ├── autonomous_agent.hpp  # Otonom bilişsel ajan kontrolörü
+│   │   ├── gguf_parser.hpp       # GGUF / TensorRT Engine başlık ayrıştırıcısı
 │   │   └── tensorrt_inference.hpp# INT8 kuantize yerel çıkarım motoru
 │   └── src/
 │       ├── mcp_server.cpp
 │       ├── code_generator.cpp
 │       ├── autonomous_agent.cpp
+│       ├── gguf_parser.cpp
 │       └── tensorrt_inference.cpp
 ├── ros2_bridge/           # ROS2 / DDS Hibrit İletişim Köprüsü
 │   ├── include/
 │   │   └── kam_ros2_node.hpp  # Dinamik QoS ve Topic Remapping desteği
 │   └── src/
 │       └── kam_ros2_node.cpp
+├── hardware/              # Donanım Veriyolu Arayüzleri
+│   ├── include/
+│   │   └── hardware_bus.hpp   # CAN-Bus (SocketCAN), UART, SPI ve SDR sürücüsü
+│   └── src/
+│       └── hardware_bus.cpp
 ├── examples/              # Uç Görev ve Kriz Simülasyon Senaryoları
 │   ├── uav_telemetry_failure_scenario.cpp  # UART-2 arızası ve SDR kurtarma
 │   ├── edge_mission_recovery.cpp           # NPU termal aşımı ve sensör füzyonu
 │   ├── uav_jamming_attack.cpp              # Elektronik Harp (EW) karıştırma testi
-│   └── deep_space_radiation_bitflip.cpp    # Uzay radyasyonu SEU bit-flip izolasyonu
+│   ├── deep_space_radiation_bitflip.cpp    # Uzay radyasyonu SEU bit-flip izolasyonu
+│   ├── can_bus_spoofing_defense.cpp        # CAN-Bus yetkisiz ID siber savunması
+│   └── thermal_runaway_mitigation.cpp      # NPU termal kaçak & INT4 kuantizasyon
 ├── python/                # Python bağlayıcıları, TUI ve Simülasyon Ekosistemi
 │   ├── kam/
 │   │   ├── active_inference.py
 │   │   ├── code_mutator.py
 │   │   ├── engine.py
 │   │   ├── mcp_server.py
+│   │   ├── hardware_bus.py
+│   │   ├── model_benchmark.py
 │   │   ├── tui.py
 │   │   └── cli.py
 │   └── cli.py             # Kök erişimli hızlı yürütücü
@@ -271,6 +304,7 @@ kam/
 ├── .github/workflows/     # CI/CD Pipeline (Ubuntu 24.04, GCC-13, C++20)
 │   └── ci.yml
 ├── CMakeLists.txt         # Modern CMake konfigürasyonu
+├── LICENSE                # Apache 2.0 Lisansı
 └── README.md              # Bu dosya
 ```
 
@@ -318,6 +352,8 @@ make -j$(nproc)
 # Örnek senaryoları çalıştırın
 ./kam_uav_scenario
 ./kam_jamming_attack
+./kam_can_spoofing
+./kam_thermal_mitigation
 ```
 
 ### Python Simülasyonu ve Test
@@ -330,6 +366,9 @@ python cli.py --scenario uav_failure
 
 # Elektronik harp saldırı simülasyonunu yürütün
 python cli.py --scenario jamming_attack
+
+# Model çıkarım ve donanım enerji kıyaslamasını gösterin
+python cli.py --benchmark
 
 # Canlı terminal gösterge panelini açın
 python cli.py --dashboard
