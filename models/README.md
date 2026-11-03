@@ -10,7 +10,8 @@ Bu dizin, KAM'ın yerel bilişsel motorlarının (`kam:r1` ve `kam:7b`) yapılan
 models/
 ├── weights/                       # [YERELDE BARINDIRILIR - GITIGNORE İLE KORUNUR]
 │   ├── kam_r1_deepseek_7b.gguf    # 4.68 GB DeepSeek-R1 7B Ağırlığı
-│   └── kam_7b_qwen_foundation.gguf# 4.68 GB Qwen 2.5 7B Ağırlığı
+│   ├── kam_7b_qwen_foundation.gguf# 4.68 GB Qwen 2.5 7B Ağırlığı
+│   └── qwen_1.5b_lightweight_fallback.gguf # 986 MB Hafif Yedek Model Ağırlığı
 ├── Modelfile.kam-r1               # DeepSeek-R1 Çevrimiçi/Standart Reçete
 ├── Modelfile.kam-r1-offline       # Doğrudan weights/ altındaki GGUF'tan %100 Çevrimdışı Derleme
 ├── Modelfile.kam                  # Qwen 2.5 7B Standart Reçete
@@ -31,7 +32,7 @@ models/weights/
 ```
 kuralları tanımlanmıştır. 
 
-**Sonuç:** Model ağırlıkları bilgisayarınızda **fiziksel olarak `models/weights/` altında (yaklaşık 9.36 GB)** durur, ancak GitHub'a push yaparken asla Git geçmişine girmez ve push hatası oluşturmaz.
+**Sonuç:** Model ağırlıkları bilgisayarınızda **fiziksel olarak `models/weights/` altında (3 model - toplam yaklaşık 10.35 GB)** durur, ancak GitHub'a push yaparken asla Git geçmişine girmez ve push hatası oluşturmaz.
 
 ---
 
