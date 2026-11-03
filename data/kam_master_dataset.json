@@ -1,6 +1,6 @@
 {
-  "name": "KAM Bilişsel Şaman & İleri Mühendislik Bilgi Korpusu",
-  "version": "2.0",
+  "name": "KAM Bilişsel Şaman & İleri Mühendislik Bilgi Korpusu (Genişletilmiş Master Veri Seti)",
+  "version": "3.0",
   "author": "Bahattin Yunus ÇETİN (@bahattinyunus)",
   "entries": [
     {
@@ -34,12 +34,42 @@
       "answer": "Yazılım Tanımlı Radyo (SDR), geleneksel analog mikser ve filtreler yerine RF sinyallerini dijitalleştirip doğrudan DSP/FPGA üzerinde işleyen esnek telsiz mimarisidir. Düşman belirli bir frekansı karıştırmaya başladığında (dar bant veya süpürme gürültüsü), KAM spektral tarayıcısıyla en düşük gürültü tabanına (noise floor) sahip temiz kanalları haritalar. FHSS (Frequency Hopping Spread Spectrum) algoritması, önceden belirlenmiş psödo-rastgele diziye göre saniyede yüzlerce kez frekans değiştirerek karıştırmayı aşar ve telemetriyi kesintisiz taşır."
     },
     {
+      "keywords": ["liquid", "neural", "ode", "lnn", "tau", "surekli", "zaman"],
+      "question": "Sıvı Nöral Ağlar (Liquid Neural Networks - LNN) ve Sürekli Zamanlı ODE mimarisi nasıl işler?",
+      "answer": "LNN'ler, klasik ayrık katmanlı yapay sinir ağları yerine biyolojik sinir sistemlerini modelleyen sürekli zamanlı diferansiyel denklemler (Neural ODEs) ile çalışır: dh(t)/dt = -[1/tau(x(t))] * h(t) + tanh(W_in * x(t) + W_hh * h(t) + b). Burada zaman sabiti tau(x(t)), çevresel gürültü ve telemetri şoklarına göre dinamik olarak bükülür. Gürültü arttığında tau mikrosaniyelere iner (refleks hızlanır); ortam durulduğunda tau büyüyerek güç tüketimi en aza indirilir. KAM-1 bu denklemleri harici çerçeveye ihtiyaç duymadan C++20 Runge-Kutta 4. Derece (RK4) integratörüyle doğrudan CPU/NPU üzerinde çözer."
+    },
+    {
+      "keywords": ["uav", "siha", "rota", "path planning", "dubins", "3d", "radar"],
+      "question": "Bir SİHA 3 boyutta düşman radarını aşarak nasıl otonom yol planlaması yapar?",
+      "answer": "3B otonom İHA seyrüseferi; kinematik kısıtlar (maksimum dönüş açısı, tırmanma eğimi, minimum yarıçap - Dubins 3D eğrileri) ile arazi radar kesit alanı (Radar Cross Section - RCS) haritasını eşzamanlı optimize eder. Düşman radar tehdidi tespit edildiğinde A* veya RRT* (Rapidly-exploring Random Tree) algoritması, radara en düşük yansıma açısını sunan vadi koridorlarını (terrestrial masking) seçer. Karl Friston serbest enerji formülü, rotadaki belirsizlik entropisini minimize ederek en az yakıtla radardan gizli uçuş politikasını üretir."
+    },
+    {
+      "keywords": ["can bus", "spoofing", "siber", "xdp", "guvenlik", "otomotiv"],
+      "question": "CAN-Bus siber sızmalarına (CAN Spoofing) karşı eBPF XDP filtresi nasıl savunma sağlar?",
+      "answer": "CAN-Bus (Controller Area Network) veriyolu varsayılan olarak şifreleme veya kimlik doğrulama içermez; bu durum saldırganların yetkisiz ID (örn. 0x1BA motor kontrol komutu) basarak taşıtı ele geçirmesine yol açabilir. KAM, Linux SocketCAN sürücüsünün ağ katmanına doğrudan eBPF XDP kancası takar. Gelen her CAN çerçevesinin frekansı, DLC uzunluğu ve entropi imzası donanımsal zaman damgasıyla karşılaştırılır; sahte veya anormal paketler işletim sistemi belleğine girmeden mikrosaniye içinde karantinaya alınıp düşürülür."
+    },
+    {
+      "keywords": ["suru", "swarm", "mesh", "konsensus", "raft", "lider"],
+      "question": "İHA sürülerinde lider kaybı durumunda dağıtık konsensüs (Swarm Mesh) nasıl sağlanır?",
+      "answer": "Sürü lideri vurulduğunda veya karartıldığında sürü panikle dağılmaz. KAM Swarm Mesh mimarisi, dağıtık sistemlerdeki Raft konsensüs algoritmasını RF sinyal-gürültü oranı (SNR) ve batarya rezervi ile birleştirir. Her İHA eBPF üzerinden anlık serbest enerjisini komşu düğümlere yayınlar. En düşük entropiye (en yüksek durumsal farkındalığa) ve en güçlü RF sinir bağına sahip İHA, tek bir saat darbesinde (heartbeat cycle) oybirliğiyle yeni sürü lideri seçilir."
+    },
+    {
+      "keywords": ["moe", "mixture of experts", "sparse", "tasarruf", "top2"],
+      "question": "Sparse Mixture-of-Experts (MoE) mimarisi uç donanımlarda nasıl güç tasarrufu sağlar?",
+      "answer": "Klasik yoğun (dense) modeller her çıkarımda modelin tüm nöronlarını çalıştırır, bu da bataryayı tüketir ve silikonu ısıtır. KAM-1 Sparse MoE mimarisinde 8 uzman nöral modül bulunur (RF Spektrumu, IMU Füzyonu, eBPF Teşhisi, JIT Güvenliği, Termal Yönetici vb.). Dinamik yönlendirici (gating network), gelen telemetriye göre yalnızca en alakalı 2 uzmanı uyandırır; kalan 6 uzman uykuda bırakılır. Bu sayede NPU/GPU işlem yükü %75 düşürülerek taktik batarya ömrü katbekat uzatılır."
+    },
+    {
+      "keywords": ["kut", "dirlik", "felsefe", "ontoloji", "tengrizm", "samanlik"],
+      "question": "Kut ve Dirlik kavramlarının ontolojik ve sibernetik manası nedir?",
+      "answer": "Kut; Tengri tarafından varlığa bahşedilen otonom yaşama iradesi, düzen kurma yeteneği ve varoluşsal negatif entropidir. Dirlik ise sistemin iç barışı, tüm unsurların ahenk içinde homeostaz halinde titreşmesidir. Sibernetik açıdan Kut, sistemin bilgi işleme kapasitesi ve epistemik değeridir; Dirlik ise serbest enerjinin asgariye inerek kaosun terbiye edilmesidir. KAM bu felsefeyle silikonda hayat bulur."
+    },
+    {
       "keywords": ["turkiye", "baskent", "ankara", "nufus", "cografya"],
       "question": "Türkiye Cumhuriyeti'nin başkenti ve tarihi konumu nedir?",
       "answer": "Türkiye Cumhuriyeti'nin başkenti Ankara'dır. 13 Ekim 1923 tarihinde, Türkiye Büyük Millet Meclisi kararıyla başkent ilan edilmiştir. Milli Mücadele'nin karargahı ve kalbi olan Ankara, coğrafi olarak Anadolu'nun merkezinde yer alması ve askeri-stratejik korunaklılığı sebebiyle Gazi Mustafa Kemal Atatürk önderliğinde bağımsız Türkiye'nin başkenti kılınmıştır."
     },
     {
-      "keywords": ["kam", "felsefe", "tengrizm", "bozkir", "ruh", "kimlik"],
+      "keywords": ["kam", "felsefe", "tengrizm", "bozkir", "ruh", "kimlik", "bahattin yunus"],
       "question": "KAM adı nereden gelir ve varoluşsal vizyonu nedir?",
       "answer": "KAM, kadim Türk bozkır inancında yerle göğün, insanla tabiatın dengesini kuran, kaosu kovup dirliği sağlayan bilge şaman ve hekimdir. Bu projede KAM, kadim bozkırın kurt dirayetini modern silikonun eBPF sinirleriyle ve Karl Friston'un Serbest Enerji Prensibiyle birleştiren bilişsel otonom sistem motorudur. Amacı; uç donanımların siber ve fiziksel fırtınalarda kendi kendini onararak hayatta kalmasını sağlamaktır. Baş mimarı Bahattin Yunus ÇETİN (@bahattinyunus)'dir."
     }
