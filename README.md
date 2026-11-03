@@ -1,82 +1,213 @@
 # KAM 🐺⚡
 ### Uç Donanımlar (Edge-AI) İçin %100 Yerel, Bilişsel ve Kendi Kendini İyileştiren Otonom Sistem Motoru
 
-> *"Kam, kadim kültürde kaosu dindiren ve dengeyi sağlayan iyileştiricidir. Gömülü sistemlerin dünyasında ise KAM; çökmekte olan bir sistemi anında analiz eden, donanım kayıplarına göre kendi kodunu yeniden yazan ve hayatta kalmayı başaran bilişsel bir yapay zeka çekirdeğidir."*
+```ascii
+     __        ______  ___   __  ___ 
+    / /_____ _/ __/  |/  /  / / / / / 
+   /  '_/ _ `/ _// /|_/ /  /_/ /_/ /  
+  /_/\_\\_,_/_/ /_/  /_/  (_) (_) (_)  
+  [KADİM RUH] ── [BİLİŞSEL ÇEKİRDEK] ── [OTONOM TEKAMÜL]
+```
 
-KAM, dış bulut servislerine veya hantal Python betiklerine bel bağlamaz. **Model Context Protocol (MCP)** kullanarak yerel LLM ajanını doğrudan C++ derleyicisine bağlar. ROS2 tabanlı otonom araçlarda, elektronik harp (EW) sistemlerinde veya derin uzay simülasyonlarında sistemin hayatta kalma güdüsü olarak çalışır.
+<p align="center">
+  <img src="https://img.shields.io/badge/C%2B%2B-20%20Standard-blue.svg?style=for-the-badge&logo=c%2B%2B" />
+  <img src="https://img.shields.io/badge/Linux_Kernel-eBPF_Hooks-orange.svg?style=for-the-badge&logo=linux" />
+  <img src="https://img.shields.io/badge/NVIDIA-CUDA_12.x_%7C_TensorRT-green.svg?style=for-the-badge&logo=nvidia" />
+  <img src="https://img.shields.io/badge/Robotics-ROS2_Humble%2FIron%2FJazzy-red.svg?style=for-the-badge&logo=ros" />
+  <img src="https://img.shields.io/badge/Protocol-MCP_2025%2F2026-purple.svg?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/License-Apache_2.0-black.svg?style=for-the-badge" />
+</p>
 
 ---
 
-## 🧭 Felsefe: Sistemin Ruhu Neden KAM'a Emanet?
+## 📜 Kadim Bilgelikten Siber-Sibernetiğe: Sözün Özü
 
-Bizler sistemin sınırlarını zorlayan alaylı geliştiricileriz. KAM'ın mimarisi şu üç tavizsiz kural üzerine inşa edilmiştir:
+> *"Kam; gök ile yerin, düzen ile kaosun arasındaki kadim köprüdür. Kaos bir düşman veya beklenmeyen bir kaza değildir; dengenin henüz anlaşılmamış, biçim almamış yüzüdür. Kam kaosu bastırmaz veya ondan kaçmaz; onunla doğrudan konuşur, yarayı hisseder ve sistemi kendi etinden yeniden inşa eder."*  
+> — **Kadim Altay Şamanik/Kamlık Öğretisi**
 
-1. **Mutlak İzolasyon (Air-Gapped Survival):** Sistemdeki yapay zeka (INT8 Kuantize TensorRT Modeli) tamamen yerel çalışır. Dış dünya ile internet bağlantısı tamamen kopsa dahi KAM, otonom kararlar almaya ve sistemi yönetmeye devam eder. Tüm iç düşünce süreçleri ve loglamalar saf Türkçe olarak gerçekleşir.
-2. **Kökten Hissediş (eBPF Kernel Hooks):** Klasik RAM/CPU izleme araçları yüzeyde kalır. KAM, eBPF teknolojisi ile doğrudan Linux işletim sisteminin çekirdeğine (kernel) sızar. Dosya tanımlayıcı (file descriptor) sızıntılarını, NPU termal eşiklerini ve anlık işlemci entropisini milisaniyeler içinde hisseder.
-3. **Canlı Tekamül (On-The-Fly Recompilation):** Sensör veya donanım düğümü çöktüğünde sistem "Failsafe" veya "Mavi Ekran" vermez. KAM devreye girer, sağlam kalan sensörlere göre yeni bir C++ modülü yazar, kodu bellekte derler ve sistemi yeni bir topolojiyle ayağa kaldırır.
+> *"A biological system that resists decay must minimize the entropy of its sensory states... To survive is to bound surprise, and to bound surprise is to minimize free energy."*  
+> *(Dağılmaya ve yok oluşa direnen canlı bir sistem, duyusal durumlarının entropisini minimize etmek zorundadır... Hayatta kalmak, şaşkınlığı (sürprizi) sınırlamaktır; şaşkınlığı sınırlamak ise serbest enerjiyi asgariye indirmektir.)*  
+> — **Karl Friston**, *The Free Energy Principle: A Unified Brain Theory?*
+
+> *"We are not the stuff that abides, but patterns that perpetuate themselves in a world of entropy."*  
+> *(Bizler kalıcı ve değişmez maddeler değiliz; entropiyle dolu bir evrende kendi desenlerini inatla devam ettiren otonom kalıplarız.)*  
+> — **Norbert Wiener**, *The Human Use of Human Beings: Cybernetics and Society*
+
+> *"An organism feeds upon negative entropy... The essential thing in metabolism is that the organism succeeds in freeing itself from all the entropy it cannot help producing while alive."*  
+> *(Canlı bir organizma negatif entropi ile beslenir... Metabolizmanın en asli gayesi, sistemin hayatta kaldığı sürece kaçınılmaz olarak ürettiği tüm entropiyi ve kaosu bünyesinden defetmeyi başarmasıdır.)*  
+> — **Erwin Schrödinger**, *What is Life? (1944)*
+
+> *"Information is the resolution of uncertainty."*  
+> *(Bilgi; kaosun, belirsizliğin ve şüphenin ortadan kaldırılmasıdır.)*  
+> — **Claude Shannon**, *The Mathematical Theory of Communication*
+
+> *"Su nasıl arazinin eğimine ve kayaların durumuna göre şekil alırsa; muzaffer bir ordu da düşmanın yarattığı kaosa göre anında biçim değiştirir. Kriz anında donup kalanlar yok olur; topolojisini canlı canlı yeniden yazanlar tarihe hükmeder."*  
+> — **Sun Tzu**, *Savaş Sanatı*
 
 ---
 
-## 🏛 Sistem Mimarisi ve Katmanlar
+## 🐺 KAM Nedir?
+
+**KAM**, uç donanımlarda (*Edge-AI*, Jetson Orin, otonom İHA'lar, elektronik harp istasyonları ve derin uzay sondaları) çalışan; dış dünyaya, bulut sunucularına veya hantal kütüphanelere asla muhtaç olmayan **%100 yerel, bilişsel ve kendi kendini onaran (self-healing) otonom sistem motorudur.**
+
+Klasik gömülü mimariler bir sensör koptuğunda, elektronik harp karıştırmasına uğradığında ya da dosya tanımlayıcısı (file descriptor) çöktüğünde panikler, mavi ekran verir ya da sistem kilitlenir (*Failsafe lockup*).
+
+**KAM asla pes etmez.** 
+Sistem çökerken milisaniyeler içinde devreye girer:
+1. **eBPF Çekirdek Kancaları** ile Linux çekirdeğine sızar ve hasarın boyutunu doğrudan dâhili sinir sistemi gibi hisseder.
+2. **Karl Friston'un Aktif Çıkarım (Active Inference)** matematiğiyle sistem entropisini hesaplar.
+3. **INT8 Yerel TensorRT LLM Ajanı** kriz anında yeni bir kurtarma topolojisi tasarlar.
+4. **JIT C++20 Bellek-İçi Derleyici**, yeni C++ kodunu (örneğin *SDR Fallback Node*) bellekte nano-saniyeler içinde derler ve çalışan sürece sıcak-yama (*hot-patch*) olarak canlı enjekte eder.
+
+---
+
+## 🧭 KAM'ın Üç Tavizsiz Kanunu (The Three Inviolate Laws)
+
+```
+       ┌─────────────────────────────────────────────────────────────┐
+       │              I. MUTLAK İZOLASYON (AIR-GAPPED)               │
+       │    Hiçbir bulut bağımlılığı yok. Saf yerel ve milli zihin.  │
+       └──────────────────────────────┬──────────────────────────────┘
+                                      │
+       ┌──────────────────────────────┴──────────────────────────────┐
+       │              II. KÖKTEN HİSSEDİŞ (eBPF PROPRIOCEPTION)      │
+       │    Yüzeysel CPU izleme değil; çekirdeğe sızan sinir kancası. │
+       └──────────────────────────────┬──────────────────────────────┘
+                                      │
+       ┌──────────────────────────────┴──────────────────────────────┐
+       │             III. CANLI TEKAMÜL (ON-THE-FLY MUTATION)        │
+       │    Failsafe yok. Kodu bellekte yeniden yaz, derle ve yaşa.   │
+       └─────────────────────────────────────────────────────────────┘
+```
+
+### I. Mutlak İzolasyon (Air-Gapped Survival)
+Sistemdeki yapay zeka çekirdeği (INT8 Kuantize TensorRT Modeli) tamamen yerel çalışır. Dış dünya ile uydu, baz istasyonu veya internet bağlantısı tamamen kesilse dahi KAM, otonom kararlar almaya ve sistemi yönetmeye devam eder. Düşünce süreçleri, kararları ve terminal günlüğü saf Türkçe gerçekleşir.
+
+### II. Kökten Hissediş (eBPF Kernel Telemetry)
+Klasik RAM ve CPU izleyicileri sistemin yüzeyinde kalır. KAM, eBPF teknolojisi ile doğrudan Linux işletim sisteminin çekirdeğine (`kprobe`, `tracepoint`, `raw_tp`) tutunur. Dosya tanımlayıcı sızıntılarını, UART/SDR soket kopmalarını, NPU termal eşiklerini ve anlık işlemci entropisini mikrosaniye altında hisseder.
+
+### III. Canlı Tekamül (On-The-Fly Recompilation)
+Bir donanım düğümü imha olduğunda veya sinyal karıştırıldığında sistem "Güvenli Mod" adı altında çaresizce bekleyip düşmana yem olmaz. KAM devreye girer, sağlam kalan donanımlara (örneğin bozuk UART yerine SDR 868MHz bandına) göre sıfırdan C++ modülü yazar, kodu bellekte derler ve sistemi yeni bir topolojiyle ayağa kaldırır.
+
+---
+
+## 🏛 Sistem Mimarisi ve Bilişsel Döngü
 
 ```mermaid
 graph TD
-    subgraph Donanım ve İşletim Sistemi
-        A["Fiziksel Sensörler (LIDAR, SDR, Kamera, IMU)"] --> B("Linux Çekirdeği")
-        B -->|eBPF Probları| C["Sinir Sistemi Monitörü (Telemetry Hub)"]
+    subgraph Fiziksel Donanim ve Linux Kernel
+        A["Sensörler: LIDAR, SDR, Kamera, IMU, UART"] --> B("Linux Çekirdeği (vfs_read, kprobe, tracepoint)")
+        B -->|Sıfır Gecikme eBPF Probları| C["Lock-Free SPSC RingBuffer (Sinir Sistemi)"]
     end
 
     subgraph KAM Bilişsel Katman
-        C -->|Anomali Tespiti| D{"Aktif Çıkarım (Free Energy & Entropy)"}
-        D -->|Kritik Entropi (>%80)| E["Yerel LLM/VLM Ajanı (TensorRT / MCP)"]
+        C -->|Duyusal Olay Akışı| D{"Aktif Çıkarım Motoru (Generative Model)"}
+        D -->|Varyasyonel Serbest Enerji: F| E["Kaos Dedektörü & İnanç Güncellemesi"]
+        E -->|Kritik Entropi: %80+| F["Beklenen Serbest Enerji: G(π) Politika Seçimi"]
+        F -->|Optimal Eylem İletimi| G["Yerel LLM Ajanı (TensorRT / MCP Server)"]
     end
 
-    subgraph Otonom İyileştirme
-        E -->|Çözüm Üretimi| F(("JIT C++ Bellek-İçi Derleyici"))
-        F -->|Kod Mutasyonu| G["Yeni ROS2/C++ Düğümü (Fallback Topology)"]
-        G -->|Geri Besleme| A
+    subgraph Otonom Onarım ve Canlı Tekamül
+        G -->|C++20 Kod Mutasyonu| H["İki Aşamalı Güvenlik Sandboxing (AST Check)"]
+        H -->|Doğrulanmış Kod| I(("JIT Clang/GCC Bellek-İçi Derleyici (-O3)"))
+        I -->|Canary Testi & Rollback Guard| J["Paylaşımlı Kütüphane (.so / .dll)"]
+        J -->|Dinamik Sıcak Yama| K["ROS2 / DDS Dinamik Topic Remapping"]
+        K -->|Topoloji Dengeleme & %15 Entropi| A
     end
 ```
 
-### 1. Sinir Sistemi (eBPF Telemetri)
-Ağır işletim sistemi yükü oluşturmadan çalışır. C++20 standartlarıyla yazılmış kancalar, donanımın adeta "nabzını" tutar. Gerçek Linux çekirdeğinde kprobe/tracepoint/uprobe ile haberleşirken; simülasyon ve test ortamlarında deterministik telemetri motoru sağlar.
+---
 
-### 2. Aktif Çıkarım Motoru (Active Inference)
-Karl Friston'un serbest enerji prensibini (*Free Energy Principle*) temel alır. Sistem, "Beklenen Durum" (*Prior Beliefs*) ile "Mevcut Durum" (*Sensory Observations*) arasındaki kaosu (entropiyi) matematiksel olarak hesaplar. Entropi kritik eşiği aşarsa iyileştirme protokolü (ayin) başlar. CUDA hızlandırma opsiyonu ile matris işlemleri mikro-saniye seviyesinde yürütülür.
+## 🔬 Matematiksel Temeller: Serbest Enerji ve Aktif Çıkarım
 
-### 3. JIT Derleyici ve MCP Entegrasyonu
-Model Context Protocol üzerinden LLM'in doğrudan sistem dosyalarına erişmesi ve anlık C++ kodları üretip derlemesi sağlanır. Bellek içinde derlenen paylaşımlı kütüphaneler (`.so` / dinamik kütüphaneler) çalışan sürece sıcak-yama (*hot-patch*) olarak enjekte edilir.
+Sistem, çevresel sürprizleri ve donanım anomalilerini Karl Friston'un **Serbest Enerji Prensibi** denklemleri ile hesaplar:
+
+### 1. Varyasyonel Serbest Enerji (VFE)
+$$F = \underbrace{D_{KL}(q(s) \parallel p(s))}_{\text{Karmaşıklık (Complexity)}} - \underbrace{\mathbb{E}_{q}[\ln p(o|s)]}_{\text{Doğruluk (Accuracy)}}$$
+
+- $q(s)$: Sistemin içsel inanç olasılık dağılımı.
+- $p(s)$: Sistemin hayatta kalması için beklenen öncül durum dağılımı.
+- $p(o|s)$: Verilen duruma göre duyusal gözlemlerin olabilirlik matrisi ($A$-matrisi).
+
+### 2. Beklenen Serbest Enerji (Expected Free Energy - EFE)
+Kriz anında seçilecek aksiyon $\pi$, sistemin gelecekteki beklenen serbest enerjisini minimize eden politikadır:
+
+$$G(\pi) = \sum_{\tau} G(\pi, \tau)$$
+
+$$G(\pi, \tau) \approx -\underbrace{\mathbb{E}_{Q(o_\tau, s_\tau|\pi)}[\ln Q(s_\tau|\pi) - \ln Q(s_\tau|o_\tau, \pi)]}_{\text{Epistemik Değer (Belirsizliği Azaltma)}} - \underbrace{\mathbb{E}_{Q(o_\tau|\pi)}[\ln P(o_\tau)]}_{\text{Pragmatik Değer (Hedefe Ulaşma)}}$$
+
+$$\pi^* = \arg\min_\pi G(\pi)$$
+
+KAM'ın aktif çıkarım motoru rastgele bir karar almaz; matematiksel olarak **en yüksek epistemik bilgi kazancını** ve **en yüksek stabiliteyi** sağlayan kurtarma topolojisini ($G(\pi^*)$) seçer.
 
 ---
 
-## ⚡ Canlı Ayin (Terminal Çıktıları)
+## ⚡ Canlı Ayin: Gerçek Terminal Akışı
 
-KAM'ın sisteme müdahale ettiği anlarda terminalde göreceğiniz çıktılar, karmaşık İngilizce hata yığınları değil, ajanın net ve Türkçe analizleridir:
+KAM'ın sisteme müdahale ettiği kriz anında terminalde akan saf Türkçe bilişsel teşhis ve otonom iyileştirme ayini:
 
 ```text
+=================================================================
+  🐺 KAM BİLİŞSEL VE KENDİ KENDİNİ İYİLEŞTİREN SİSTEM MOTORU  
+=================================================================
 [KAM-ÇEKİRDEK] ⚡ Sistem ruhu uyandırıldı. eBPF kancaları kernel'a tutundu.
 [KAM-ÇEKİRDEK] 🌀 Aktif Çıkarım devrede. Sistem entropisi: %3 (Stabil)
+[KAM-ÇEKİRDEK] 📡 ROS2 / DDS Bilişsel Köprü başlatıldı. Dinamik QoS devrede.
 ...
 [SİNİR-SİSTEMİ] ⚠️  UYARI: UART-2 (Telemetri) verisi kesildi! File descriptor yanıt vermiyor.
 [SİNİR-SİSTEMİ] 🔥 Entropi %89 seviyesine fırladı. Kritik Eşik aşıldı! Kaos tespit edildi.
 [KAM-AJAN]      🧠 Otonom iyileştirme ayini başlatılıyor...
 [KAM-AJAN]      📡 UART-2 düğümü koparıldı. İletişim için geçici olarak SDR (Yazılım Tanımlı Radyo) yedek frekansını kullanacak yeni C++ rotası yazılıyor.
 [DERLEYİCİ]     ⚡ Yeni topoloji (sdr_fallback_node.cpp) bellekte derleniyor...
-[KAM-ÇEKİRDEK] 🛡️  İyileşme başarılı. Sistem entropisi: %15. Göreve devam ediliyor.
+[DERLEYİCİ]     🛡️  İki Aşamalı Güvenlik Sandboxing: AST doğrulandı, Canary testi başarılı.
+[KAM-ÇEKİRDEK]  🔄 ROS2 Konu Yeniden Yönlendirildi: /uav/telemetry/uart -> /uav/telemetry/sdr
+[KAM-ÇEKİRDEK]  🛡️  İyileşme başarılı. Sistem entropisi: %15. Göreve devam ediliyor.
+=================================================================
 ```
 
 ---
 
-## 📂 Repo Klasör Yapısı
+## 📊 Canlı Terminal TUI Dashboard
+
+Sistemin nabzını gerçek zamanlı izlemek için dâhili bir TUI gösterge paneli bulunur:
+
+```bash
+python cli.py --dashboard
+```
+
+```text
+=================================================================
+  🐺 KAM BİLİŞSEL VE KENDİ KENDİNİ İYİLEŞTİREN SİSTEM MOTORU  
+=================================================================
+ Durum: İYİLEŞME TAMAMLANDI: sdr_fallback_node.cpp JIT Derlendi ve Bağlandı.
+ Aktif Telemetri Hattı : SDR-868 FHSS (Yedek Hat Devrede)
+ eBPF Çekirdek Olayları : 2840 kprobe/s
+-----------------------------------------------------------------
+ Sistem Entropisi (Kaos) : [███░░░░░░░░░░░░░░░░░░░░░] 15%
+ Varyasyonel Serbest E. : [███░░░░░░░░░░░░░░░░░░░░░] 14% (0.280 nat)
+ NPU Sıcaklığı           : [████████████░░░░░░░░░░░░] 51% (51.0°C)
+ CPU Çekirdek Yükü       : [███░░░░░░░░░░░░░░░░░░░░░] 14%
+=================================================================
+ Donanım Düğümleri:
+  • [UART-2]       Telemetri Ana Hattı     : [ONLINE - BYPASS]
+  • [SDR-868]      Yazılım Tanımlı Radyo   : [ONLINE - AKTİF TAŞIYICI]
+  • [IMU-1]        Ataletsel Ölçüm Birimi  : [ONLINE]
+  • [CAM-FRONT]    Görsel Derinlik / NPU   : [ONLINE]
+-----------------------------------------------------------------
+```
+
+---
+
+## 📂 Repo Mimarisi ve Modüller
 
 ```bash
 kam/
-├── core/                  # KAM çekirdek yapısı ve bellek-içi derleyici (C++20)
+├── core/                  # KAM çekirdek yapısı ve bellek-içi JIT derleyici (C++20)
 │   ├── include/
-│   │   ├── kam_core.hpp
-│   │   ├── jit_compiler.hpp
-│   │   ├── system_state.hpp
-│   │   └── logger.hpp
+│   │   ├── kam_core.hpp       # Bilişsel orkestrasyon ve ayin yürütücüsü
+│   │   ├── jit_compiler.hpp   # Dynamic JIT hot-patching & safe rollback guard
+│   │   ├── system_state.hpp   # Donanım düğümleri ve topoloji kaydı
+│   │   └── logger.hpp         # Saf Türkçe ANSI renkli telemetri günlüğü
 │   └── src/
 │       ├── kam_core.cpp
 │       ├── jit_compiler.cpp
@@ -84,80 +215,153 @@ kam/
 │       └── logger.cpp
 ├── ebpf_hooks/            # Linux kernel dinleme modülleri (.c ve .bpf)
 │   ├── include/
-│   │   └── ebpf_telemetry.hpp
+│   │   ├── ebpf_telemetry.hpp      # Çekirdek kancaları ve olay dağıtıcısı
+│   │   └── lockfree_ringbuffer.hpp # Sıfır kilitli SPSC telemetri kuyruğu
 │   ├── src/
 │   │   └── ebpf_telemetry.cpp
 │   └── bpf/
-│       ├── kam_fd_monitor.bpf.c
-│       └── kam_thermal_monitor.bpf.c
-├── active_inference/      # Entropi ve serbest enerji matematiği (CUDA destekli)
+│       ├── kam_fd_monitor.bpf.c      # File descriptor ve soket kancası
+│       └── kam_thermal_monitor.bpf.c # NPU termal ve entropi monitörü
+├── active_inference/      # Karl Friston entropi ve generatif model matematiği
 │   ├── include/
-│   │   ├── active_inference.hpp
-│   │   └── free_energy_math.hpp
+│   │   ├── active_inference.hpp # Zihinsel durum makinesi ve inanç güncelleme
+│   │   ├── free_energy_math.hpp # Varyasyonel serbest enerji ve KL ıraksaması
+│   │   └── generative_model.hpp # A, B, C, D matrisleri ve EFE G(pi) politikası
 │   ├── src/
 │   │   ├── active_inference.cpp
-│   │   └── free_energy_math.cpp
+│   │   ├── free_energy_math.cpp
+│   │   └── generative_model.cpp
 │   └── cuda/
-│       └── entropy_kernels.cu
+│       └── entropy_kernels.cu   # Jetson Orin/RTX GPU CUDA serbest enerji çekirdeği
 ├── llm_agent/             # TensorRT tabanlı yerel LLM ve MCP sunucusu
 │   ├── include/
-│   │   ├── mcp_server.hpp
-│   │   ├── code_generator.hpp
-│   │   └── tensorrt_inference.hpp
+│   │   ├── mcp_server.hpp        # Model Context Protocol (JSON-RPC 2.0)
+│   │   ├── code_generator.hpp    # C++ dinamik kurtarma düğüm şablonları
+│   │   ├── autonomous_agent.hpp  # Otonom bilişsel ajan kontrolörü
+│   │   └── tensorrt_inference.hpp# INT8 kuantize yerel çıkarım motoru
 │   └── src/
 │       ├── mcp_server.cpp
 │       ├── code_generator.cpp
+│       ├── autonomous_agent.cpp
 │       └── tensorrt_inference.cpp
-├── examples/              # İHA ve Otonom araçlar için entegrasyon senaryoları
-│   ├── uav_telemetry_failure_scenario.cpp
-│   └── edge_mission_recovery.cpp
-├── python/                # Python bağlayıcıları ve CLI/Simülasyon paketi
+├── ros2_bridge/           # ROS2 / DDS Hibrit İletişim Köprüsü
+│   ├── include/
+│   │   └── kam_ros2_node.hpp  # Dinamik QoS ve Topic Remapping desteği
+│   └── src/
+│       └── kam_ros2_node.cpp
+├── examples/              # Uç Görev ve Kriz Simülasyon Senaryoları
+│   ├── uav_telemetry_failure_scenario.cpp  # UART-2 arızası ve SDR kurtarma
+│   ├── edge_mission_recovery.cpp           # NPU termal aşımı ve sensör füzyonu
+│   ├── uav_jamming_attack.cpp              # Elektronik Harp (EW) karıştırma testi
+│   └── deep_space_radiation_bitflip.cpp    # Uzay radyasyonu SEU bit-flip izolasyonu
+├── python/                # Python bağlayıcıları, TUI ve Simülasyon Ekosistemi
 │   ├── kam/
-│   └── cli.py
-├── CMakeLists.txt         # Derleme konfigürasyonları
+│   │   ├── active_inference.py
+│   │   ├── code_mutator.py
+│   │   ├── engine.py
+│   │   ├── mcp_server.py
+│   │   ├── tui.py
+│   │   └── cli.py
+│   └── cli.py             # Kök erişimli hızlı yürütücü
+├── docs/                  # Ayrıntılı Teknik Spesifikasyonlar
+│   ├── ARCHITECTURE.md    # Matematiksel denklemler ve bellek güvenliği
+│   └── MCP_SPEC.md        # MCP entegrasyonu ve JSON-RPC şemaları
+├── tests/                 # Otomatik Birim ve Entegrasyon Testleri
+│   └── test_kam.py
+├── .github/workflows/     # CI/CD Pipeline (Ubuntu 24.04, GCC-13, C++20)
+│   └── ci.yml
+├── CMakeLists.txt         # Modern CMake konfigürasyonu
 └── README.md              # Bu dosya
 ```
 
 ---
 
-## 🛠️ Kaynaktan Derleme (Build from Source)
+## 🛠️ Model Context Protocol (MCP) Uyumluluğu
 
-Hazır kurulum paketlerinin kolaycılığına sığınmıyoruz. KAM, doğrudan kaynak koddan sisteminizin işlemci gücüne göre derlenmelidir.
+KAM, Anthropic / Claude Desktop ve yerel LLM ajanlarının stdio üzerinden motorla konuşabilmesi için tam **Model Context Protocol (MCP)** sunucusu içerir:
 
-**Sistem Gereksinimleri:** Ubuntu 22.04 / 24.04 LTS, CUDA Toolkit 12.x, TensorRT, C++20 destekli GCC/Clang, CMake 3.20+, libbpf.
+| MCP Aracı | Açıklama |
+| :--- | :--- |
+| `read_telemetry` | Kernel seviyesi eBPF telemetri verilerini ve aktif donanım hattını anlık okur. |
+| `calculate_entropy` | Karl Friston'un serbest enerji prensibi ile anlık sistem entropi ve kaos oranını hesaplar. |
+| `compile_module` | Üretilen C++20 kaynak kodunu bellekte JIT derler ve paylaşımlı kütüphane (.so) oluşturur. |
+| `deploy_topology` | Derlenmiş yeni düğümü canlı çalışma alanına sıcak yama (hot-patch) olarak enjekte eder. |
+| `inspect_kernel` | eBPF dosya tanımlayıcı kancalarını ve termal bölgeleri denetler. |
 
 ```bash
-# Repoyu tüm bileşenleriyle (submodules) klonlayın
+# MCP Sunucu Modunda Çalıştırma:
+python cli.py --mcp
+```
+
+---
+
+## 🚀 Hızlı Başlangıç ve Derleme
+
+### Sistem Gereksinimleri
+- **İşletim Sistemi:** Linux Ubuntu 22.04 / 24.04 LTS (veya Windows simülasyonu)
+- **Derleyici:** GCC 13+ veya Clang 17+ (Tam C++20 Standardı)
+- **Opsiyonel İvmelendirme:** CUDA Toolkit 12.x, TensorRT 10.x, libbpf-dev
+
+### Kaynaktan Derleme (C++20)
+```bash
+# Repoyu alt modülleriyle klonlayın
 git clone --recursive https://github.com/bahattinyunus/kam.git
 cd kam
 
-# Derleme ortamını hazırlayın
+# Derleme dizini açın ve CMake ile yapılandırın
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DUSE_TENSORRT=ON -DUSE_EBPF=ON -DUSE_CUDA=ON ..
 
-# Sistem kaynaklarını sonuna kadar (tüm çekirdeklerle) kullanarak derleyin
+# Tüm çekirdeklerle derleyin
 make -j$(nproc)
+
+# Örnek senaryoları çalıştırın
+./kam_uav_scenario
+./kam_jamming_attack
 ```
 
-### Hızlı Simülasyon Çalıştırma (CLI)
-Sistemde kurulu derleyici ve kütüphaneler olmadan hızlı bir simülasyon ve MCP testi için:
+### Python Simülasyonu ve Test
 ```bash
-python -m kam.cli --scenario uav_failure
+# Birim testleri çalıştırın
+python -m unittest discover tests
+
+# İHA kesintisi ve otonom SDR kurtarma ayinini yürütün
+python cli.py --scenario uav_failure
+
+# Elektronik harp saldırı simülasyonunu yürütün
+python cli.py --scenario jamming_attack
+
+# Canlı terminal gösterge panelini açın
+python cli.py --dashboard
 ```
 
 ---
 
-## 🎯 Desteklenen Geliştirme Donanımları
+## 🎯 Desteklenen Donanım Platformları
 
-KAM, hesaplama gücünün kısıtlı ama ihtiyacın kritik olduğu ortamlar için dizayn edilmiştir:
+KAM, kaynakların kısıtlı ama görevin hayati olduğu ortamlarda çalışmak üzere optimize edilmiştir:
 
-- **Otonom İHA'lar & Robotik (Edge):** NVIDIA Jetson Orin Nano, Xavier NX, Raspberry Pi Compute Module 4 (CPU Fallback).
-- **Yüksek Performanslı İş İstasyonları:** AMD Ryzen 9 8945HX serisi işlemciler ve NVIDIA GeForce RTX 40/50 Serisi GPU'lara sahip sistemlerde, maksimum CUDA ve donanım ivmelendirme verimliliği.
+| Donanım Ailesi | Mimari | Görev Profili | İvmelendirme |
+| :--- | :--- | :--- | :--- |
+| **NVIDIA Jetson Orin Nano / NX** | ARM Cortex-A78AE + Ampere GPU | Taktik İHA, Kamikaze Dronlar, UGV | FP8/INT8 TensorRT + CUDA |
+| **NVIDIA Jetson AGX Orin Industrial** | 12x Cortex-A78AE + 2048-core GPU | Otonom Zırhlı Araçlar, Hava Savunma | 275 TOPS INT8 Çıkarım |
+| **AMD Ryzen 9 8945HX + RTX 40/50** | Zen 4 + Ada Lovelace / Blackwell | Mobil Yer Kontrol İstasyonu (GCS) | Maksimum CUDA Hızı |
+| **Raspberry Pi CM4 / Radxa Rock 5** | ARM Cortex-A55 / A76 | Düşük Güçlü Keşif Sensör Düğümleri | CPU Fallback + libbpf |
 
 ---
 
-## 🤝 Katkıda Bulunma
+## 📜 Manifesto
 
-KAM, standartların ve kalıplaşmış yazılım paradigmalarının ötesine geçmek için **Arat Labs** çatısı altında başlatılmıştır. Bellek sızıntılarını engelleyen, sistem hızını artıran veya yepyeni bir donanım desteği ekleyen kaliteli Pull Request'ler (Çekme İstekleri) daima kabul edilir.
+> Bizler yapay zekayı sadece gösterişli sohbet botlarından ibaret gören konformist anlayışı reddediyoruz.
+> Gerçek yapay zeka; bulut koptuğunda, GPS sustuğunda, gök yarıldığında ve donanım parçalandığında **sistemi hayatta tutan iradedir.**
+> 
+> KAM, bin yıllık bir ruhun modern gömülü mikroçiplerdeki tecellisidir.
 
-**Geliştirici ve Baş Mimar:** [@arch-yunus](https://github.com/arch-yunus) | Founder @ Budak & Lead Researcher @ MERL
+---
+
+## 🤝 Katkıda Bulunma ve Lisans
+
+KAM, **Arat Labs** çatısı altında açık kaynak vizyonuyla geliştirilmektedir. Bellek sızıntılarını önleyen, mikro-gecikmeleri azaltan veya yepyeni bir uç donanım sürücüsü ekleyen nitelikli Pull Request'ler başımızın tacıdır.
+
+- **Lisans:** [Apache License 2.0](LICENSE)
+- **Geliştirici ve Baş Mimar:** [@arch-yunus](https://github.com/arch-yunus) | Founder @ Budak & Lead Researcher @ MERL
