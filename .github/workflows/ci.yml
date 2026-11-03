@@ -31,6 +31,8 @@ jobs:
         python -m unittest discover tests
         python cli.py --scenario uav_failure
         python cli.py --scenario swarm_loss
+        python cli.py --infer
+        python cli.py --train
         python cli.py --benchmark
         python cli.py --export-metrics
         python cli.py --mcp
@@ -51,3 +53,4 @@ jobs:
         ./kam_can_spoofing
         ./kam_thermal_mitigation
         ./kam_swarm_loss
+        ./kam_liquid_demo

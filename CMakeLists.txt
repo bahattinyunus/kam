@@ -37,7 +37,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ew_mesh/include
 )
 
-# 1. Core Kütüphanesi
+# 1. Core Kütüphanesi & Tensör Motoru
 set(CORE_SOURCES
     core/src/logger.cpp
     core/src/system_state.cpp
@@ -46,6 +46,8 @@ set(CORE_SOURCES
     core/src/watchdog.cpp
     core/src/memory_arena.cpp
     core/src/telemetry_exporter.cpp
+    core/src/tensor_engine.cpp
+    core/src/liquid_network.cpp
 )
 
 # 2. eBPF Kancaları Kütüphanesi
@@ -125,6 +127,9 @@ if(BUILD_EXAMPLES)
 
     add_executable(kam_swarm_loss examples/swarm_mesh_loss_resilience.cpp)
     target_link_libraries(kam_swarm_loss kam_static)
+
+    add_executable(kam_liquid_demo examples/liquid_neural_ode_demo.cpp)
+    target_link_libraries(kam_liquid_demo kam_static)
 endif()
 
 # Kurulum Kuralları

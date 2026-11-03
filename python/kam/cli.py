@@ -5,6 +5,8 @@ from .mcp_server import McpServer
 from .tui import KamDashboard
 from .model_benchmark import ModelBenchmark
 from .swarm_mesh import SwarmMeshController
+from .models.liquid_moe import KamLiquidFoundationModel
+from .models.trainer import ActiveInferenceTrainer
 
 def main():
     parser = argparse.ArgumentParser(
@@ -15,6 +17,16 @@ def main():
         choices=["uav_failure", "thermal_crisis", "jamming_attack", "can_spoofing", "thermal_runaway", "swarm_loss"],
         default="uav_failure",
         help="Yürütülecek simülasyon ve iyileştirme ayini senaryosu"
+    )
+    parser.add_argument(
+        "--infer",
+        action="store_true",
+        help="KAM-1 Liquid Foundation Model üzerinden gerçek zamanlı çıkarım yap"
+    )
+    parser.add_argument(
+        "--train",
+        action="store_true",
+        help="Model üzerinde Karl Friston serbest enerji minimizasyonu eğitim döngüsü çalıştır"
     )
     parser.add_argument(
         "--dashboard", "-d",
@@ -38,6 +50,26 @@ def main():
     )
 
     args = parser.parse_args()
+
+    if args.infer:
+        model = KamLiquidFoundationModel()
+        sensory_telemetry = [0.02, 0.03, 0.15, 0.80, 48.0, 1.2, 0.05, 0.9] * 2
+        result = model.forward(sensory_telemetry)
+        print("\n" + "=" * 65)
+        print("  🐺 KAM-1 LIQUID MOE COGNITIVE FOUNDATION MODEL ÇIKARIMI")
+        print("=" * 65)
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+        print("=" * 65 + "\n")
+        return
+
+    if args.train:
+        trainer = ActiveInferenceTrainer()
+        print("\n[KAM-1 MODEL] Karl Friston Serbest Enerji Minimizasyon Eğitimi Başlatılıyor...")
+        history = trainer.run_training_cycle(steps=4)
+        for h in history:
+            print(f"  • Epok {h['epoch']}: Ortalama Serbest Enerji = {h['mean_free_energy']} nats | Durum: {h['convergence_status']} | Tau: {h['tau_adaptive']:.3f}s")
+        print("[KAM-1 MODEL] Eğitim tamamlandı. Ağırlıklar yerel NPU/INT8 biçimine uyarlandı.\n")
+        return
 
     if args.export_metrics:
         print("# HELP kam_entropy Karl Friston aktif cikarim kaos orani\n# TYPE kam_entropy gauge\nkam_entropy 0.03\n")

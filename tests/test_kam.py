@@ -13,6 +13,8 @@ from kam.hardware_bus import HardwareBusSimulator, CanMessage
 from kam.model_benchmark import ModelBenchmark
 from kam.sensor_fusion import SensorFusionEKF
 from kam.swarm_mesh import SwarmMeshController
+from kam.models.liquid_moe import KamLiquidFoundationModel
+from kam.models.trainer import ActiveInferenceTrainer
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -104,6 +106,22 @@ class TestKam(unittest.TestCase):
         new_leader = swarm.simulate_leader_loss()
         self.assertNotEqual(new_leader, "Alpha-1")
         self.assertTrue(swarm.drones[new_leader].is_leader)
+
+    def test_liquid_foundation_model_inference_and_routing(self):
+        model = KamLiquidFoundationModel()
+        sensory = [0.1, 0.2, 0.8, 0.05] * 4
+        out = model.forward(sensory)
+
+        self.assertIn("model", out)
+        self.assertEqual(len(out["active_experts"]), 2)
+        self.assertGreater(out["free_energy_nats"], 0.0)
+        self.assertIn("selected_optimal_action", out)
+
+    def test_active_inference_trainer(self):
+        trainer = ActiveInferenceTrainer()
+        history = trainer.run_training_cycle(steps=2)
+        self.assertEqual(len(history), 2)
+        self.assertIn("mean_free_energy", history[0])
 
 if __name__ == "__main__":
     unittest.main()
