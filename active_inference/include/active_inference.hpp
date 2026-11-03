@@ -1,8 +1,10 @@
 #pragma once
 
 #include "free_energy_math.hpp"
+#include "generative_model.hpp"
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace kam::active_inference {
 
@@ -19,6 +21,7 @@ struct InferenceAssessment {
     MentalState state;
     bool requires_intervention;
     std::string diagnostics_tr;
+    PolicyAction recommended_policy; // Karl Friston EFE G(pi) ile seçilen en iyi aksiyon
 };
 
 class ActiveInferenceEngine {
@@ -36,13 +39,17 @@ public:
 
     double getCurrentEntropy() const;
     MentalState getMentalState() const;
+    const std::vector<double>& getCurrentBeliefs() const;
+    GenerativeModel& getGenerativeModel();
 
 private:
     std::vector<double> prior_beliefs_;
     std::vector<double> current_observations_;
+    std::vector<double> current_beliefs_;
     std::vector<double> likelihood_matrix_;
     double current_entropy_ = 0.03;
     MentalState state_ = MentalState::EQUILIBRIUM;
+    std::unique_ptr<GenerativeModel> generative_model_;
 };
 
 } // namespace kam::active_inference

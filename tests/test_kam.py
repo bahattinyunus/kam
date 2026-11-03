@@ -8,6 +8,7 @@ from kam.active_inference import ActiveInferenceEngine
 from kam.code_mutator import CodeMutator
 from kam.mcp_server import McpServer
 from kam.engine import KamEngine
+from kam.tui import render_bar
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -55,6 +56,12 @@ class TestKam(unittest.TestCase):
         engine.awaken()
         self.assertTrue(engine.running)
         self.assertEqual(engine.active_telemetry, "UART-2")
+
+    def test_tui_render_bar(self):
+        bar_green = render_bar(0.05)
+        self.assertIn("5%", bar_green)
+        bar_red = render_bar(0.89)
+        self.assertIn("89%", bar_red)
 
 if __name__ == "__main__":
     unittest.main()

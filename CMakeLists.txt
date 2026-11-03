@@ -31,6 +31,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ebpf_hooks/include
     ${CMAKE_CURRENT_SOURCE_DIR}/active_inference/include
     ${CMAKE_CURRENT_SOURCE_DIR}/llm_agent/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/ros2_bridge/include
 )
 
 # 1. Core Kütüphanesi
@@ -49,6 +50,7 @@ set(EBPF_SOURCES
 # 3. Aktif Çıkarım (Active Inference) Kütüphanesi
 set(ACTIVE_INFERENCE_SOURCES
     active_inference/src/free_energy_math.cpp
+    active_inference/src/generative_model.cpp
     active_inference/src/active_inference.cpp
 )
 if(USE_CUDA)
@@ -63,12 +65,18 @@ set(LLM_AGENT_SOURCES
     llm_agent/src/mcp_server.cpp
 )
 
-# Ana KAM Kütüphanesi
+# 5. ROS2 Bilişsel Köprü
+set(ROS2_BRIDGE_SOURCES
+    ros2_bridge/src/kam_ros2_node.cpp
+)
+
+# Ana KAM Statik Kütüphanesi
 add_library(kam_static STATIC
     ${CORE_SOURCES}
     ${EBPF_SOURCES}
     ${ACTIVE_INFERENCE_SOURCES}
     ${LLM_AGENT_SOURCES}
+    ${ROS2_BRIDGE_SOURCES}
 )
 
 if(UNIX AND NOT APPLE)
@@ -82,6 +90,12 @@ if(BUILD_EXAMPLES)
 
     add_executable(kam_edge_recovery examples/edge_mission_recovery.cpp)
     target_link_libraries(kam_edge_recovery kam_static)
+
+    add_executable(kam_jamming_attack examples/uav_jamming_attack.cpp)
+    target_link_libraries(kam_jamming_attack kam_static)
+
+    add_executable(kam_deep_space_bitflip examples/deep_space_radiation_bitflip.cpp)
+    target_link_libraries(kam_deep_space_bitflip kam_static)
 endif()
 
 # Kurulum Kuralları
@@ -90,3 +104,4 @@ install(DIRECTORY core/include/ DESTINATION include/kam/core)
 install(DIRECTORY ebpf_hooks/include/ DESTINATION include/kam/ebpf)
 install(DIRECTORY active_inference/include/ DESTINATION include/kam/active_inference)
 install(DIRECTORY llm_agent/include/ DESTINATION include/kam/llm)
+install(DIRECTORY ros2_bridge/include/ DESTINATION include/kam/ros2)
