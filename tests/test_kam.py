@@ -11,6 +11,8 @@ from kam.engine import KamEngine
 from kam.tui import render_bar
 from kam.hardware_bus import HardwareBusSimulator, CanMessage
 from kam.model_benchmark import ModelBenchmark
+from kam.sensor_fusion import SensorFusionEKF
+from kam.swarm_mesh import SwarmMeshController
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -79,6 +81,29 @@ class TestKam(unittest.TestCase):
         self.assertIn("INT8", benchmarks)
         self.assertIn("INT4-AWQ", benchmarks)
         self.assertGreater(benchmarks["INT4-AWQ"].tokens_per_second, benchmarks["INT8"].tokens_per_second)
+
+    def test_sensor_fusion_ekf_and_spoofing(self):
+        ekf = SensorFusionEKF()
+        ekf.predict(dt=0.1, ax=1.0)
+        self.assertGreater(ekf.vx, 15.0)
+
+        # Normal GPS güncellemesi
+        ok = ekf.update_gps(1.5, 0.0, 100.0)
+        self.assertTrue(ok)
+        self.assertFalse(ekf.dead_reckoning)
+
+        # GPS Spoofing Sıçraması (100 metre aniden kayma)
+        spoof_ok = ekf.update_gps(250.0, 0.0, 100.0)
+        self.assertFalse(spoof_ok)
+        self.assertTrue(ekf.dead_reckoning)
+
+    def test_swarm_mesh_consensus(self):
+        swarm = SwarmMeshController()
+        self.assertEqual(swarm.active_leader, "Alpha-1")
+
+        new_leader = swarm.simulate_leader_loss()
+        self.assertNotEqual(new_leader, "Alpha-1")
+        self.assertTrue(swarm.drones[new_leader].is_leader)
 
 if __name__ == "__main__":
     unittest.main()

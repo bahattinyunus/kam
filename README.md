@@ -278,13 +278,24 @@ kam/
 │   │   └── hardware_bus.hpp   # CAN-Bus (SocketCAN), UART, SPI ve SDR sürücüsü
 │   └── src/
 │       └── hardware_bus.cpp
+├── sensor_fusion/         # Hata Toleranslı Sensör Füzyonu & EKF
+│   ├── include/
+│   │   └── ekf_fusion.hpp     # 6-DOF EKF & Dead-Reckoning Ataletsel Seyrüsefer
+│   └── src/
+│       └── ekf_fusion.cpp
+├── ew_mesh/               # Elektronik Harp & Bilişsel Frekans Atlama
+│   ├── include/
+│   │   └── fhss_transceiver.hpp # Bilişsel SDR & FHSS Spektral Tarayıcı
+│   └── src/
+│       └── fhss_transceiver.cpp
 ├── examples/              # Uç Görev ve Kriz Simülasyon Senaryoları
 │   ├── uav_telemetry_failure_scenario.cpp  # UART-2 arızası ve SDR kurtarma
 │   ├── edge_mission_recovery.cpp           # NPU termal aşımı ve sensör füzyonu
 │   ├── uav_jamming_attack.cpp              # Elektronik Harp (EW) karıştırma testi
 │   ├── deep_space_radiation_bitflip.cpp    # Uzay radyasyonu SEU bit-flip izolasyonu
 │   ├── can_bus_spoofing_defense.cpp        # CAN-Bus yetkisiz ID siber savunması
-│   └── thermal_runaway_mitigation.cpp      # NPU termal kaçak & INT4 kuantizasyon
+│   ├── thermal_runaway_mitigation.cpp      # NPU termal kaçak & INT4 kuantizasyon
+│   └── swarm_mesh_loss_resilience.cpp      # İHA sürü lideri kaybı & otonom konsensüs
 ├── python/                # Python bağlayıcıları, TUI ve Simülasyon Ekosistemi
 │   ├── kam/
 │   │   ├── active_inference.py
@@ -292,6 +303,8 @@ kam/
 │   │   ├── engine.py
 │   │   ├── mcp_server.py
 │   │   ├── hardware_bus.py
+│   │   ├── sensor_fusion.py
+│   │   ├── swarm_mesh.py
 │   │   ├── model_benchmark.py
 │   │   ├── tui.py
 │   │   └── cli.py

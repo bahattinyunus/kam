@@ -33,6 +33,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/llm_agent/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ros2_bridge/include
     ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/sensor_fusion/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/ew_mesh/include
 )
 
 # 1. Core Kütüphanesi
@@ -43,6 +45,7 @@ set(CORE_SOURCES
     core/src/kam_core.cpp
     core/src/watchdog.cpp
     core/src/memory_arena.cpp
+    core/src/telemetry_exporter.cpp
 )
 
 # 2. eBPF Kancaları Kütüphanesi
@@ -79,6 +82,12 @@ set(HARDWARE_SOURCES
     hardware/src/hardware_bus.cpp
 )
 
+# 7. Sensör Füzyonu & Elektronik Harp Mesh
+set(FUSION_SOURCES
+    sensor_fusion/src/ekf_fusion.cpp
+    ew_mesh/src/fhss_transceiver.cpp
+)
+
 # Ana KAM Statik Kütüphanesi
 add_library(kam_static STATIC
     ${CORE_SOURCES}
@@ -87,6 +96,7 @@ add_library(kam_static STATIC
     ${LLM_AGENT_SOURCES}
     ${ROS2_BRIDGE_SOURCES}
     ${HARDWARE_SOURCES}
+    ${FUSION_SOURCES}
 )
 
 if(UNIX AND NOT APPLE)
@@ -112,6 +122,9 @@ if(BUILD_EXAMPLES)
 
     add_executable(kam_thermal_mitigation examples/thermal_runaway_mitigation.cpp)
     target_link_libraries(kam_thermal_mitigation kam_static)
+
+    add_executable(kam_swarm_loss examples/swarm_mesh_loss_resilience.cpp)
+    target_link_libraries(kam_swarm_loss kam_static)
 endif()
 
 # Kurulum Kuralları
@@ -122,3 +135,5 @@ install(DIRECTORY active_inference/include/ DESTINATION include/kam/active_infer
 install(DIRECTORY llm_agent/include/ DESTINATION include/kam/llm)
 install(DIRECTORY ros2_bridge/include/ DESTINATION include/kam/ros2)
 install(DIRECTORY hardware/include/ DESTINATION include/kam/hardware)
+install(DIRECTORY sensor_fusion/include/ DESTINATION include/kam/sensor_fusion)
+install(DIRECTORY ew_mesh/include/ DESTINATION include/kam/ew_mesh)
