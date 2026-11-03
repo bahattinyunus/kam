@@ -415,3 +415,154 @@ header {
   border-color: var(--blue-accent);
   color: #fff;
 }
+
+/* Model Seçim Hapı & Header Aksiyonları */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.model-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: var(--cyan-glow);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.model-badge:hover {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: var(--cyan-glow);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+}
+
+.settings-gear {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-left: 2px;
+}
+
+/* Modal Stilleri */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 520px;
+  background: #0f172a;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #fff;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.form-select, .form-input {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.form-select:focus, .form-input:focus {
+  border-color: var(--cyan-glow);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+}
+
+/* Typing Düşünme Animasyonu */
+.typing-dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--cyan-glow);
+  border-radius: 50%;
+  animation: pulseDot 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulseDot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1.1); opacity: 1; }
+}
+
+/* Chat bubble markdown zengin biçimlendirme */
+.bubble-kam h1, .bubble-kam h2, .bubble-kam h3 {
+  color: var(--cyan-glow);
+  margin: 10px 0 6px 0;
+  font-size: 15px;
+}
+
+.bubble-kam ul, .bubble-kam ol {
+  margin: 6px 0 6px 20px;
+}
+
+.bubble-kam li {
+  margin-bottom: 4px;
+}
+
+.bubble-kam strong {
+  color: #fff;
+}

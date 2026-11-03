@@ -11,13 +11,20 @@ from .engine import KamEngine
 from .models.liquid_moe import KamLiquidFoundationModel
 from .code_mutator import CodeMutator
 from .knowledge_engine import LocalKnowledgeEngine
+from .real_llm import UniversalLLMClient
 
 class KamWebHandler(SimpleHTTPRequestHandler):
     engine = None
     model = None
-    knowledge = None
+    llm_client = None
 
     def __init__(self, *args, **kwargs):
+        if KamWebHandler.engine is None:
+            KamWebHandler.engine = KamEngine()
+        if KamWebHandler.model is None:
+            KamWebHandler.model = KamLiquidFoundationModel()
+        if KamWebHandler.llm_client is None:
+            KamWebHandler.llm_client = UniversalLLMClient()
         web_dir = os.path.join(os.path.dirname(__file__), "..", "..", "web")
         super().__init__(*args, directory=web_dir, **kwargs)
 
@@ -33,9 +40,23 @@ class KamWebHandler(SimpleHTTPRequestHandler):
                 "entropy": entropy,
                 "free_energy": 0.08 if entropy < 0.2 else (1.84 if entropy > 0.8 else 0.28),
                 "npu_temp": 48.2 if entropy < 0.2 else (74.5 if entropy > 0.8 else 51.0),
-                "chaos_detected": entropy >= 0.80
+                "chaos_detected": entropy >= 0.80,
+                "active_model": KamWebHandler.llm_client.current_model,
+                "backend": KamWebHandler.llm_client.active_backend
             }
             self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/models":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            models = KamWebHandler.llm_client.list_available_models()
+            self.wfile.write(json.dumps({
+                "models": models,
+                "current_model": KamWebHandler.llm_client.current_model,
+                "active_backend": KamWebHandler.llm_client.active_backend
+            }, ensure_ascii=False).encode("utf-8"))
             return
 
         super().do_GET()
@@ -53,6 +74,36 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.end_headers()
             self.wfile.write(json.dumps({"reply": reply, "code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/config":
+            # API Key veya Model Değiştirme
+            gemini_key = body.get("gemini_key")
+            selected_model = body.get("model")
+
+            if gemini_key is not None:
+                KamWebHandler.llm_client.gemini_api_key = gemini_key.strip()
+                if gemini_key.strip():
+                    KamWebHandler.llm_client.active_backend = "gemini"
+                    KamWebHandler.llm_client.current_model = "gemini-1.5-flash"
+                else:
+                    KamWebHandler.llm_client.active_backend = "ollama" if KamWebHandler.llm_client.check_ollama_alive() else "local_fallback"
+
+            if selected_model:
+                KamWebHandler.llm_client.current_model = selected_model
+                if "gemini" in selected_model:
+                    KamWebHandler.llm_client.active_backend = "gemini"
+                else:
+                    KamWebHandler.llm_client.active_backend = "ollama"
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "status": "ok",
+                "active_backend": KamWebHandler.llm_client.active_backend,
+                "current_model": KamWebHandler.llm_client.current_model
+            }).encode("utf-8"))
             return
 
         elif self.path == "/api/crisis":
@@ -80,42 +131,21 @@ class KamWebHandler(SimpleHTTPRequestHandler):
     def process_chat(self, prompt: str):
         p_lower = prompt.lower()
 
-        # 1. Yerel Semantik Bilgi Tabanı
-        ans = KamWebHandler.knowledge.query(prompt)
-        if ans:
-            return ans, None
-
-        # 2. Donanım ve Telemetri Krizleri
-        if "uart" in p_lower or "telemetri" in p_lower or "kop" in p_lower:
+        # Özel donanım/kod tetikleyicileri varsa kod ekle
+        code_snippet = None
+        if "uart" in p_lower and ("kod" in p_lower or "kop" in p_lower or "yaz" in p_lower or "onar" in p_lower):
             KamWebHandler.engine.active_telemetry = "SDR 868MHz (Yedek Hat Aktif)"
             KamWebHandler.engine.inference.reset_equilibrium(0.15)
-            return (
-                "Telemetri hattında kopukluk algılandı! Varyasyonel Entropi: %89 (Kaos).\n"
-                "SDR 868MHz ISM frekans atlamalı köprü bellekte JIT derlenip bağlandı.",
-                CodeMutator.generate_sdr_fallback()
-            )
+            code_snippet = CodeMutator.generate_sdr_fallback()
+        elif "termal" in p_lower and ("92" in p_lower or "sicak" in p_lower or "sogut" in p_lower):
+            code_snippet = CodeMutator.generate_thermal_fallback()
+        elif "kod" in p_lower and "c++" in p_lower:
+            code_snippet = CodeMutator.generate_sdr_fallback()
 
-        elif "termal" in p_lower or "sicak" in p_lower or "npu" in p_lower:
-            return (
-                "NPU termal eşik aşımı tespit edildi (92°C)!\n"
-                "Model kuantizasyonu INT8 -> INT4-AWQ seviyesine dinamik olarak indirgendi. Güç: 45W -> 14.5W.",
-                CodeMutator.generate_thermal_fallback()
-            )
+        # Doğrudan Gerçek LLM Motoruna Sor (Qwen2.5 / DeepSeek / Gemini)
+        llm_reply = KamWebHandler.llm_client.generate(prompt)
 
-        elif "durum" in p_lower or "nerede" in p_lower:
-            ent = int(KamWebHandler.engine.inference.entropy * 100)
-            return f"Aktif Hat: {KamWebHandler.engine.active_telemetry} | Entropi: %{ent} | Bilişsel Denge: SAĞLAM", None
-
-        elif "kod" in p_lower or "c++" in p_lower or "yaz" in p_lower:
-            return "Uç donanım için optimize edilmiş C++20 kurtarma düğümü üretildi:", CodeMutator.generate_sdr_fallback()
-
-        else:
-            res = KamWebHandler.model.forward([0.1, 0.2, 0.05, 0.01] * 4)
-            return (
-                f"Soru analiz edildi kanka. KAM-1 Serbest Enerji: {res['free_energy_nats']} nats. "
-                f"Önerilen Eylem: {res['selected_optimal_action']}. Sistem tam kontrol altında!",
-                None
-            )
+        return llm_reply, code_snippet
 
     def process_crisis(self, c_type: str):
         if c_type == "uav_uart_cut":
@@ -123,7 +153,7 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             KamWebHandler.engine.active_telemetry = "SDR-868MHz (FHSS Fallback)"
             return (
                 "UART-2 telemetri hattı fiziksel olarak koptu! Entropi %89 seviyesine fırladı. "
-                "KAM-Ajan otonom ayin başlatarak SDR 868MHz frekans atlamalı C++ düğümünü bellekte JIT derledi ve göreve devam etti.",
+                "KAM-Ajan otonom ayin başlatıp SDR 868MHz frekans atlamalı C++ düğümünü bellekte JIT derledi ve göreve devam etti.",
                 CodeMutator.generate_sdr_fallback()
             )
         elif c_type == "ew_jamming":
@@ -150,7 +180,7 @@ class KamWebHandler(SimpleHTTPRequestHandler):
 def run_gui(host: str = "127.0.0.1", port: int = 8080, open_browser: bool = True):
     KamWebHandler.engine = KamEngine()
     KamWebHandler.model = KamLiquidFoundationModel()
-    KamWebHandler.knowledge = LocalKnowledgeEngine()
+    KamWebHandler.llm_client = UniversalLLMClient()
 
     server = ThreadingHTTPServer((host, port), KamWebHandler)
     url = f"http://{host}:{port}"
@@ -159,8 +189,8 @@ def run_gui(host: str = "127.0.0.1", port: int = 8080, open_browser: bool = True
     print("  🐺 KAM BİLİŞSEL VE OTONOM SİSTEM ARAYÜZÜ (WEB GUI)")
     print("=" * 65)
     print(f"  • Yerel Arayüz Adresi : {url}")
+    print(f"  • Aktif LLM Motoru    : {KamWebHandler.llm_client.current_model} ({KamWebHandler.llm_client.active_backend})")
     print("  • Terminal gerekmeden tüm sistemi web üzerinden yönetebilirsiniz.")
-    print("  • Durdurmak için Ctrl+C tuşlarına basın.")
     print("=" * 65 + "\n")
 
     if open_browser:

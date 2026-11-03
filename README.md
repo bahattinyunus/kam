@@ -397,8 +397,8 @@ make -j$(nproc)
 ./kam_thermal_mitigation
 ```
 
-### 🖥️ Grafiksel Web Arayüzü (Terminal İstemeyenler İçin Tek Tıkla GUI)
-Terminalle uğraşmak istemiyorsanız, tüm telemetriyi, canlı Türkçe sohbeti ve kriz simülatörünü modern web tarayıcınızdan tek tıkla yönetebilirsiniz:
+### 🖥️ Grafiksel Web Arayüzü & Universal LLM Deneyimi
+Terminalle uğraşmak istemiyorsanız, tüm telemetriyi, **gerçek LLM sohbetini** (yerel Ollama Qwen 2.5, DeepSeek veya Google Gemini API) ve kriz simülatörünü modern web tarayıcınızdan tek tıkla yönetebilirsiniz:
 
 ```bash
 # Grafiksel web arayüzünü başlatın (Tarayıcı otomatik açılır):
@@ -407,16 +407,19 @@ python web_ui.py
 python cli.py --gui
 ```
 > **Adres:** `http://localhost:8080`  
-> Canlı sohbet ("TR'nin başkenti neresi?", "UART koptu", "C++ kodu yaz"), anlık Karl Friston serbest enerji ibreleri, NPU termal takibi ve tek tıkla kriz enjeksiyonu içerir.
+> - **Akıcı LLM Zihni:** Tıpkı Gemini / ChatGPT gibi zengin Markdown, kod blokları ve genel kültür derinliğiyle sohbet edin.
+> - **Yerel & Hibrit LLM Desteği:** Makinenizde çalışan `Ollama` modellerini (`qwen2.5:1.5b`, `llama3.2`, `deepseek-r1`) otomatik algılar; istenirse arayüzden Google Gemini API anahtarı eklenerek bulut modellerine geçiş yapılabilir.
+> - **RAG Fact Grounding:** Coğrafya, tarih ve sistem mühendisliği sorularında doğrulanmış gerçek bilgi tabanından güç alır ("Türkiye'nin başkenti neresidir?" vb.).
+> - **Canlı Donanım İbreleri:** Karl Friston serbest enerji göstergeleri, NPU sıcaklık sensörü ve tek tıkla donanım sabotaj testleri.
 
 ---
 
 ### Python Simülasyonu, Model Çıkarımı ve Sohbet
 ```bash
-# Tek komutla yerel bilişsel motoru kurun:
+# Tek komutla yerel bilişsel motoru ve veri setlerini hazırlayın:
 python scripts/setup_local_brain.py
 
-# Doğrudan Türkçe bilişsel zihin ile interaktif terminal sohbeti:
+# Gerçek LLM + RAG destekli akıcı Türkçe terminal sohbeti:
 python cli.py --chat
 
 # KAM-1 Sıvı Sinir Ağı çıkarımı (Top-2 MoE):

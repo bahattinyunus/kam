@@ -60,17 +60,20 @@ class LocalKnowledgeEngine:
             match_count = 0
             for kw in keywords:
                 for w in words:
-                    if kw in w or w in kw:
+                    if kw == w:  # Tam kelime eşleşmesi
                         match_count += 1
+                        break
+                    elif len(kw) > 4 and kw in w:
+                        match_count += 0.8
                         break
 
             if match_count > 0:
-                score = match_count / (len(keywords) + 0.1)
+                score = match_count / max(1, len(keywords))
                 if score > best_score:
                     best_score = score
                     best_match = entry
 
-        if best_match and best_score >= 0.25:
+        if best_match and best_score >= 0.50:
             return best_match["answer"]
 
         return None
