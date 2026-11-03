@@ -3,6 +3,7 @@ import json
 from .engine import KamEngine
 from .mcp_server import McpServer
 from .tui import KamDashboard
+from .model_benchmark import ModelBenchmark
 
 def main():
     parser = argparse.ArgumentParser(
@@ -10,7 +11,7 @@ def main():
     )
     parser.add_argument(
         "--scenario",
-        choices=["uav_failure", "thermal_crisis", "jamming_attack"],
+        choices=["uav_failure", "thermal_crisis", "jamming_attack", "can_spoofing", "thermal_runaway"],
         default="uav_failure",
         help="Yürütülecek simülasyon ve iyileştirme ayini senaryosu"
     )
@@ -20,12 +21,21 @@ def main():
         help="Canlı terminal TUI gösterge panelini (Dashboard) başlat"
     )
     parser.add_argument(
+        "--benchmark", "-b",
+        action="store_true",
+        help="Donanım model çıkarım ve enerji verimlilik kıyaslamasını göster"
+    )
+    parser.add_argument(
         "--mcp",
         action="store_true",
         help="MCP (Model Context Protocol) sunucu modunu başlat"
     )
 
     args = parser.parse_args()
+
+    if args.benchmark:
+        ModelBenchmark.print_benchmark_table()
+        return
 
     if args.dashboard:
         dash = KamDashboard()
@@ -42,6 +52,12 @@ def main():
         engine.run_uav_failure_ritual()
     elif args.scenario == "jamming_attack":
         print("\033[1;35m[KAM-ELEKTRONİK-HARP] Sinyal karıştırma simülasyonu başlatılıyor...\033[0m")
+        engine.run_uav_failure_ritual()
+    elif args.scenario == "can_spoofing":
+        print("\033[1;31m[KAM-CAN-GÜVENLİK] CAN-0 veriyolunda yetkisiz ID (0x1BA) saptandı! JIT filtre devrede.\033[0m")
+        engine.run_uav_failure_ritual()
+    elif args.scenario == "thermal_runaway":
+        print("\033[1;33m[KAM-TERMAL] NPU 92°C eşiği aşıldı! Model INT4-AWQ moduna çekiliyor.\033[0m")
         engine.run_uav_failure_ritual()
     else:
         print("[KAM] Termal kriz senaryosu yürütülüyor...")

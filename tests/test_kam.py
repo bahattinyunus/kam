@@ -9,6 +9,8 @@ from kam.code_mutator import CodeMutator
 from kam.mcp_server import McpServer
 from kam.engine import KamEngine
 from kam.tui import render_bar
+from kam.hardware_bus import HardwareBusSimulator, CanMessage
+from kam.model_benchmark import ModelBenchmark
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -62,6 +64,21 @@ class TestKam(unittest.TestCase):
         self.assertIn("5%", bar_green)
         bar_red = render_bar(0.89)
         self.assertIn("89%", bar_red)
+
+    def test_hardware_bus_simulator(self):
+        bus = HardwareBusSimulator()
+        valid_msg = CanMessage(can_id=0x100, payload=b"\x01\x02\x03\x04")
+        self.assertTrue(bus.is_can_packet_valid(valid_msg))
+
+        spoofed_msg = CanMessage(can_id=0x1BA, payload=b"\xFF\xFF")
+        self.assertFalse(bus.is_can_packet_valid(spoofed_msg))
+        self.assertEqual(bus.filtered_spoofed_packets, 1)
+
+    def test_model_benchmark_data(self):
+        benchmarks = ModelBenchmark.get_benchmarks()
+        self.assertIn("INT8", benchmarks)
+        self.assertIn("INT4-AWQ", benchmarks)
+        self.assertGreater(benchmarks["INT4-AWQ"].tokens_per_second, benchmarks["INT8"].tokens_per_second)
 
 if __name__ == "__main__":
     unittest.main()

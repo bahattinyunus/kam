@@ -32,6 +32,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/active_inference/include
     ${CMAKE_CURRENT_SOURCE_DIR}/llm_agent/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ros2_bridge/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/hardware/include
 )
 
 # 1. Core Kütüphanesi
@@ -40,6 +41,8 @@ set(CORE_SOURCES
     core/src/system_state.cpp
     core/src/jit_compiler.cpp
     core/src/kam_core.cpp
+    core/src/watchdog.cpp
+    core/src/memory_arena.cpp
 )
 
 # 2. eBPF Kancaları Kütüphanesi
@@ -63,11 +66,17 @@ set(LLM_AGENT_SOURCES
     llm_agent/src/code_generator.cpp
     llm_agent/src/autonomous_agent.cpp
     llm_agent/src/mcp_server.cpp
+    llm_agent/src/gguf_parser.cpp
 )
 
 # 5. ROS2 Bilişsel Köprü
 set(ROS2_BRIDGE_SOURCES
     ros2_bridge/src/kam_ros2_node.cpp
+)
+
+# 6. Donanım Veriyolu Sürücüleri
+set(HARDWARE_SOURCES
+    hardware/src/hardware_bus.cpp
 )
 
 # Ana KAM Statik Kütüphanesi
@@ -77,6 +86,7 @@ add_library(kam_static STATIC
     ${ACTIVE_INFERENCE_SOURCES}
     ${LLM_AGENT_SOURCES}
     ${ROS2_BRIDGE_SOURCES}
+    ${HARDWARE_SOURCES}
 )
 
 if(UNIX AND NOT APPLE)
@@ -96,6 +106,12 @@ if(BUILD_EXAMPLES)
 
     add_executable(kam_deep_space_bitflip examples/deep_space_radiation_bitflip.cpp)
     target_link_libraries(kam_deep_space_bitflip kam_static)
+
+    add_executable(kam_can_spoofing examples/can_bus_spoofing_defense.cpp)
+    target_link_libraries(kam_can_spoofing kam_static)
+
+    add_executable(kam_thermal_mitigation examples/thermal_runaway_mitigation.cpp)
+    target_link_libraries(kam_thermal_mitigation kam_static)
 endif()
 
 # Kurulum Kuralları
@@ -105,3 +121,4 @@ install(DIRECTORY ebpf_hooks/include/ DESTINATION include/kam/ebpf)
 install(DIRECTORY active_inference/include/ DESTINATION include/kam/active_inference)
 install(DIRECTORY llm_agent/include/ DESTINATION include/kam/llm)
 install(DIRECTORY ros2_bridge/include/ DESTINATION include/kam/ros2)
+install(DIRECTORY hardware/include/ DESTINATION include/kam/hardware)

@@ -30,6 +30,7 @@ jobs:
       run: |
         python -m unittest discover tests
         python cli.py --scenario uav_failure
+        python cli.py --benchmark
         python cli.py --mcp
 
     - name: C++20 Projesini Derle
@@ -45,3 +46,5 @@ jobs:
         ./kam_edge_recovery
         ./kam_jamming_attack
         ./kam_deep_space_bitflip
+        ./kam_can_spoofing
+        ./kam_thermal_mitigation
