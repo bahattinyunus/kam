@@ -166,6 +166,26 @@ function hideTypingIndicator() {
   if (el) el.remove();
 }
 
+function createMessageBubble(sender) {
+  const history = document.getElementById("chat-history");
+  const msgDiv = document.createElement("div");
+  msgDiv.className = `chat-message ${sender}`;
+
+  const avatar = document.createElement("div");
+  avatar.className = `chat-avatar avatar-${sender === "user" ? "user" : "kam"}`;
+  avatar.innerText = sender === "user" ? "👤" : "🐺";
+
+  const bubble = document.createElement("div");
+  bubble.className = `chat-bubble bubble-${sender === "user" ? "user" : "kam"}`;
+  bubble.innerHTML = `<span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>`;
+
+  msgDiv.appendChild(avatar);
+  msgDiv.appendChild(bubble);
+  history.appendChild(msgDiv);
+  history.scrollTop = history.scrollHeight;
+  return bubble;
+}
+
 function appendMessage(sender, text, codeSnippet = null) {
   const history = document.getElementById("chat-history");
   const msgDiv = document.createElement("div");
@@ -200,23 +220,61 @@ async function submitMessage() {
   appendMessage("user", text);
   input.value = "";
   isProcessing = true;
-  showTypingIndicator();
+
+  const kamBubble = createMessageBubble("kam");
+  let accumulatedText = "";
 
   try {
-    const res = await fetch("/api/chat", {
+    const response = await fetch("/api/chat/stream", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text })
     });
-    const data = await res.json();
-    hideTypingIndicator();
-    appendMessage("kam", data.reply, data.code || null);
-    fetchTelemetry();
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const chunks = buffer.split("\n\n");
+      buffer = chunks.pop(); // Son bitmemiş satırı tamponda tut
+
+      for (const chunk of chunks) {
+        if (chunk.startsWith("data: ")) {
+          const jsonStr = chunk.slice(6).trim();
+          if (!jsonStr) continue;
+          try {
+            const data = JSON.parse(jsonStr);
+            if (data.done) break;
+            if (data.token) {
+              accumulatedText += data.token;
+              kamBubble.innerHTML = formatMarkdown(accumulatedText);
+              const history = document.getElementById("chat-history");
+              history.scrollTop = history.scrollHeight;
+            }
+          } catch (e) {}
+        }
+      }
+    }
+
+    if (!accumulatedText.trim()) {
+      kamBubble.innerHTML = "KAM Zihni aktif. Sistem telemetrisi ve bilişsel nöronlar dengede.";
+    }
   } catch (err) {
-    hideTypingIndicator();
-    appendMessage("kam", "Bağlantı hatası: KAM çekirdeğine ulaşılamadı.");
+    if (!accumulatedText) {
+      kamBubble.innerHTML = "Bağlantı hatası: KAM çekirdeğine ulaşılamadı.";
+    }
   } finally {
     isProcessing = false;
+    fetchTelemetry();
   }
 }
 

@@ -76,6 +76,25 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"reply": reply, "code": code}, ensure_ascii=False).encode("utf-8"))
             return
 
+        elif self.path == "/api/chat/stream":
+            message = body.get("message", "").strip()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Connection", "keep-alive")
+            self.end_headers()
+
+            try:
+                for token in KamWebHandler.llm_client.generate_stream(message):
+                    data = json.dumps({"token": token}, ensure_ascii=False)
+                    self.wfile.write(f"data: {data}\n\n".encode("utf-8"))
+                    self.wfile.flush()
+                self.wfile.write(b"data: {\"done\": true}\n\n")
+                self.wfile.flush()
+            except Exception as e:
+                pass
+            return
+
         elif self.path == "/api/config":
             # API Key veya Model Değiştirme
             gemini_key = body.get("gemini_key")
@@ -131,16 +150,14 @@ class KamWebHandler(SimpleHTTPRequestHandler):
     def process_chat(self, prompt: str):
         p_lower = prompt.lower()
 
-        # Özel donanım/kod tetikleyicileri varsa kod ekle
+        # Sadece açık donanım arızası ve telemetri kopması varsa donanım durumunu güncelle
         code_snippet = None
-        if "uart" in p_lower and ("kod" in p_lower or "kop" in p_lower or "yaz" in p_lower or "onar" in p_lower):
+        if "uart" in p_lower and ("kop" in p_lower or "onar" in p_lower or "kesil" in p_lower):
             KamWebHandler.engine.active_telemetry = "SDR 868MHz (Yedek Hat Aktif)"
             KamWebHandler.engine.inference.reset_equilibrium(0.15)
             code_snippet = CodeMutator.generate_sdr_fallback()
-        elif "termal" in p_lower and ("92" in p_lower or "sicak" in p_lower or "sogut" in p_lower):
+        elif "termal" in p_lower and ("92" in p_lower or "asimi" in p_lower):
             code_snippet = CodeMutator.generate_thermal_fallback()
-        elif "kod" in p_lower and "c++" in p_lower:
-            code_snippet = CodeMutator.generate_sdr_fallback()
 
         # Doğrudan Gerçek LLM Motoruna Sor (Qwen2.5 / DeepSeek / Gemini)
         llm_reply = KamWebHandler.llm_client.generate(prompt)

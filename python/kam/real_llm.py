@@ -16,7 +16,7 @@ class UniversalLLMClient:
         self.ollama_url = ollama_url
         self.gemini_api_key = gemini_api_key or os.environ.get("GEMINI_API_KEY", "")
         self.knowledge = LocalKnowledgeEngine()
-        self.current_model = "qwen2.5:1.5b"
+        self.current_model = "qwen2.5:7b"
         self.active_backend = "ollama" if self.check_ollama_alive() else ("gemini" if self.gemini_api_key else "local_fallback")
         self.conversation_history = []
 
@@ -27,6 +27,16 @@ class UniversalLLMClient:
                 if resp.status == 200:
                     data = json.loads(resp.read().decode("utf-8"))
                     models = [m["name"] for m in data.get("models", [])]
+                    # En yüksek zekalı modeli otomatik önceliklendir
+                    preferred = [
+                        "qwen2.5:7b", "deepseek-r1:7b", "deepseek-r1:8b",
+                        "llama3.1:8b", "llama3.2:3b", "qwen2.5:1.5b"
+                    ]
+                    for pref in preferred:
+                        for m in models:
+                            if m.startswith(pref):
+                                self.current_model = m
+                                return True
                     if models and self.current_model not in models:
                         self.current_model = models[0]
                     return True
@@ -50,6 +60,51 @@ class UniversalLLMClient:
             models.append({"name": "gemini-2.0-flash", "source": "Google Gemini (Bulut)"})
         models.append({"name": "kam-1-liquid-moe", "source": "KAM Dahili Zihin (Offline)"})
         return models
+
+    def generate_stream(self, user_prompt: str):
+        grounded_fact = self.knowledge.query(user_prompt)
+        system_instruction = BASE_SYSTEM_PROMPT
+        if grounded_fact:
+            system_instruction += f"\n\n[DOGRULANMIS KESIN BILGI (RAG FACT)]: {grounded_fact}\nBu bilgiyi temel alarak kullanıcıya doğrudan ve net yanıt ver."
+
+        self.conversation_history.append({"role": "user", "content": user_prompt})
+
+        # 1. Ollama Akış Modu (Streaming)
+        if self.check_ollama_alive():
+            accumulated = []
+            try:
+                url = f"{self.ollama_url}/api/chat"
+                messages = [{"role": "system", "content": system_instruction}] + self.conversation_history[-6:]
+                payload = json.dumps({
+                    "model": self.current_model,
+                    "messages": messages,
+                    "stream": True,
+                    "options": {
+                        "temperature": 0.6,
+                        "top_p": 0.9
+                    }
+                }).encode("utf-8")
+                req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    for line in resp:
+                        if line:
+                            chunk = json.loads(line.decode("utf-8"))
+                            token = chunk.get("message", {}).get("content", "")
+                            if token:
+                                accumulated.append(token)
+                                yield token
+                            if chunk.get("done", False):
+                                break
+                if accumulated:
+                    full_reply = "".join(accumulated)
+                    self.conversation_history.append({"role": "assistant", "content": full_reply})
+                    return
+            except Exception as e:
+                print(f"[OLLAMA STREAM HATA] {e}", file=sys.stderr)
+
+        # 2. Streaming yapılamazsa düz generate çağır ve tek seferde yield et
+        reply = self.generate(user_prompt)
+        yield reply
 
     def generate(self, user_prompt: str) -> str:
         # RAG Grounding: Doğrulanmış gerçek bilgiyi çek
