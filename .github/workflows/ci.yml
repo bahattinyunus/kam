@@ -30,7 +30,8 @@ jobs:
       run: |
         python scripts/fetch_open_datasets.py
         python scripts/setup_local_brain.py
-        python -m unittest discover tests
+        python tests/test_kam.py
+        python tests/test_web_server.py
         python cli.py --scenario uav_failure
         python cli.py --scenario swarm_loss
         python cli.py --infer

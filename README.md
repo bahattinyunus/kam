@@ -397,6 +397,20 @@ make -j$(nproc)
 ./kam_thermal_mitigation
 ```
 
+### 🖥️ Grafiksel Web Arayüzü (Terminal İstemeyenler İçin Tek Tıkla GUI)
+Terminalle uğraşmak istemiyorsanız, tüm telemetriyi, canlı Türkçe sohbeti ve kriz simülatörünü modern web tarayıcınızdan tek tıkla yönetebilirsiniz:
+
+```bash
+# Grafiksel web arayüzünü başlatın (Tarayıcı otomatik açılır):
+python web_ui.py
+# veya
+python cli.py --gui
+```
+> **Adres:** `http://localhost:8080`  
+> Canlı sohbet ("TR'nin başkenti neresi?", "UART koptu", "C++ kodu yaz"), anlık Karl Friston serbest enerji ibreleri, NPU termal takibi ve tek tıkla kriz enjeksiyonu içerir.
+
+---
+
 ### Python Simülasyonu, Model Çıkarımı ve Sohbet
 ```bash
 # Tek komutla yerel bilişsel motoru kurun:

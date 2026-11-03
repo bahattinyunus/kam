@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KAM 🐺⚡ Bilişsel Otonom Kontrol Merkezi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo-container">
+      <div class="logo-badge">🐺</div>
+      <div class="logo-title">
+        <h1>KAM BİLİŞSEL KONTROL MERKEZİ</h1>
+        <p>Edge-AI İçin %100 Yerel, Sıvı Sinir Ağı & Aktif Çıkarım Motoru</p>
+      </div>
+    </div>
+    <div class="system-status-pill">
+      <div class="status-dot"></div>
+      <span id="system-status-text">BİLİŞSEL DENGE AKTİF</span>
+    </div>
+  </header>
+
+  <!-- Ana Gövde -->
+  <main class="main-container">
+    <!-- Sol Panel: Telemetri, Düğümler ve Kriz Yönetimi -->
+    <aside class="sidebar">
+      <!-- Canlı Metrikler -->
+      <section class="card">
+        <h2 class="card-title">🌀 Aktif Çıkarım Telemetrisi</h2>
+        
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="metric-label">Sistem Entropisi</div>
+            <div class="metric-value" id="val-entropy">%3</div>
+            <div class="progress-bar-container">
+              <div class="progress-fill" id="bar-entropy" style="width: 3%; background: var(--emerald-glow);"></div>
+            </div>
+          </div>
+
+          <div class="metric-box">
+            <div class="metric-label">Serbest Enerji (F)</div>
+            <div class="metric-value" id="val-free-energy">0.08 nats</div>
+            <div class="progress-bar-container">
+              <div class="progress-fill" id="bar-free-energy" style="width: 8%; background: var(--blue-accent);"></div>
+            </div>
+          </div>
+
+          <div class="metric-box">
+            <div class="metric-label">NPU Sıcaklığı</div>
+            <div class="metric-value" id="val-npu-temp">48.2°C</div>
+            <div class="progress-bar-container">
+              <div class="progress-fill" id="bar-npu-temp" style="width: 48%; background: var(--amber-glow);"></div>
+            </div>
+          </div>
+
+          <div class="metric-box">
+            <div class="metric-label">eBPF Kanca Olayı</div>
+            <div class="metric-value" id="val-ebpf-events">3,420 /s</div>
+            <div class="progress-bar-container">
+              <div class="progress-fill" id="bar-ebpf-events" style="width: 65%; background: var(--cyan-glow);"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; color: var(--text-muted);">
+          Aktif Taşıyıcı Hat: <strong id="val-active-channel" style="color: var(--cyan-glow);">UART-2 (Primary)</strong>
+        </div>
+      </section>
+
+      <!-- Donanım Düğümleri -->
+      <section class="card">
+        <h2 class="card-title">🛡️ Donanım Düğümleri</h2>
+        <div class="node-list">
+          <div class="node-item">
+            <span class="node-name">UART-2 Telemetri</span>
+            <span class="node-status-tag tag-online" id="tag-uart">ONLINE</span>
+          </div>
+          <div class="node-item">
+            <span class="node-name">SDR 868MHz Radyo</span>
+            <span class="node-status-tag tag-online" id="tag-sdr">STANDBY</span>
+          </div>
+          <div class="node-item">
+            <span class="node-name">IMU & Ataletsel Füzyon</span>
+            <span class="node-status-tag tag-online">ONLINE</span>
+          </div>
+          <div class="node-item">
+            <span class="node-name">CAN-0 Otomotiv Ağı</span>
+            <span class="node-status-tag tag-online" id="tag-can">ONLINE</span>
+          </div>
+          <div class="node-item">
+            <span class="node-name">Jetson Orin NPU</span>
+            <span class="node-status-tag tag-online" id="tag-npu">ONLINE (INT8)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Kriz Enjeksiyon Simülatörü -->
+      <section class="card">
+        <h2 class="card-title">⚠️ Otonom Kriz & Ayin Tetikleyici</h2>
+        <div class="scenario-buttons">
+          <button class="btn-action btn-crisis" onclick="triggerCrisis('uav_uart_cut')">
+            💥 UART Kesintisi
+          </button>
+          <button class="btn-action btn-crisis" onclick="triggerCrisis('ew_jamming')">
+            📡 Jamming Saldırısı
+          </button>
+          <button class="btn-action btn-crisis" onclick="triggerCrisis('thermal_spike')">
+            🔥 NPU 92°C Aşımı
+          </button>
+          <button class="btn-action btn-crisis" onclick="triggerCrisis('can_spoof')">
+            🚗 CAN-Bus Saldırısı
+          </button>
+        </div>
+        <button class="btn-action" style="width: 100%; margin-top: 10px;" onclick="resetSystem()">
+          🔄 Bilişsel Dengeyi Sıfırla
+        </button>
+      </section>
+    </aside>
+
+    <!-- Sağ Panel: İnteraktif Bilişsel Zihin Sohbeti -->
+    <section class="content-panel">
+      <div class="card chat-card">
+        <h2 class="card-title">💬 KAM Yerel Bilişsel Zihin (Air-Gapped REPL)</h2>
+        
+        <div class="chat-history" id="chat-history">
+          <!-- Başlangıç Mesajı -->
+          <div class="chat-message">
+            <div class="chat-avatar avatar-kam">🐺</div>
+            <div class="chat-bubble bubble-kam">
+              Selamlar kanka! Ben <strong>KAM (Bilişsel Otonom Sistem Motoru)</strong>. 
+              <br><br>
+              Uç donanımların, telemetrinin ve sistemin hayatta kalma güdüsü olarak 7/24 nöbetteyim. 
+              Bana coğrafya sorabilir ("TR'nin başkenti neresi?"), donanım arızası bildirebilir ("UART koptu"), termal kriz yönetimi yaptırabilir veya anlık C++20 kodu ürettirebilirsin.
+            </div>
+          </div>
+        </div>
+
+        <!-- Hızlı Sorular -->
+        <div class="quick-prompts">
+          <span class="prompt-pill" onclick="sendPrompt('TR\'nin başkenti neresi?')">🇹🇷 TR'nin başkenti neresi?</span>
+          <span class="prompt-pill" onclick="sendPrompt('UART-2 koptu, acil kurtarma C++ kodu yaz!')">⚡ UART koptu, C++ kodu yaz</span>
+          <span class="prompt-pill" onclick="sendPrompt('NPU sıcaklığı 92 dereceye fırladı!')">🔥 NPU sıcaklığı 92°C oldu</span>
+          <span class="prompt-pill" onclick="sendPrompt('Karl Friston serbest enerji prensibi nedir?')">🌀 Karl Friston kimdir?</span>
+          <span class="prompt-pill" onclick="sendPrompt('Sistemin mevcut telemetri durumu nedir?')">📊 Sistem durumu nedir?</span>
+        </div>
+
+        <!-- Mesaj Giriş Barı -->
+        <div class="chat-input-bar">
+          <input type="text" id="chat-input" placeholder="KAM zihnine bir soru sorun veya donanım anomalisi bildirin..." onkeypress="handleKeyPress(event)">
+          <button class="btn-send" onclick="submitMessage()">Gönder</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

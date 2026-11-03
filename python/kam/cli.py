@@ -8,10 +8,16 @@ from .swarm_mesh import SwarmMeshController
 from .models.liquid_moe import KamLiquidFoundationModel
 from .models.trainer import ActiveInferenceTrainer
 from .interactive_chat import KamInteractiveChat
+from .web_server import run_gui
 
 def main():
     parser = argparse.ArgumentParser(
         description="KAM: Bilişsel ve Kendi Kendini İyileştiren Otonom Sistem Motoru CLI"
+    )
+    parser.add_argument(
+        "--gui", "--web",
+        action="store_true",
+        help="KAM grafiksel web arayüzünü (Dashboard) başlat ve tarayıcıda aç"
     )
     parser.add_argument(
         "--scenario",
@@ -56,6 +62,10 @@ def main():
     )
 
     args = parser.parse_args()
+
+    if args.gui:
+        run_gui()
+        return
 
     if args.chat:
         chat = KamInteractiveChat()
