@@ -1,4 +1,5 @@
 // KAM Bilişsel Kontrol Merkezi Web İstemcisi
+// Siber-Şamanik ve İkonik Arayüz Motoru (v2.5 R1)
 
 let isProcessing = false;
 
@@ -14,7 +15,7 @@ function formatMarkdown(text) {
     if (mainText.includes("</think>")) {
       mainText = mainText.replace(/<think>([\s\S]*?)<\/think>/gi, (match, thought) => {
         return `<details class="thought-process" open>
-          <summary class="thought-summary">🧠 Düşünce Süreci (Akıl Yürütme Zinciri)</summary>
+          <summary class="thought-summary">🧠 Düşünce Süreci (DeepSeek-R1 Akıl Yürütme)</summary>
           <div class="thought-content">${thought.trim().replace(/\n/g, '<br>')}</div>
         </details>`;
       });
@@ -36,7 +37,7 @@ function formatMarkdown(text) {
   });
 
   // Inline Kod `kod`
-  html = html.replace(/`([^`]+)`/g, '<code style="background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; color: var(--cyan-glow);">$1</code>');
+  html = html.replace(/`([^`]+)`/g, '<code style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; color: var(--cyan-glow); font-family: var(--font-mono);">$1</code>');
 
   // Başlıklar
   html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
@@ -58,60 +59,89 @@ function formatMarkdown(text) {
   return html;
 }
 
+// Telemetri Verisini Çek
 async function fetchTelemetry() {
   try {
     const res = await fetch("/api/telemetry");
     if (!res.ok) return;
     const data = await res.json();
 
-    document.getElementById("val-entropy").innerText = `%${Math.round(data.entropy * 100)}`;
+    const entropyStr = `%${Math.round(data.entropy * 100)}`;
+    const elValEntropy = document.getElementById("val-entropy");
+    if (elValEntropy) elValEntropy.innerText = entropyStr;
+
+    const elDrawerEntropy = document.getElementById("drawer-val-entropy");
+    if (elDrawerEntropy) elDrawerEntropy.innerText = entropyStr;
+
     const barEntropy = document.getElementById("bar-entropy");
-    barEntropy.style.width = `${Math.min(100, Math.round(data.entropy * 100))}%`;
-    if (data.entropy >= 0.8) {
-      barEntropy.style.background = "var(--crimson-glow)";
-    } else if (data.entropy >= 0.4) {
-      barEntropy.style.background = "var(--amber-glow)";
-    } else {
-      barEntropy.style.background = "var(--emerald-glow)";
+    if (barEntropy) {
+      barEntropy.style.width = `${Math.min(100, Math.round(data.entropy * 100))}%`;
+      if (data.entropy >= 0.8) {
+        barEntropy.style.background = "var(--crimson-glow)";
+      } else if (data.entropy >= 0.4) {
+        barEntropy.style.background = "var(--amber-glow)";
+      } else {
+        barEntropy.style.background = "var(--emerald-glow)";
+      }
     }
 
-    document.getElementById("val-free-energy").innerText = `${data.free_energy.toFixed(3)} nats`;
-    document.getElementById("bar-free-energy").style.width = `${Math.min(100, Math.round(data.free_energy * 50))}%`;
+    const elFreeEnergy = document.getElementById("val-free-energy");
+    if (elFreeEnergy) elFreeEnergy.innerText = `${data.free_energy.toFixed(3)} nats`;
 
-    document.getElementById("val-npu-temp").innerText = `${data.npu_temp.toFixed(1)}°C`;
-    document.getElementById("val-active-channel").innerText = data.active_telemetry;
+    const barFreeEnergy = document.getElementById("bar-free-energy");
+    if (barFreeEnergy) barFreeEnergy.style.width = `${Math.min(100, Math.round(data.free_energy * 50))}%`;
 
-    // Aktif Model Bilgisi
+    const elNpuTemp = document.getElementById("val-npu-temp");
+    if (elNpuTemp) elNpuTemp.innerText = `${data.npu_temp.toFixed(1)}°C`;
+
+    const barNpuTemp = document.getElementById("bar-npu-temp");
+    if (barNpuTemp) barNpuTemp.style.width = `${Math.min(100, Math.round(data.npu_temp))}%`;
+
+    const elChannel = document.getElementById("val-active-channel");
+    if (elChannel) elChannel.innerText = data.active_telemetry;
+
+    // Aktif Model Etiketleri
     if (data.active_model) {
-      const backendLabel = data.backend === "gemini" ? "Gemini Bulut" : (data.backend === "ollama" ? "Ollama Yerel" : "Dahili");
-      document.getElementById("active-model-text").innerText = `${data.active_model} (${backendLabel})`;
+      const shortModel = data.active_model.split(":")[0];
+      const elModelText = document.getElementById("active-model-text");
+      if (elModelText) elModelText.innerText = data.active_model;
+
+      const elIslandModel = document.getElementById("island-model-label");
+      if (elIslandModel) elIslandModel.innerText = data.active_model;
     }
 
     // Durum Hapı
     const statusText = document.getElementById("system-status-text");
-    if (data.chaos_detected) {
-      statusText.innerText = "⚠️ KAOS & ENTROPİ FIRLAMASI";
-      statusText.parentElement.style.color = "var(--crimson-glow)";
-      statusText.parentElement.style.borderColor = "var(--crimson-glow)";
-    } else {
-      statusText.innerText = "🟢 DİRLİK & DENGE SAĞLAM";
-      statusText.parentElement.style.color = "var(--emerald-glow)";
-      statusText.parentElement.style.borderColor = "rgba(16, 185, 129, 0.4)";
+    const statusPill = document.getElementById("status-pill");
+    if (statusText && statusPill) {
+      if (data.chaos_detected) {
+        statusText.innerText = "KAOS & ENJİYON";
+        statusPill.style.color = "var(--crimson-glow)";
+        statusPill.style.borderColor = "var(--crimson-glow)";
+        statusPill.style.background = "rgba(244, 63, 94, 0.15)";
+      } else {
+        statusText.innerText = "DİRLİK & DENGE";
+        statusPill.style.color = "var(--emerald-glow)";
+        statusPill.style.borderColor = "rgba(16, 185, 129, 0.25)";
+        statusPill.style.background = "rgba(16, 185, 129, 0.1)";
+      }
     }
 
     // Düğüm durumları
     const tagUart = document.getElementById("tag-uart");
     const tagSdr = document.getElementById("tag-sdr");
-    if (data.active_telemetry.includes("SDR")) {
-      tagUart.className = "node-status-tag tag-critical";
-      tagUart.innerText = "OFFLINE (KOPUK)";
-      tagSdr.className = "node-status-tag tag-online";
-      tagSdr.innerText = "ONLINE (AKTİF)";
-    } else {
-      tagUart.className = "node-status-tag tag-online";
-      tagUart.innerText = "ONLINE";
-      tagSdr.className = "node-status-tag tag-online";
-      tagSdr.innerText = "STANDBY";
+    if (tagUart && tagSdr) {
+      if (data.active_telemetry.includes("SDR")) {
+        tagUart.className = "node-status-tag tag-critical";
+        tagUart.innerText = "OFFLINE (KOPUK)";
+        tagSdr.className = "node-status-tag tag-online";
+        tagSdr.innerText = "ONLINE (AKTİF)";
+      } else {
+        tagUart.className = "node-status-tag tag-online";
+        tagUart.innerText = "ONLINE";
+        tagSdr.className = "node-status-tag tag-online";
+        tagSdr.innerText = "STANDBY";
+      }
     }
 
   } catch (err) {
@@ -126,7 +156,7 @@ async function fetchModels() {
     if (!res.ok) return;
     const data = await res.json();
     const select = document.getElementById("modal-model-select");
-    if (data.models && data.models.length > 0) {
+    if (data.models && data.models.length > 0 && select) {
       select.innerHTML = "";
       data.models.forEach(m => {
         const opt = document.createElement("option");
@@ -137,8 +167,11 @@ async function fetchModels() {
       });
     }
     if (data.current_model) {
-      const backendLabel = data.active_backend === "gemini" ? "Gemini Bulut" : (data.active_backend === "ollama" ? "Ollama Yerel" : "Dahili");
-      document.getElementById("active-model-text").innerText = `${data.current_model} (${backendLabel})`;
+      const elModelText = document.getElementById("active-model-text");
+      if (elModelText) elModelText.innerText = data.current_model;
+
+      const elIslandModel = document.getElementById("island-model-label");
+      if (elIslandModel) elIslandModel.innerText = data.current_model;
     }
   } catch (err) {
     console.warn("Modeller çekilemedi:", err);
@@ -150,43 +183,35 @@ setInterval(fetchTelemetry, 2000);
 fetchTelemetry();
 fetchModels();
 
-function handleKeyPress(e) {
-  if (e.key === "Enter") {
+// Klavye ve Textarea İşleyicileri
+function handleKeyDown(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
     submitMessage();
   }
 }
 
+function autoResizeTextarea(textarea) {
+  textarea.style.height = "auto";
+  textarea.style.height = Math.min(textarea.scrollHeight, 180) + "px";
+}
+
 function sendPrompt(text) {
-  document.getElementById("chat-input").value = text;
+  const input = document.getElementById("chat-input");
+  input.value = text;
+  autoResizeTextarea(input);
   submitMessage();
 }
 
-function showTypingIndicator() {
-  const history = document.getElementById("chat-history");
-  const msgDiv = document.createElement("div");
-  msgDiv.className = "chat-message kam typing-temp";
-  msgDiv.id = "typing-indicator-msg";
-
-  const avatar = document.createElement("div");
-  avatar.className = "chat-avatar avatar-kam";
-  avatar.innerText = "🐺";
-
-  const bubble = document.createElement("div");
-  bubble.className = "chat-bubble bubble-kam";
-  bubble.innerHTML = `KAM düşünüyor <span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>`;
-
-  msgDiv.appendChild(avatar);
-  msgDiv.appendChild(bubble);
-  history.appendChild(msgDiv);
-  history.scrollTop = history.scrollHeight;
-}
-
-function hideTypingIndicator() {
-  const el = document.getElementById("typing-indicator-msg");
-  if (el) el.remove();
+function hideWelcomeHero() {
+  const hero = document.getElementById("welcome-hero");
+  if (hero && hero.style.display !== "none") {
+    hero.style.display = "none";
+  }
 }
 
 function createMessageBubble(sender) {
+  hideWelcomeHero();
   const history = document.getElementById("chat-history");
   const msgDiv = document.createElement("div");
   msgDiv.className = `chat-message ${sender}`;
@@ -199,14 +224,21 @@ function createMessageBubble(sender) {
   bubble.className = `chat-bubble bubble-${sender === "user" ? "user" : "kam"}`;
   bubble.innerHTML = `<span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>`;
 
-  msgDiv.appendChild(avatar);
-  msgDiv.appendChild(bubble);
+  if (sender === "user") {
+    msgDiv.appendChild(bubble);
+    msgDiv.appendChild(avatar);
+  } else {
+    msgDiv.appendChild(avatar);
+    msgDiv.appendChild(bubble);
+  }
+
   history.appendChild(msgDiv);
-  history.scrollTop = history.scrollHeight;
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   return bubble;
 }
 
 function appendMessage(sender, text, codeSnippet = null) {
+  hideWelcomeHero();
   const history = document.getElementById("chat-history");
   const msgDiv = document.createElement("div");
   msgDiv.className = `chat-message ${sender}`;
@@ -226,10 +258,16 @@ function appendMessage(sender, text, codeSnippet = null) {
     bubble.appendChild(codePre);
   }
 
-  msgDiv.appendChild(avatar);
-  msgDiv.appendChild(bubble);
+  if (sender === "user") {
+    msgDiv.appendChild(bubble);
+    msgDiv.appendChild(avatar);
+  } else {
+    msgDiv.appendChild(avatar);
+    msgDiv.appendChild(bubble);
+  }
+
   history.appendChild(msgDiv);
-  history.scrollTop = history.scrollHeight;
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 
 async function submitMessage() {
@@ -240,6 +278,7 @@ async function submitMessage() {
 
   appendMessage("user", text);
   input.value = "";
+  input.style.height = "auto";
   input.disabled = true;
   if (sendBtn) sendBtn.disabled = true;
   isProcessing = true;
@@ -296,8 +335,7 @@ async function submitMessage() {
             if (data.token) {
               accumulatedText += data.token;
               kamBubble.innerHTML = formatMarkdown(accumulatedText);
-              const history = document.getElementById("chat-history");
-              history.scrollTop = history.scrollHeight;
+              window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             }
           } catch (e) {}
         }
@@ -326,15 +364,28 @@ async function clearChat() {
   try {
     await fetch("/api/clear_chat", { method: "POST" });
   } catch (e) {}
+
   const history = document.getElementById("chat-history");
-  history.innerHTML = `
-    <div class="chat-message">
-      <div class="chat-avatar avatar-kam">🐺</div>
-      <div class="chat-bubble bubble-kam">
-        Sohbet belleği sıfırlandı yoldaş. Kam meclisi yeni bir istişare ve görev için hazır!
-      </div>
-    </div>
-  `;
+  history.innerHTML = "";
+  const hero = document.getElementById("welcome-hero");
+  if (hero) hero.style.display = "flex";
+}
+
+// Slide-Over HUD Drawer Aç/Kapat
+function toggleTelemetryDrawer() {
+  const drawer = document.getElementById("hud-drawer");
+  const backdrop = document.getElementById("hud-backdrop");
+  if (drawer && backdrop) {
+    const isActive = drawer.classList.contains("active");
+    if (isActive) {
+      drawer.classList.remove("active");
+      backdrop.classList.remove("active");
+    } else {
+      drawer.classList.add("active");
+      backdrop.classList.add("active");
+      fetchTelemetry();
+    }
+  }
 }
 
 async function triggerCrisis(type) {
@@ -398,3 +449,17 @@ async function saveSettings() {
     alert("Ayarlar kaydedilirken hata oluştu!");
   }
 }
+
+// Global Kısayollar (Esc ile çekmeceyi/modali kapat)
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    const drawer = document.getElementById("hud-drawer");
+    if (drawer && drawer.classList.contains("active")) {
+      toggleTelemetryDrawer();
+    }
+    const modal = document.getElementById("settings-modal");
+    if (modal && modal.style.display !== "none") {
+      closeSettingsModal();
+    }
+  }
+});
