@@ -67,23 +67,28 @@ class LocalKnowledgeEngine:
 
         for entry in self.knowledge_base:
             keywords = [self.normalize(k) for k in entry.get("keywords", [])]
-            match_count = 0
+            match_count = 0.0
+            strong_match = False
             for kw in keywords:
                 for w in words:
                     if kw == w:  # Tam kelime eşleşmesi
-                        match_count += 1
+                        match_count += 1.0
+                        if len(kw) >= 4:
+                            strong_match = True
                         break
                     elif len(kw) > 4 and kw in w:
                         match_count += 0.8
+                        strong_match = True
                         break
 
             if match_count > 0:
-                score = match_count / max(1, len(keywords))
-                if score > best_score:
-                    best_score = score
-                    best_match = entry
+                score = match_count / max(1, min(len(words), 3))
+                if strong_match or match_count >= 1.0:
+                    if score > best_score:
+                        best_score = score
+                        best_match = entry
 
-        if best_match and best_score >= 0.50:
+        if best_match and (best_score >= 0.25 or best_match.get("keywords")):
             return best_match["answer"]
 
         return None
