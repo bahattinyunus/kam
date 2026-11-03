@@ -13,6 +13,7 @@
   <a href="#-kam-nedir">🐺 Nedir?</a> •
   <a href="#-üç-tavizsiz-kanun">🧭 3 Kanun</a> •
   <a href="#-siber-şamanik-bilişsel-kokpit-web-gui-v25-r1">🖥️ Web Kokpiti</a> •
+  <a href="#-hugging-face-model-ailesi--tek-satırda-çalıştırma">🤗 Hugging Face</a> •
   <a href="#-sistem-mimarisi-ve-bilişsel-döngü">🏛️ Mimari</a> •
   <a href="#-matematiksel-temeller-serbest-enerji-ve-aktif-çıkarım">🔬 Matematik</a> •
   <a href="#-derin-teknolojik-sistem-analizi">⚙️ Sistem Detayı</a> •
@@ -23,6 +24,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/C%2B%2B-20%20Standard-blue.svg?style=for-the-badge&logo=c%2B%2B" />
   <img src="https://img.shields.io/badge/Linux_Kernel-eBPF_Hooks-orange.svg?style=for-the-badge&logo=linux" />
+  <a href="https://huggingface.co/bahattinyunus"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Models%20%26%20GGUF-yellow.svg?style=for-the-badge" /></a>
   <img src="https://img.shields.io/badge/DeepSeek-R1_Reasoning-purple.svg?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Active_Inference-Karl_Friston-cyan.svg?style=for-the-badge" />
   <img src="https://img.shields.io/badge/NVIDIA-CUDA_12.x_%7C_RTX_5060-green.svg?style=for-the-badge&logo=nvidia" />
@@ -177,6 +179,21 @@ python web_ui.py
 2. **Yüzen Giriş Adası (Floating Input Island):** Ekranın altına yapışık kalabalık çubuklar yerine; havada asılı duran, buzlu cam efektli (`backdrop-filter: blur(24px)`), anlık model değiştirici hapı (`kam:r1 ▾`) ve neon fırlatma oku barındıran ada tasarımı.
 3. **Slide-Over Cyber-HUD Drawer (Açılır Telemetri & Kriz Çekmecesi):** Ekranı işgal eden tüm telemetri çubukları ve donanım düğümleri sağ üstteki `⚡ Telemetri & Kriz` butonuyla açılan gizli çekmeceye taşındı. Sohbet daima %100 sade kalır; istendiğinde tek tıkla veya `Esc` tuşuyla tüm kriz masası açılır.
 4. **DeepSeek-R1 `<think>` Akordeonu:** Model karmaşık problemleri çözerken akıl yürütme zinciri mor ışıltılı katlanabilir akordeon içinde akar; nihai yanıt ise tertemiz Türkçe ile sunulur.
+
+---
+
+## 🤗 Hugging Face Model Ailesi & Tek Satırda Çalıştırma
+
+KAM modelleri resmi olarak **Hugging Face Hub** üzerinde açık kaynak GGUF formatında yayınlanmıştır. Dünyanın her yerindeki herhangi bir bilgisayardan veya sunucudan, Ollama aracılığıyla tek bir komutla doğrudan çalıştırabilirsiniz:
+
+| Model Adı | Mimari & Çap | Hugging Face Deposu | Ollama Tek Satır Komutu |
+|:---|:---|:---|:---|
+| **`kam:7b`** | 🐺 Qwen 2.5 7B Bilişsel Şaman (Akıcı Türkçe) | [bahattinyunus/kam-7b-gguf](https://huggingface.co/bahattinyunus/kam-7b-gguf) | `ollama run hf.co/bahattinyunus/kam-7b-gguf` |
+| **`kam:r1`** | 🧠 DeepSeek-R1 7B Zincirleme Akıl Yürütme (CoT) | [bahattinyunus/kam-r1-gguf](https://huggingface.co/bahattinyunus/kam-r1-gguf) | `ollama run hf.co/bahattinyunus/kam-r1-gguf` |
+| **`kam:1.5b`**| ⚡ Qwen 2.5 1.5B Uç Donanım & Mikro İHA Hafif Model | [bahattinyunus/kam-1.5b-edge-gguf](https://huggingface.co/bahattinyunus/kam-1.5b-edge-gguf) | `ollama run hf.co/bahattinyunus/kam-1.5b-edge-gguf` |
+
+> 💡 **Not:** Modeller 16K bağlam penceresi (`num_ctx 16384`) ve Karl Friston Serbest Enerji Prensibi parametreleriyle önceden yapılandırılmıştır.
+
 
 ---
 
