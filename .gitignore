@@ -39,3 +39,12 @@ weights/
 *.onnx
 *.engine
 
+# Kimlik Bilgileri ve API Anahtarları (Güvenlik)
+kaggle.json
+.kaggle/
+*.key
+*.pem
+.env
+.env.*
+
+
