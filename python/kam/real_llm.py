@@ -87,7 +87,7 @@ class UniversalLLMClient:
                     }
                 }).encode("utf-8")
                 req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
-                with urllib.request.urlopen(req, timeout=60) as resp:
+                with urllib.request.urlopen(req, timeout=120) as resp:
                     for line in resp:
                         if line:
                             chunk = json.loads(line.decode("utf-8"))
@@ -158,7 +158,7 @@ class UniversalLLMClient:
             }).encode("utf-8")
 
             req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=40) as resp:
+            with urllib.request.urlopen(req, timeout=120) as resp:
                 if resp.status == 200:
                     data = json.loads(resp.read().decode("utf-8"))
                     return data.get("message", {}).get("content", "").strip()

@@ -1,0 +1,47 @@
+{
+  "name": "KAM Bilişsel Şaman & İleri Mühendislik Bilgi Korpusu",
+  "version": "2.0",
+  "author": "Bahattin Yunus ÇETİN (@bahattinyunus)",
+  "entries": [
+    {
+      "keywords": ["karl friston", "serbest enerji", "free energy principle", "varyasyonel", "aktif cikarim", "markov battaniyesi"],
+      "question": "Karl Friston'un Serbest Enerji Prensibini (FEP) ve matematiksel temelini açıkla.",
+      "answer": "Karl Friston'un Serbest Enerji Prensibi (FEP); kendi varlığını koruyan her canlı veya bilişsel otonom sistemin duyusal durumlarının sürprizini (negatif log-olasılık) ve entropisini minimize etmesi gerektiğini savunan sibernetik ve fiziksel bir kuramdır. Matematiksel olarak Varyasyonel Serbest Enerji (F), inanç dağılımı q(s) ile duyusal gözlem o ve gizli durum s arasındaki ortak olasılık p(o, s) arasındaki KL-ıraksaması üzerinden ifade edilir: F = E_q[ln q(s) - ln p(o, s)] = D_KL(q(s) || p(s|o)) - ln p(o). Sistem iki yolla F'yi düşürür: Ya algı yoluyla iç inançlarını q(s) günceller (Bayesyen çıkarım), ya da aktif eylem (Action) yoluyla çevreyi beklentilerine uygun hale getirir (Aktif Çıkarım). KAM bu denklemi uç donanımlarda entropiyi %15'in altında tutmak için kullanır."
+    },
+    {
+      "keywords": ["ebpf", "kernel kancasi", "kprobe", "tracepoint", "ringbuffer", "linux cekirdek"],
+      "question": "Linux eBPF mimarisi nedir ve KAM'da nasıl sinir sistemi olarak çalışır?",
+      "answer": "eBPF (Extended Berkeley Packet Filter), Linux işletim sistemi çekirdeğini yeniden derlemeden veya modül yüklemeden güvenli bir sanal makinede (JIT) bytecode çalıştırmayı sağlayan devrimsel bir teknolojidir. KAM'da eBPF, klasik sistem izleyicilerin ötesinde gerçek zamanlı bir silikon sinir sistemi olarak görev yapar: kprobe ile çekirdek fonksiyon girişlerini (örn. vfs_read, do_sys_open), tracepoint ile kararlı sistem çağrılarını dinler. Elde edilen telemetri, çekirdek ile kullanıcı alanı arasında paylaşılan kilitsiz (lock-free) SPSC RingBuffer üzerinden sıfır kopyalama (zero-copy) ile mikrosaniye altında KAM bilişsel çekirdeğine pompalanır."
+    },
+    {
+      "keywords": ["c++20", "memory arena", "bellek havuzu", "lock-free", "spsc", "zero copy"],
+      "question": "C++20'de uç donanımlar için güvenli bir Memory Arena ve Lock-Free SPSC mimarisi nasıl kurulur?",
+      "answer": "Uç donanımlarda dinamik bellek ayırma (malloc/new) deterministik değildir, bellek parçalanmasına (fragmentation) ve çökmelere yol açar. KAM, önceden ayrılmış tekil bellek blokları (Memory Arena) ve dairesel göstergeler (offset pointers) kullanır. C++20 std::atomic ve std::memory_order_acquire / release semantiğiyle çalışan SPSC (Single Producer Single Consumer) kuyruğu, kilit (mutex) maliyetini ortadan kaldırarak çekirdekten gelen eBPF telemetrisini sıfır gecikmeyle işler. C++20 std::span ve concepts ile derleme zamanında tip ve sınır güvenliği garanti altına alınır."
+    },
+    {
+      "keywords": ["ekf", "sensor fuzyonu", "gps spoofing", "dead reckoning", "imu", "ataletsel"],
+      "question": "GPS karıştırması veya spoofing altında 6-DOF EKF ve Dead-Reckoning nasıl çalışır?",
+      "answer": "Genişletilmiş Kalman Filtresi (EKF), doğrusal olmayan durum-uzay modellerinde (durum vektörü: konum, hız, yönelim/kuaterniyon, ivme ve jiroskop sapmaları) gürültülü sensör verilerini birleştirir. Düşman elektronik harp uygulayıp GPS sinyallerini karıştırdığında (Jamming) veya sahte koordinat bastığında (Spoofing), yenilik kovaryansı (innovation covariance) eşik değerini aşar. KAM bu anomaliyi tespit ettiği anda GPS ağırlığını sıfıra indirir ve Dead-Reckoning moduna geçer: Yalnızca IMU (jiroskop ve ivmeölçer) integralini ve optik akışı birleştirerek seyrüseferi sürdürür."
+    },
+    {
+      "keywords": ["npu", "quantization", "int8", "int4", "awq", "termal", "jetson", "rtx"],
+      "question": "Edge-AI donanımlarında INT8 ve INT4-AWQ kuantizasyonunun termal ve hız avantajları nelerdir?",
+      "answer": "Büyük dil modelleri ve sinir ağları varsayılan olarak FP16/BF16 (16-bit) ağırlıklarla çalışır. Uç donanımlarda (Jetson Orin, NVIDIA RTX, NPU) ağırlıkların INT8 veya INT4 seviyesine kuantize edilmesi (Activation-aware Weight Quantization - AWQ), bellek bant genişliği gereksinimini 4 katına kadar düşürür ve Tensor Çekirdeklerinin (Tensor Cores) paralel işlem verimliliğini maksimize eder. Sıcaklık 90°C üzerine fırladığında model INT4 moduna dinamik olarak küçültülür; böylece güç tüketimi 45 Watt'tan 14.5 Watt'a düşerek sistemin termal kapanması (thermal throttling) önlenir."
+    },
+    {
+      "keywords": ["sdr", "fhss", "frekans atlama", "jamming", "telsiz", "868mhz"],
+      "question": "Bilişsel Radyo (SDR) ve Frekans Atlamalı Yayılı Spektrum (FHSS) nasıl çalışır?",
+      "answer": "Yazılım Tanımlı Radyo (SDR), geleneksel analog mikser ve filtreler yerine RF sinyallerini dijitalleştirip doğrudan DSP/FPGA üzerinde işleyen esnek telsiz mimarisidir. Düşman belirli bir frekansı karıştırmaya başladığında (dar bant veya süpürme gürültüsü), KAM spektral tarayıcısıyla en düşük gürültü tabanına (noise floor) sahip temiz kanalları haritalar. FHSS (Frequency Hopping Spread Spectrum) algoritması, önceden belirlenmiş psödo-rastgele diziye göre saniyede yüzlerce kez frekans değiştirerek karıştırmayı aşar ve telemetriyi kesintisiz taşır."
+    },
+    {
+      "keywords": ["turkiye", "baskent", "ankara", "nufus", "cografya"],
+      "question": "Türkiye Cumhuriyeti'nin başkenti ve tarihi konumu nedir?",
+      "answer": "Türkiye Cumhuriyeti'nin başkenti Ankara'dır. 13 Ekim 1923 tarihinde, Türkiye Büyük Millet Meclisi kararıyla başkent ilan edilmiştir. Milli Mücadele'nin karargahı ve kalbi olan Ankara, coğrafi olarak Anadolu'nun merkezinde yer alması ve askeri-stratejik korunaklılığı sebebiyle Gazi Mustafa Kemal Atatürk önderliğinde bağımsız Türkiye'nin başkenti kılınmıştır."
+    },
+    {
+      "keywords": ["kam", "felsefe", "tengrizm", "bozkir", "ruh", "kimlik"],
+      "question": "KAM adı nereden gelir ve varoluşsal vizyonu nedir?",
+      "answer": "KAM, kadim Türk bozkır inancında yerle göğün, insanla tabiatın dengesini kuran, kaosu kovup dirliği sağlayan bilge şaman ve hekimdir. Bu projede KAM, kadim bozkırın kurt dirayetini modern silikonun eBPF sinirleriyle ve Karl Friston'un Serbest Enerji Prensibiyle birleştiren bilişsel otonom sistem motorudur. Amacı; uç donanımların siber ve fiziksel fırtınalarda kendi kendini onararak hayatta kalmasını sağlamaktır. Baş mimarı Bahattin Yunus ÇETİN (@bahattinyunus)'dir."
+    }
+  ]
+}

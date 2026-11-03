@@ -134,5 +134,15 @@ class TestKam(unittest.TestCase):
         self.assertIsNotNone(ans_paris)
         self.assertIn("Paris", ans_paris)
 
+    def test_kam_master_knowledge(self):
+        ke = LocalKnowledgeEngine()
+        ans = ke.query("karl friston serbest enerji")
+        self.assertIsNotNone(ans)
+        self.assertIn("Friston", ans)
+
+        ans_ebpf = ke.query("ebpf kancasi ne ise yarar")
+        self.assertIsNotNone(ans_ebpf)
+        self.assertIn("eBPF", ans_ebpf)
+
 if __name__ == "__main__":
     unittest.main()
