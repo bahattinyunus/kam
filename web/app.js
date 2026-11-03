@@ -70,11 +70,11 @@ async function fetchTelemetry() {
     // Durum Hapı
     const statusText = document.getElementById("system-status-text");
     if (data.chaos_detected) {
-      statusText.innerText = "KRİTİK KAOS TESPİT EDİLDİ";
+      statusText.innerText = "⚠️ KAOS & ENTROPİ FIRLAMASI";
       statusText.parentElement.style.color = "var(--crimson-glow)";
       statusText.parentElement.style.borderColor = "var(--crimson-glow)";
     } else {
-      statusText.innerText = "BİLİŞSEL DENGE AKTİF";
+      statusText.innerText = "🟢 DİRLİK & DENGE SAĞLAM";
       statusText.parentElement.style.color = "var(--emerald-glow)";
       statusText.parentElement.style.borderColor = "rgba(16, 185, 129, 0.4)";
     }
@@ -311,7 +311,7 @@ async function clearChat() {
     <div class="chat-message">
       <div class="chat-avatar avatar-kam">🐺</div>
       <div class="chat-bubble bubble-kam">
-        Sohbet belleği sıfırlandı kanka. Yeni bir soru veya görev iletebilirsin!
+        Sohbet belleği sıfırlandı yoldaş. Kam meclisi yeni bir istişare ve görev için hazır!
       </div>
     </div>
   `;
@@ -326,7 +326,7 @@ async function triggerCrisis(type) {
     });
     const data = await res.json();
 
-    appendMessage("kam", `⚠️ <strong>[KRİZ TETİKLENDİ]</strong> ${data.message}`, data.code || null);
+    appendMessage("kam", `⚡ <strong>[KAOS TETİKLENDİ // AYİN BAŞLADI]</strong> ${data.message}`, data.code || null);
     fetchTelemetry();
   } catch (err) {
     alert("Kriz tetiklenirken hata oluştu!");
@@ -336,7 +336,7 @@ async function triggerCrisis(type) {
 async function resetSystem() {
   try {
     await fetch("/api/reset", { method: "POST" });
-    appendMessage("kam", "🛡️ <strong>[SİSTEM SIFIRLANDI]</strong> Aktif çıkarım dengelendi, entropi %3 seviyesine çekildi.");
+    appendMessage("kam", "🛡️ <strong>[DİRLİK VE DENGE YENİDEN KURULDU]</strong> Gök çökmedi, yer yarılmadı. Bilişsel denge sağlandı, varyasyonel serbest enerji %3 seviyesine çekildi.");
     fetchTelemetry();
   } catch (err) {
     alert("Sıfırlama başarısız.");

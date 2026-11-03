@@ -566,3 +566,66 @@ header {
 .bubble-kam strong {
   color: #fff;
 }
+
+/* Alt Bilgi Çubuğu (Footer) */
+.system-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--panel-border);
+  background: rgba(10, 14, 23, 0.9);
+  padding: 12px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-left strong {
+  color: var(--cyan-glow);
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.separator {
+  opacity: 0.3;
+}
+
+.dot {
+  color: var(--cyan-glow);
+  font-size: 8px;
+}
+
+/* Şamanik Renk Parıltıları ve Buton İyileştirmeleri */
+.btn-reset {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: var(--emerald-glow);
+}
+
+.btn-reset:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: var(--emerald-glow);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-clear {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.btn-clear:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--crimson-glow);
+}

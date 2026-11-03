@@ -179,27 +179,27 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             KamWebHandler.engine.inference.trigger_anomaly()
             KamWebHandler.engine.active_telemetry = "SDR-868MHz (FHSS Fallback)"
             return (
-                "UART-2 telemetri hattı fiziksel olarak koptu! Entropi %89 seviyesine fırladı. "
-                "KAM-Ajan otonom ayin başlatıp SDR 868MHz frekans atlamalı C++ düğümünü bellekte JIT derledi ve göreve devam etti.",
+                "Kırılan Bağ! UART-2 telemetri hattı koptu, varyasyonel entropi %89 seviyesine fırladı. "
+                "Panik yok yoldaş! Bilişsel Kam ayini başlattı: SDR 868MHz frekans atlamalı kurtarma köprüsü bellekte JIT derlendi ve görev hattı kesintisiz göğe taşındı.",
                 CodeMutator.generate_sdr_fallback()
             )
         elif c_type == "ew_jamming":
             KamWebHandler.engine.active_telemetry = "SDR-433MHz (Anti-Jamming Hopping)"
             return (
-                "Elektronik Harp Sinyal Karıştırması (Jamming -95dBm) saptandı! "
-                "FHSS bilişsel radyo 433 MHz temiz bandına sıçradı.",
+                "Düşman Karıştırması! Elektronik Harp karıştırması (-95dBm gürültü) tespit edildi. "
+                "Bozkır kurdu gibi izimizi kaybettiriyoruz: FHSS bilişsel radyo 433 MHz temiz bandına sıçradı, gürültü tabanı aşıldı.",
                 CodeMutator.generate_sdr_fallback()
             )
         elif c_type == "thermal_spike":
             return (
-                "NPU Sıcaklığı 92.4°C seviyesine ulaştı! "
-                "Termal Kaçak (Thermal Runaway) önlendi: Model INT4-AWQ moduna çekildi.",
+                "Kızıl Kor! NPU 92.4°C sıcaklığa ulaştı. "
+                "Aşırı hararet silikonu eritmeden eBPF termal kancamız devreye girdi: Model INT4-AWQ moduna çekildi, güç tüketimi 45W -> 14.5W seviyesine indirildi.",
                 CodeMutator.generate_thermal_fallback()
             )
         elif c_type == "can_spoof":
             return (
-                "CAN-0 veriyolunda yetkisiz ID (0x1BA) ile mesaj enjeksiyonu tespit edildi! "
-                "eBPF bellek içi güvenlik filtresi (can_firewall_filter.cpp) devreye girdi.",
+                "Siber Sızma! CAN-0 veriyoluna yetkisiz sahte paket (ID 0x1BA) sızdırıldı. "
+                "eBPF bellek içi güvenlik filtresi (can_firewall_filter.cpp) saldırganı mikrosaniyede karantinaya aldı.",
                 CodeMutator.generate_sdr_fallback()
             )
         return "Bilinmeyen kriz tipi", None
