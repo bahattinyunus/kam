@@ -629,3 +629,45 @@ header {
   background: rgba(239, 68, 68, 0.2);
   border-color: var(--crimson-glow);
 }
+
+/* DeepSeek-R1 / KAM Akıl Yürütme Düşünce Süreci (Thinking Accordion) */
+.thought-process {
+  background: rgba(30, 27, 75, 0.4);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 10px 0 14px 0;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.thought-process[open] {
+  background: rgba(30, 27, 75, 0.6);
+  border-color: rgba(167, 139, 250, 0.5);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+}
+
+.thought-summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #c4b5fd;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.thought-summary:hover {
+  color: #e9d5ff;
+}
+
+.thought-content {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(139, 92, 246, 0.2);
+  color: #cbd5e1;
+  font-style: italic;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-size: 12.5px;
+}

@@ -27,9 +27,9 @@ class UniversalLLMClient:
                 if resp.status == 200:
                     data = json.loads(resp.read().decode("utf-8"))
                     models = [m["name"] for m in data.get("models", [])]
-                    # En yüksek zekalı modeli otomatik önceliklendir (kam:7b en başta)
+                    # En yüksek zekalı modeli otomatik önceliklendir (kam:r1 ve kam:7b en başta)
                     preferred = [
-                        "kam:7b", "qwen2.5:7b", "deepseek-r1:7b", "deepseek-r1:8b",
+                        "kam:r1", "kam:7b", "deepseek-r1:7b", "qwen2.5:7b", "deepseek-r1:8b",
                         "llama3.1:8b", "llama3.2:3b", "qwen2.5:1.5b"
                     ]
                     for pref in preferred:
@@ -53,7 +53,16 @@ class UniversalLLMClient:
                     data = json.loads(resp.read().decode("utf-8"))
                     for m in data.get("models", []):
                         m_name = m["name"]
-                        source_label = "KAM Kadim Bilişsel Zihin (Özel 7B)" if "kam" in m_name else "Ollama (Yerel)"
+                        if "kam:r1" in m_name:
+                            source_label = "KAM Derin Düşünce (R1 Akıl Yürütme - 7B)"
+                        elif "kam" in m_name:
+                            source_label = "KAM Kadim Bilişsel Şaman (Özel 7B Yerel)"
+                        elif "deepseek-r1" in m_name:
+                            source_label = "DeepSeek-R1 (Akıl Yürütme - Yerel)"
+                        elif "qwen" in m_name:
+                            source_label = "Qwen 2.5 (Standart - Yerel)"
+                        else:
+                            source_label = "Ollama (Yerel)"
                         models.append({"name": m_name, "source": source_label})
             except Exception:
                 pass

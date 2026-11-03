@@ -2,13 +2,33 @@
 
 let isProcessing = false;
 
-// Basit Markdown Dönüştürücü (Gemini / ChatGPT çıktıları için)
+// Basit Markdown Dönüştürücü (Gemini / DeepSeek-R1 / ChatGPT çıktıları için)
 function formatMarkdown(text) {
   if (!text) return "";
-  let html = text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+
+  // Düşünce Zinciri (<think>...</think>) - DeepSeek-R1
+  let thoughtHtml = "";
+  let mainText = text;
+
+  if (mainText.includes("<think>")) {
+    if (mainText.includes("</think>")) {
+      mainText = mainText.replace(/<think>([\s\S]*?)<\/think>/gi, (match, thought) => {
+        return `<details class="thought-process" open>
+          <summary class="thought-summary">🧠 Düşünce Süreci (Akıl Yürütme Zinciri)</summary>
+          <div class="thought-content">${thought.trim().replace(/\n/g, '<br>')}</div>
+        </details>`;
+      });
+    } else {
+      mainText = mainText.replace(/<think>([\s\S]*)$/gi, (match, thought) => {
+        return `<details class="thought-process" open>
+          <summary class="thought-summary">🧠 Düşünce Süreci (Düşünüyor...)</summary>
+          <div class="thought-content">${thought.trim().replace(/\n/g, '<br>')} <span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></div>
+        </details>`;
+      });
+    }
+  }
+
+  let html = mainText;
 
   // Kod Blokları ```lang\ncode\n```
   html = html.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
