@@ -214,15 +214,29 @@ function appendMessage(sender, text, codeSnippet = null) {
 
 async function submitMessage() {
   const input = document.getElementById("chat-input");
+  const sendBtn = document.querySelector(".btn-send");
   const text = input.value.trim();
   if (!text || isProcessing) return;
 
   appendMessage("user", text);
   input.value = "";
+  input.disabled = true;
+  if (sendBtn) sendBtn.disabled = true;
   isProcessing = true;
 
   const kamBubble = createMessageBubble("kam");
   let accumulatedText = "";
+
+  // Güvenlik: Eğer akış 35 saniyede bitmezse kilidi mutlaka aç
+  const safetyTimer = setTimeout(() => {
+    if (isProcessing) {
+      console.warn("Yayın zaman aşımına uğradı, kilit sıfırlanıyor.");
+      isProcessing = false;
+      input.disabled = false;
+      if (sendBtn) sendBtn.disabled = false;
+      input.focus();
+    }
+  }, 35000);
 
   try {
     const response = await fetch("/api/chat/stream", {
@@ -238,8 +252,9 @@ async function submitMessage() {
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
+    let streamDone = false;
 
-    while (true) {
+    while (!streamDone) {
       const { value, done } = await reader.read();
       if (done) break;
 
@@ -253,7 +268,11 @@ async function submitMessage() {
           if (!jsonStr) continue;
           try {
             const data = JSON.parse(jsonStr);
-            if (data.done) break;
+            if (data.done) {
+              streamDone = true;
+              try { await reader.cancel(); } catch (e) {}
+              break;
+            }
             if (data.token) {
               accumulatedText += data.token;
               kamBubble.innerHTML = formatMarkdown(accumulatedText);
@@ -269,13 +288,33 @@ async function submitMessage() {
       kamBubble.innerHTML = "KAM Zihni aktif. Sistem telemetrisi ve bilişsel nöronlar dengede.";
     }
   } catch (err) {
+    console.error("Sohbet hatası:", err);
     if (!accumulatedText) {
       kamBubble.innerHTML = "Bağlantı hatası: KAM çekirdeğine ulaşılamadı.";
     }
   } finally {
+    clearTimeout(safetyTimer);
     isProcessing = false;
+    input.disabled = false;
+    if (sendBtn) sendBtn.disabled = false;
+    input.focus();
     fetchTelemetry();
   }
+}
+
+async function clearChat() {
+  try {
+    await fetch("/api/clear_chat", { method: "POST" });
+  } catch (e) {}
+  const history = document.getElementById("chat-history");
+  history.innerHTML = `
+    <div class="chat-message">
+      <div class="chat-avatar avatar-kam">🐺</div>
+      <div class="chat-bubble bubble-kam">
+        Sohbet belleği sıfırlandı kanka. Yeni bir soru veya görev iletebilirsin!
+      </div>
+    </div>
+  `;
 }
 
 async function triggerCrisis(type) {

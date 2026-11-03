@@ -81,7 +81,8 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/event-stream; charset=utf-8")
             self.send_header("Cache-Control", "no-cache")
-            self.send_header("Connection", "keep-alive")
+            self.send_header("Connection", "close")
+            self.close_connection = True
             self.end_headers()
 
             try:
@@ -93,6 +94,15 @@ class KamWebHandler(SimpleHTTPRequestHandler):
                 self.wfile.flush()
             except Exception as e:
                 pass
+            return
+
+        elif self.path == "/api/clear_chat":
+            if KamWebHandler.llm_client:
+                KamWebHandler.llm_client.conversation_history.clear()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "ok"}, ensure_ascii=False).encode("utf-8"))
             return
 
         elif self.path == "/api/config":

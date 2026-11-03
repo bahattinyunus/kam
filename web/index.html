@@ -129,7 +129,10 @@
     <!-- Sağ Panel: İnteraktif Bilişsel Zihin Sohbeti -->
     <section class="content-panel">
       <div class="card chat-card">
-        <h2 class="card-title">💬 KAM Yerel Bilişsel Zihin (Air-Gapped REPL)</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <h2 class="card-title" style="margin: 0;">💬 KAM Yerel Bilişsel Zihin (Air-Gapped REPL)</h2>
+          <button class="btn-action" style="padding: 4px 12px; font-size: 11px;" onclick="clearChat()">🗑️ Sohbeti Sıfırla</button>
+        </div>
         
         <div class="chat-history" id="chat-history">
           <!-- Başlangıç Mesajı -->

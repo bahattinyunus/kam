@@ -102,9 +102,14 @@ class UniversalLLMClient:
             except Exception as e:
                 print(f"[OLLAMA STREAM HATA] {e}", file=sys.stderr)
 
-        # 2. Streaming yapılamazsa düz generate çağır ve tek seferde yield et
-        reply = self.generate(user_prompt)
-        yield reply
+        # 2. Streaming yapılamazsa doğrudan yanıt üret
+        if grounded_fact:
+            self.conversation_history.append({"role": "assistant", "content": grounded_fact})
+            yield grounded_fact
+        else:
+            fallback_msg = "KAM Bilişsel Zihni aktif. Sistem telemetrisi ve bilişsel nöronlar dengede."
+            self.conversation_history.append({"role": "assistant", "content": fallback_msg})
+            yield fallback_msg
 
     def generate(self, user_prompt: str) -> str:
         # RAG Grounding: Doğrulanmış gerçek bilgiyi çek
