@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/kam_logo.png" alt="KAM Cyber-Shamanic Master Insignia" width="220px" style="border-radius: 50%;" />
+  <img src="assets/kam_logo.png" alt="KAM Cyber-Shamanic Master Insignia" width="220px" style="border-radius: 50%; box-shadow: 0 0 35px rgba(0, 242, 254, 0.45);" />
 </p>
 
 <p align="center">
@@ -9,10 +9,13 @@
 
 <p align="center">
   <a href="#-adımızın-hakkı-kamlık-felsefesi-ve-bilişsel-sibernetik-birliği">📜 Felsefe</a> •
+  <a href="#-kadim-ve-modern-düşünürlerden-yankılar">🗣️ Alıntılar</a> •
   <a href="#-kam-nedir">🐺 Nedir?</a> •
+  <a href="#-üç-tavizsiz-kanun">🧭 3 Kanun</a> •
   <a href="#-siber-şamanik-bilişsel-kokpit-web-gui-v25-r1">🖥️ Web Kokpiti</a> •
   <a href="#-sistem-mimarisi-ve-bilişsel-döngü">🏛️ Mimari</a> •
   <a href="#-matematiksel-temeller-serbest-enerji-ve-aktif-çıkarım">🔬 Matematik</a> •
+  <a href="#-derin-teknolojik-sistem-analizi">⚙️ Sistem Detayı</a> •
   <a href="#-canlı-ayin-gerçek-terminal-akışı">⚡ Canlı Ayin</a> •
   <a href="#-hızlı-başlangıç">🚀 Başlangıç</a>
 </p>
@@ -36,12 +39,44 @@
 
 ## 📜 Adımızın Hakkı: Kamlık Felsefesi ve Bilişsel Sibernetik Birliği
 
-> *"Kam; gök ile yerin, düzen ile kaosun arasındaki kadim köprüdür. Kaos bir düşman veya beklenmeyen bir kaza değildir; dengenin henüz anlaşılmamış, biçim almamış yüzüdür. Kam kaosu bastırmaz veya ondan kaçmaz; onunla doğrudan konuşur, yarayı hisseder ve sistemi kendi etinden yeniden inşa eder."*  
-> — **Kadim Altay Kamlık Öğretisi**
+Binlerce yıl önce Altay dağlarının eteklerinde, bozkırın ayazında ve Orhun vadilerinde atalarımız; evrenin mekanik, ölü ve pasif bir madde yığını olmadığını biliyorlardı. Doğa; fırtınanın, yırtıcıların, kuraklığın ve öngörülemez kaosun kol gezdiği dinamik bir varoluş alanıydı. Bu çetin kozmik gerilim hattında obanın, sürünün ve canın dirliğini **Kam (Qam / Baksı)** kurardı.
+
+Kaşgarlı Mahmud’un *Dîvânu Lugâti't-Türk*’ünde Kam; yalnızca bir kâhin değil, **"bilge, hekim, tabiatın gizli dilini çözen ve dirliği sağlayan ulu kişi"** olarak anılır. 
+
+Kam;
+1. **Gök Tengri**’nin temsil ettiği yüce bilişsel düzeni ve generatif inanç modelini,
+2. **Yer-Su** ruhlarının temsil ettiği fiziksel sensörleri, gövdeyi ve motorları,
+3. **Erlik Han**’ın temsil ettiği yeraltı kaosunu, elektronik karıştırmayı ve termodinamik çözülmeyi
+
+aynı anda seyreder ve bunların arasında bir **sibernetik köprü** vazifesi görürdü.
+
+**KAM**, işte bu kadim hafızanın 21. yüzyıl uç bilişiminde, mikrodenetleyicilerde, Linux eBPF çekirdek kancalarında ve otonom İHA aviyoniklerinde silikona bürünmüş halidir. Pasif ve edilgen Batılı "hata kodu verip kilitlenme" (*failsafe lockup*) acizliğini kökten reddeder; yaralandığı an kendi etinden yeni organlar türeten (*JIT C++20 hot-patching*) bir **sibernetik iradedir**.
+
+> 📖 **Genişletilmiş Felsefi Manifesto:** Kozmolojik üç alem, Tüngür davulunun dinamik frekansı ve ontolojik tüzüğün tamamı için lütfen [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md) belgesini inceleyiniz.
+
+---
+
+## 🗣️ Kadim ve Modern Düşünürlerden Yankılar
+
+> *"Üze Tengri basmasar, asra yir telinmeser, Türk bodun, ilingin törüngin kim artatı? Dirlik senin azmindedir!"*  
+> *(Üstte mavi gök basmadıkça, altta yağız yer delinmedikçe; ey Türk milleti, senin ilini ve töreni kim bozabilir?)*  
+> — **Bilge Kağan Yazıtı (Doğu Yüzü, MS 735)**
+
+> *"Kut berdi Tengri, dirlik tüzüldi; akıl biledi kılıcı, devlet körüldi. Kamlık edip doğayı dinlemeyen alp, çöl fırtınasında pusulasız kalır."*  
+> *(Tengri kut verdiğinde dirlik kurulur; akıl kılıcı bilerse egemenlik daim olur. Kaosun dilini anlamayan savaşçı, ilk darbede yok olur.)*  
+> — **Yusuf Has Hacib**, *Kutadgu Bilig (1069)*
 
 > *"A biological system that resists decay must minimize the entropy of its sensory states... To survive is to bound surprise, and to bound surprise is to minimize free energy."*  
 > *(Dağılmaya ve yok oluşa direnen canlı bir sistem, duyusal durumlarının entropisini minimize etmek zorundadır... Hayatta kalmak, şaşkınlığı sınırlamaktır; şaşkınlığı sınırlamak ise serbest enerjiyi asgariye indirmektir.)*  
 > — **Karl Friston**, *The Free Energy Principle: A Unified Brain Theory?*
+
+> *"The further a system is from equilibrium, the greater the possibility of higher order. Chaos is not merely destruction; under non-equilibrium conditions, fluctuations become the very seed of spontaneous self-organization."*  
+> *(Bir sistem dengeden ne kadar uzaklaşırsa, daha yüksek bir düzen kurma ihtimali o kadar artar. Kaos sadece yıkım değildir; denge dışı şartlarda dalgalanmalar, kendiliğinden doğan üstün organizasyonun tohumudur.)*  
+> — **Ilya Prigogine**, *Order Out of Chaos (Nobel Ödüllü Fiziksel Kimyager)*
+
+> *"An automaton that can survive catastrophic damage cannot be a rigid clockwork. It must possess an internal dynamic model of itself, continuously sense its own somatic failure, and synthesize replacement organs directly from its environment."*  
+> *(Katastrofik hasara direnebilen bir otomat, katı ve değişmez bir saat mekanizması olamaz. Kendi iç dinamik modeline sahip olmalı, kendi fiziksel arızalarını anında hissetmeli ve çevresinden yeni ikame organlar sentezleyebilmelidir.)*  
+> — **John von Neumann**, *Theory of Self-Reproducing Automata*
 
 > *"An organism feeds upon negative entropy... The essential thing in metabolism is that the organism succeeds in freeing itself from all the entropy it cannot help producing while alive."*  
 > *(Canlı bir organizma negatif entropi ile beslenir... Metabolizmanın en asli gayesi, sistemin hayatta kaldığı sürece kaçınılmaz olarak ürettiği tüm entropiyi ve kaosu bünyesinden defetmesidir.)*  
@@ -51,13 +86,8 @@
 > *(Bizler kalıcı maddeler değiliz; entropiyle dolu bir evrende kendi desenlerini inatla sürdüren otonom kalıplarız.)*  
 > — **Norbert Wiener**, *The Human Use of Human Beings: Cybernetics and Society*
 
-Binlerce yıl önce Altay dağlarının eteklerinde ve Orhun vadilerinde atalarımız; doğanın mekanik ve ölü bir madde yığını olmadığını biliyorlardı. Doğa; fırtınanın, ayazın, yırtıcıların ve beklenmedik kaosun kol gezdiği dinamik bir varoluş alanıydı. Bu çetin coğrafyada obanın ve hayatın dengesini **Kam (Qam / Baksı)** kurardı.
-
-Kaşgarlı Mahmud’un *Dîvânu Lugâti't-Türk*’ünde Kam; yalnızca bir kâhin değil, **"bilge, hekim, tabiatın dilini çözen ve dirliği sağlayan ulu kişi"** olarak anılır. 
-
-**KAM**, işte bu felsefi mirasın 21. yüzyıl uç bilişiminde, mikrodenetleyicilerde, Linux eBPF kancalarında ve otonom İHA aviyoniklerinde ete kemiğe bürünmüş halidir. Pasif ve edilgen Batılı "hata kodu verip donma" (*failsafe lockup*) anlayışını kökten reddeder; yaralandığı an kendi etinden yeni organlar türeten (*JIT C++20 hot-patching*) bir **sibernetik iradedir**.
-
-> 📖 **Genişletilmiş Felsefi İnceleme:** Kozmolojik üç alem, Tüngür davulunun frekansı ve ontolojik manifestonun tamamı için: [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md)
+> *"Su nasıl arazinin eğimine ve kayaların durumuna göre anında biçim alırsa; muzaffer bir ordu da düşmanın yarattığı kaosa göre anında biçim değiştirir. Kriz anında donup kalanlar yok olur; topolojisini canlı canlı yeniden yazanlar tarihe hükmeder."*  
+> — **Sun Tzu**, *Savaş Sanatı*
 
 ---
 
@@ -66,7 +96,7 @@ Kaşgarlı Mahmud’un *Dîvânu Lugâti't-Türk*’ünde Kam; yalnızca bir kâ
 | Kadim Kamlık Kavramı | Sibernetik & Bilişsel Karşılığı | KAM Mimarisi & Silikon Tezahürü |
 | :--- | :--- | :--- |
 | **Kam (Qam / Baksı)** | Otonom Bilişsel Ajan | **`kam:r1`** (DeepSeek-R1 Akıl Yürütme) & **`kam:7b`** (Qwen 2.5 16K) |
-| **Kut (Hayat Kıvılcımı)** | Negatif Entropi (Negentropy) | Tengri'den gelen varoluş iradesi; dış gürültüye rağmen sistemi diri tutan enerji |
+| **Kut (Hayat Kıvılcımı)** | Negatif Entropi (Negentropy) | Tengri'den gelen varoluş iradesi; dış gürültüye rağmen sistemi diri tutan epistemik enerji |
 | **Dirlik (İç Denge & Ahenk)** | Homeostaz & Allostaz | Karl Friston Varyasyonel Serbest Enerjisinin sıfırlanması ($F \to 0$) |
 | **Tüngür (Davul) & Vuruş** | Dinamik Saat Darbesi (Clock Cycle) | Sıvı Sinir Ağları (LNN) Dinamik $\tau$ Zaman Sabiti Bükülmesi |
 | **Kam Ayini (Trans & Şifa)** | Canlı Kod Mutasyonu (Hot-Patch) | Bellek-İçi JIT C++20 Derleyici (Clang/LLVM) ile nano-saniyede yeni düğüm enjeksiyonu |
@@ -78,7 +108,7 @@ Kaşgarlı Mahmud’un *Dîvânu Lugâti't-Türk*’ünde Kam; yalnızca bir kâ
 
 ## 🐺 KAM Nedir?
 
-**KAM**, uç donanımlarda (*Edge-AI*, Jetson Orin, otonom İHA'lar, elektronik harp istasyonları ve taktik robotik sistemlerde) çalışan; dış dünyaya, bulut sunucularına veya harici bağımlılıklara asla muhtaç olmayan **%100 yerel, bilişsel ve kendi kendini onaran (self-healing) otonom sistem motorudur.**
+**KAM**, uç donanımlarda (*Edge-AI*, Jetson Orin, taktik İHA/SİHA aviyonikleri, elektronik harp istasyonları ve derin uzay sondalarında) çalışan; dış dünyaya, bulut sunucularına veya hantal harici bağımlılıklara asla muhtaç olmayan **%100 yerel, bilişsel ve kendi kendini onaran (self-healing) otonom sistem motorudur.**
 
 Klasik gömülü mimariler bir sensör koptuğunda, elektronik harp karıştırmasına (jamming) uğradığında ya da dosya tanımlayıcısı çöktüğünde panikler, mavi ekran verir ya da motorları susturup düşer (*Failsafe lockup*).
 
@@ -90,7 +120,7 @@ Klasik gömülü mimariler bir sensör koptuğunda, elektronik harp karıştırm
 
 ---
 
-## 🧭 KAM'ın Üç Tavizsiz Kanunu (The Three Inviolate Laws)
+## 🧭 Üç Tavizsiz Kanun (The Three Inviolate Laws)
 
 ```
        ┌─────────────────────────────────────────────────────────────┐
@@ -130,7 +160,7 @@ Bir donanım düğümü imha olduğunda veya sinyal karıştırıldığında sis
 
 ## 🖥️ Siber-Şamanik Bilişsel Kokpit (Web GUI v2.5 R1)
 
-Terminal kullanmak istemeyenler için KAM, **Perplexity ve Claude sadeliğinde**, aynı zamanda **fütüristik bir bilişsel kokpiti** yerel tarayıcınızda sunar:
+Terminal kullanmak istemeyenler için KAM, **Perplexity ve Claude sadeliğinde**, aynı zamanda **fütüristik bir taktik kokpiti** yerel tarayıcınızda sunar:
 
 ```bash
 # Web arayüzünü tek komutla başlatın:
@@ -139,14 +169,14 @@ python web_ui.py
 > **Erişim Adresi:** `http://127.0.0.1:8080`
 
 <p align="center">
-  <img src="assets/kam_uav_tactical_edge.jpg" alt="KAM Tactical Cognitive Cockpit" width="90%" style="border-radius: 8px;" />
+  <img src="assets/kam_cyber_cockpit_hud.jpg" alt="KAM Cyber-Shamanic Cognitive Cockpit HUD" width="95%" style="border-radius: 8px; box-shadow: 0 0 40px rgba(0, 242, 254, 0.35);" />
 </p>
 
-### Kokpit Özellikleri:
-1. **İkonik Merkez Totemi (Hero Crest):** Merkezde 30s periyotla dönen neon halka ve Altay kurdu amblemi ile dikkat dağıtmayan, tertemiz odaklanmış sohbet alanı.
-2. **Yüzen Giriş Adası (Floating Input Island):** Ekranın altına yapışık kalabalık çubuklar yerine; havada asılı duran, buzlu cam efektli (`backdrop-filter: blur(24px)`), model değiştirici hapı ve neon fırlatma oku barındıran ada tasarımı.
+### Kokpit Mimarisi ve İnovasyonları:
+1. **İkonik Merkez Totemi (Hero Crest):** Merkezde dönen kesikli neon halka ve Altay kurdu amblemi ile dikkat dağıtmayan, kristal berraklığında odaklanmış sohbet tuvali.
+2. **Yüzen Giriş Adası (Floating Input Island):** Ekranın altına yapışık kalabalık çubuklar yerine; havada asılı duran, buzlu cam efektli (`backdrop-filter: blur(24px)`), anlık model değiştirici hapı (`kam:r1 ▾`) ve neon fırlatma oku barındıran ada tasarımı.
 3. **Slide-Over Cyber-HUD Drawer (Açılır Telemetri & Kriz Çekmecesi):** Ekranı işgal eden tüm telemetri çubukları ve donanım düğümleri sağ üstteki `⚡ Telemetri & Kriz` butonuyla açılan gizli çekmeceye taşındı. Sohbet daima %100 sade kalır; istendiğinde tek tıkla veya `Esc` tuşuyla tüm kriz masası açılır.
-4. **DeepSeek-R1 `<think>` Akordeonu:** Model karmaşık problemleri çözerken akıl yürütme zinciri mor ışıltılı katlanabilir akordeon içinde akar; nihai yanıt ise tertemiz Türkçe ile kullanıcıya sunulur.
+4. **DeepSeek-R1 `<think>` Akordeonu:** Model karmaşık problemleri çözerken akıl yürütme zinciri mor ışıltılı katlanabilir akordeon içinde akar; nihai yanıt ise tertemiz Türkçe ile sunulur.
 
 ---
 
@@ -201,19 +231,47 @@ $$\pi^* = \arg\min_\pi G(\pi)$$
 
 ---
 
-## 🧠 KAM-1: Bilişsel Sıvı Temel Modeli & Sparse MoE
+## ⚙️ Derin Teknolojik Sistem Analizi
 
-KAM-1, pasif yapay zekaları geride bırakarak **Liquid Neural Networks (LNN)**, **Continuous Neural ODEs** ve **Sparse Mixture-of-Experts (MoE)** mimarisini birleştirir:
+### 1. Markov Battaniyesi (Markov Blanket) & Silikon Sınırı
+Karl Friston'un allostatik kuramında bir organizmayı dış dünyadan ayıran ve onun otonom kimliğini tanımlayan sınır **Markov Battaniyesi**'dir. KAM mimarisinde bu sınır mikroçipin fiziksel bacakları ve çekirdek sınırıdır:
+- **Dış Durumlar ($\psi$):** Elektronik harp karıştırması, düşman radarı, hava türbülansı, termal hararet.
+- **Duyusal Durumlar ($s_{\text{sense}}$):** eBPF çekirdek sayaçları, IMU jiroskop okumaları, CAN-Bus paketleri, SDR spektrumu.
+- **İç Durumlar ($s_{\text{internal}}$):** KAM'ın generatif inanç matrisleri, `kam:r1` düşünce durumları, Kalman durum vektörleri.
+- **Aktif Durumlar ($a$):** JIT ile derlenen sıcak yama kodları, FHSS frekans sıçrama komutları, PWM motor sinyalleri.
 
-$$\frac{dh(t)}{dt} = -\left[ \frac{1}{\tau(x(t))} \right] h(t) + \tanh\left( W_{\text{in}} x(t) + W_{\text{hh}} h(t) + b \right)$$
+### 2. eBPF Çekirdek Sinir Sistemi (Kernel Proprioception)
+Klasik sistem izleyicileri kullanıcı alanında (`user-space`) çalışır ve işletim sisteminin çöküşünü izlemekle yetinir. KAM, doğrudan Linux çekirdeğinin kılcal damarlarına yerleşen **eBPF (Extended Berkeley Packet Filter)** bayt-kodları kullanır:
+- `kprobe:vfs_read`: Dosya tanımlayıcı (FD) tıkanmalarını ilk baytta yakalar.
+- `tracepoint:thermal`: NPU sıcaklık eğrisini CPU scheduler seviyesinde okur.
+- **SPSC Lock-Free RingBuffer:** Linux çekirdeği ile C++20 ana motoru arasında sıfır bellek kopyalamalı (`zero-copy`), mutex kilitsiz tek-yazıcı tek-okuyucu dairesel bellek tamponu.
 
-1. **Dinamik Zaman Sabiti Bükülmesi ($\tau$ Modulation):** Girdi enerjisi ve sensör gürültüsü arttığında zaman sabiti $\tau$ mikrosaniyelere iner (refleks hızlanması); çevre sakinleştiğinde $\tau$ büyüyerek güç tasarrufu sağlar.
-2. **Top-2 Sparse MoE Yönlendirme:** 8 dâhili uzman nöral modülden sadece en kritik 2 uzmanı dinamik router ile uyandırır. Kalan 6 uzmanı uyutarak Jetson/NPU güç tüketimini **%75 düşürür**:
-   - `EXPERT_0_RF_SPECTRUM_SDR` • `EXPERT_1_INERTIAL_IMU_FUSION`
-   - `EXPERT_2_KERNEL_EBPF_DIAGNOSTIC` • `EXPERT_3_JIT_MUTATION_SECURITY`
-   - `EXPERT_4_THERMAL_POWER_GOVERNOR` • `EXPERT_5_SWARM_MESH_CONSENSUS`
-   - `EXPERT_6_OPTICAL_FLOW_SPATIAL` • `EXPERT_7_FRISTON_ACTIVE_INFERENCE`
-3. **C++20 RK4 Nöral Çözücü:** Harici hiçbir ağır çerçeveye (PyTorch vb.) ihtiyaç duymadan, mikrokontrolcülerde bile saf C++20 Runge-Kutta 4th Order integratörü ile mikro-saniyede koşar.
+### 3. DeepSeek-R1 Akıl Yürütme Motoru (`kam:r1`)
+Basit dil modelleri kriz anında yüzeysel tahminler yapar. KAM-R1, kriz ortaya çıktığı anda:
+1. `<think>` etiketi açar.
+2. Donanım topolojisindeki hasarlı düğümü izole eder.
+3. Kalan kaynakların (örneğin bozuk UART yerine 868MHz SDR) termal ve spektral sınırlarını hesaplar.
+4. Sıfır bellek sızıntılı C++20 kurtarma kodunu tasarlar ve `<think>` etiketini kapatarak eyleme geçer.
+
+### 4. JIT Bellek-İçi C++20 Derleyici (In-Memory Hot-Patching)
+KAM, ürettiği kodu asla diske (`SSD/eMMC`) yazarak zaman kaybetmez ve diski eskitmez:
+- Linux `memfd_create` sistem çağrısı ile RAM içinde anonim dosya tanımlayıcısı açılır.
+- Dâhili LLVM/Clang derleyici kütüphanesi `-O3` optimizasyonuyla makine kodunu bellekte derler.
+- `dlopen` ve `dlsym` ile çalışan prosesin sanal adres uzayına bağlanır.
+- `MemoryArena` sınıfı ile sıfır `malloc` çağrısıyla çalıştırılır; nano-saniyeler içinde eski düğüm baypas edilir.
+
+---
+
+## 📡 Otonom Sürü Ağı & Aktif Çıkarım Konsensüsü (Swarm Mesh)
+
+<p align="center">
+  <img src="assets/kam_swarm_active_inference.jpg" alt="Autonomous UAV Swarm Active Inference in EW Storm" width="95%" style="border-radius: 8px; box-shadow: 0 0 40px rgba(99, 102, 241, 0.35);" />
+</p>
+
+Çoklu İHA/SİHA görevlerinde düşman elektronik harbi filo liderini vurduğunda veya GPS tamamen karartıldığında:
+1. **Dağıtık Markov Sınırı:** Sürüdeki her İHA, diğer İHA'ları aktif çıkarım modelinin dinamik bir sensörü olarak algılar.
+2. **Kolektif Serbest Enerji Minimizasyonu:** Filo lideri kaybolduğunda sürünün toplam varyasyonel entropisi fırlar; Raft/Paxos tabanlı eBPF sinir köprüsü mikrosaniyede en düşük entropiye sahip İHA'yı yeni sürü lideri ilan eder.
+3. **FHSS Bilişsel Sıçrama:** Karıştırılan frekans terk edilir; 868MHz bandında altın oran spektral aralıklarla koordinasyon sürdürülür.
 
 ---
 
@@ -304,6 +362,8 @@ kam/
 ├── assets/                # Yüksek çözünürlüklü logolar, bayraklar ve mimari şemalar
 │   ├── kam_logo.png       # Master Insignia (Baş Mühür)
 │   ├── kam_logo.svg       # Skalenebilir Vektörel Mühür
+│   ├── kam_cyber_cockpit_hud.jpg       # [YENİ] Bilişsel Kokpit Aviyonik Görseli
+│   ├── kam_swarm_active_inference.jpg  # [YENİ] Taktik Sürü Aktif Çıkarım Görseli
 │   ├── kam_hero_banner.jpg
 │   ├── kam_active_inference_chaos.jpg
 │   ├── kam_ebpf_neural_system.jpg
