@@ -47,4 +47,9 @@ kaggle.json
 .env
 .env.*
 
+# Kaggle Ham Veri Setleri (Büyük Dosyalar)
+data/kaggle/
+*.jsonl
+
+
 

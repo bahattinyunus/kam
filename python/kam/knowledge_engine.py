@@ -21,7 +21,8 @@ class LocalKnowledgeEngine:
         target_files = [
             self.dataset_path,
             os.path.join(data_dir, "kam_lore_dataset.json"),
-            os.path.join(data_dir, "kam_master_dataset.json")
+            os.path.join(data_dir, "kam_master_dataset.json"),
+            os.path.join(data_dir, "kam_turkish_intelligence_corpus.json")
         ]
 
         for path in target_files:
