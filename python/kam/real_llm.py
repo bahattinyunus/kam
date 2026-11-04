@@ -89,10 +89,11 @@ class UniversalLLMClient:
         system_instruction = BASE_SYSTEM_PROMPT
         if grounded_fact:
             system_instruction += (
-                f"\n\n[KADİM VE DOĞRULANMIŞ BİLGİ KAYNAĞI]:\n{grounded_fact}\n\n"
+                f"\n\n[DOĞRULANMIŞ KESİN BİLGİ KAYNAĞI]:\n{grounded_fact}\n\n"
                 f"TÜRKÇE YANIT YÖNERGESİ:\n"
-                f"Kullanıcının sorusuna yukarıdaki kesin bilgiyi temel alarak, duru, asil, bilge "
-                f"ve edebi zenginliği yüksek bir Türkçeyle yanıt ver. Asla yabancı kelime veya kırık cümle kalıbı kullanma."
+                f"Sorunun cevabı doğrudan yukarıdaki doğrulanmış kesin bilgide mevcuttur. "
+                f"Kullanıcıya bu bilgiyi temel alarak tereddütsüz, net, asil ve duru bir Türkçeyle yanıt ver. "
+                f"Metindeki anahtar gerçekleri (örneğin şehir, tarih, terim adlarını) kesinlikle koru ve saptırma."
             )
 
         self.conversation_history.append({"role": "user", "content": user_prompt})
@@ -146,10 +147,11 @@ class UniversalLLMClient:
         system_instruction = BASE_SYSTEM_PROMPT
         if grounded_fact:
             system_instruction += (
-                f"\n\n[KADİM VE DOĞRULANMIŞ BİLGİ KAYNAĞI]:\n{grounded_fact}\n\n"
+                f"\n\n[DOĞRULANMIŞ KESİN BİLGİ KAYNAĞI]:\n{grounded_fact}\n\n"
                 f"TÜRKÇE YANIT YÖNERGESİ:\n"
-                f"Kullanıcının sorusuna yukarıdaki kesin bilgiyi temel alarak, duru, asil, bilge "
-                f"ve edebi zenginliği yüksek bir Türkçeyle yanıt ver. Asla yabancı kelime veya kırık cümle kalıbı kullanma."
+                f"Sorunun cevabı doğrudan yukarıdaki doğrulanmış kesin bilgide mevcuttur. "
+                f"Kullanıcıya bu bilgiyi temel alarak tereddütsüz, net, asil ve duru bir Türkçeyle yanıt ver. "
+                f"Metindeki anahtar gerçekleri (örneğin şehir, tarih, terim adlarını) kesinlikle koru ve saptırma."
             )
 
         self.conversation_history.append({"role": "user", "content": user_prompt})
