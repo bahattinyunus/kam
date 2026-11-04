@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/kam_logo.png" alt="KAM Sovereign Master Insignia" width="180px" style="border-radius: 50%; box-shadow: 0 0 40px rgba(0, 242, 254, 0.35); margin-top: 12px;" />
+  <img src="assets/kam_logo.png" alt="KAM Sovereign Master Mark" width="150px" style="border-radius: 24px; border: 1px solid rgba(255,255,255,0.08); margin-top: 12px;" />
 </p>
 
 <p align="center">
