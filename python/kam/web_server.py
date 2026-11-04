@@ -40,6 +40,8 @@ class KamWebHandler(SimpleHTTPRequestHandler):
                 "entropy": entropy,
                 "free_energy": 0.08 if entropy < 0.2 else (1.84 if entropy > 0.8 else 0.28),
                 "npu_temp": 48.2 if entropy < 0.2 else (74.5 if entropy > 0.8 else 51.0),
+                "ebpf_events_per_sec": 3420 if entropy < 0.2 else (8940 if entropy > 0.8 else 4610),
+                "jit_latency_ms": 41.2,
                 "chaos_detected": entropy >= 0.80,
                 "active_model": KamWebHandler.llm_client.current_model,
                 "backend": KamWebHandler.llm_client.active_backend
@@ -179,28 +181,28 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             KamWebHandler.engine.inference.trigger_anomaly()
             KamWebHandler.engine.active_telemetry = "SDR-868MHz (FHSS Fallback)"
             return (
-                "Kırılan Bağ! UART-2 telemetri hattı koptu, varyasyonel entropi %89 seviyesine fırladı. "
-                "Panik yok yoldaş! Bilişsel Kam ayini başlattı: SDR 868MHz frekans atlamalı kurtarma köprüsü bellekte JIT derlendi ve görev hattı kesintisiz göğe taşındı.",
+                "Kırılan Bağ Tespit Edildi: UART-2 telemetri hattı koptu, varyasyonel entropi %89 seviyesine yükseldi. "
+                "Bilişsel KAM otonom onarım protokolünü devreye aldı: SDR 868MHz frekans atlamalı kurtarma köprüsü bellekte JIT derlendi ve görev hattı kesintisiz devralındı.",
                 CodeMutator.generate_sdr_fallback()
             )
         elif c_type == "ew_jamming":
             KamWebHandler.engine.active_telemetry = "SDR-433MHz (Anti-Jamming Hopping)"
             return (
-                "Düşman Karıştırması! Elektronik Harp karıştırması (-95dBm gürültü) tespit edildi. "
-                "Bozkır kurdu gibi izimizi kaybettiriyoruz: FHSS bilişsel radyo 433 MHz temiz bandına sıçradı, gürültü tabanı aşıldı.",
-                CodeMutator.generate_sdr_fallback()
+                "Elektronik Harp Karıştırması: Spektrumda -95 dBm geniş bant gürültü tespit edildi. "
+                "FHSS bilişsel radyo topolojisi 433 MHz temiz frekans bandına sıçradı, gürültü tabanı aşılarak dirlik korundu.",
+                CodeMutator.generate_ew_fhss_fallback()
             )
         elif c_type == "thermal_spike":
             return (
-                "Kızıl Kor! NPU 92.4°C sıcaklığa ulaştı. "
-                "Aşırı hararet silikonu eritmeden eBPF termal kancamız devreye girdi: Model INT4-AWQ moduna çekildi, güç tüketimi 45W -> 14.5W seviyesine indirildi.",
+                "Termal Eşik Aşımı: NPU sıcaklığı 92.4°C seviyesine ulaştı. "
+                "Linux eBPF termal kancası devreye girdi: Model dinamik INT4-AWQ kuantizasyon moduna çekildi, güç tüketimi 45W -> 14.5W seviyesine indirildi.",
                 CodeMutator.generate_thermal_fallback()
             )
         elif c_type == "can_spoof":
             return (
-                "Siber Sızma! CAN-0 veriyoluna yetkisiz sahte paket (ID 0x1BA) sızdırıldı. "
-                "eBPF bellek içi güvenlik filtresi (can_firewall_filter.cpp) saldırganı mikrosaniyede karantinaya aldı.",
-                CodeMutator.generate_sdr_fallback()
+                "Veriyolu Anomalisi: CAN-0 hattına yetkisiz çerçeve (ID 0x1BA) enjeksiyonu tespit edildi. "
+                "Bellek-içi eBPF güvenlik filtresi (can_firewall_filter.cpp) derlenerek sahte paketler mikrosaniyede karantinaya alındı.",
+                CodeMutator.generate_can_firewall_fallback()
             )
         return "Bilinmeyen kriz tipi", None
 
@@ -212,13 +214,13 @@ def run_gui(host: str = "127.0.0.1", port: int = 8080, open_browser: bool = True
     server = ThreadingHTTPServer((host, port), KamWebHandler)
     url = f"http://{host}:{port}"
 
-    print("=" * 65)
-    print("  🐺 KAM BİLİŞSEL VE OTONOM SİSTEM ARAYÜZÜ (WEB GUI)")
-    print("=" * 65)
-    print(f"  • Yerel Arayüz Adresi : {url}")
-    print(f"  • Aktif LLM Motoru    : {KamWebHandler.llm_client.current_model} ({KamWebHandler.llm_client.active_backend})")
-    print("  • Terminal gerekmeden tüm sistemi web üzerinden yönetebilirsiniz.")
-    print("=" * 65 + "\n")
+    print("=" * 68)
+    print("  KAM BILISSEL VE OTONOM SISTEM KOMUTA MERKEZI (WEB GUI v2.5)")
+    print("=" * 68)
+    print(f"  * Yerel Arayuz Adresi : {url}")
+    print(f"  * Aktif LLM Motoru    : {KamWebHandler.llm_client.current_model} ({KamWebHandler.llm_client.active_backend})")
+    print("  * Tum telemetri ve kriz simulasyonlari web arayuzunde aktiftir.")
+    print("=" * 68 + "\n")
 
     if open_browser:
         try:

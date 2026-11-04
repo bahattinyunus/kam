@@ -1,13 +1,13 @@
-# KAM Model Context Protocol (MCP) Spesifikasyonu 📡
+# KAM Model Context Protocol (MCP) Spesifikasyonu
 
-KAM, Anthropic / Model Context Protocol (MCP) açık standardını destekleyerek yerel ve uç LLM modellerinin otonom sistem telemetrisine doğrudan erişmesini sağlar.
+KAM, Model Context Protocol (MCP) açık standardını JSON-RPC 2.0 üzerinden destekleyerek yerel ve uç otonom ajanların sistem telemetrisine, entropi hesabına ve bellek-içi derleyiciye doğrudan erişmesini sağlar.
 
 ---
 
-## 🛠️ Tanımlı MCP Araçları (Tools)
+## I. Tanımlı MCP Araçları (Tools)
 
 ### 1. `read_telemetry`
-- **Açıklama:** Kernel seviyesi eBPF telemetri verilerini, dosya tanımlayıcı sağlık durumunu ve aktif hatları okur.
+- **Açıklama:** Çekirdek seviyesi eBPF telemetri verilerini, dosya tanımlayıcı sağlık durumunu ve aktif iletişim hatlarını okur.
 - **Parametreler:** Yok.
 - **Örnek Yanıt:**
 ```json
@@ -19,7 +19,7 @@ KAM, Anthropic / Model Context Protocol (MCP) açık standardını destekleyerek
 ```
 
 ### 2. `calculate_entropy`
-- **Açıklama:** Karl Friston'un serbest enerji prensibi ile anlık sistem kaos yüzdesini hesaplar.
+- **Açıklama:** Karl Friston'un Serbest Enerji Prensibi ile anlık sistem entropi yüzdesini ve anomali durumunu hesaplar.
 - **Örnek Yanıt:**
 ```json
 {
@@ -29,24 +29,29 @@ KAM, Anthropic / Model Context Protocol (MCP) açık standardını destekleyerek
 ```
 
 ### 3. `compile_module`
-- **Açıklama:** Üretilen C++20 kaynak kodunu bellek içinde JIT derler ve doğrular.
+- **Açıklama:** Üretilen C++20 kaynak kodunu AST güvenlik denetiminden geçirerek bellek içinde JIT derler.
 - **Parametreler:**
-  - `module_name` (string): Modül adı (örn: `sdr_fallback_node`).
-  - `cpp_source` (string): C++20 kaynak kodu.
+  - `module_name` (`string`): Modül adı (örn. `sdr_fallback_node`).
+  - `cpp_source` (`string`): C++20 kaynak kodu.
 
 ### 4. `deploy_topology`
-- **Açıklama:** Canlı ROS2/C++ topolojisini günceller ve yeni düğümü sisteme bağlar.
+- **Açıklama:** Derlenmiş paylaşımlı kütüphaneyi canlı çalışma alanına sıcak-yama (`hot-patch`) olarak bağlar ve veri yolunu yeniden yönlendirir.
 - **Parametreler:**
-  - `module_name` (string): Yüklenecek modül adı.
+  - `module_name` (`string`): Yüklenecek modül adı.
+
+### 5. `inspect_kernel`
+- **Açıklama:** Linux eBPF `kprobe`/`tracepoint` kanca sayaçlarını ve NPU termal bölgelerini denetler.
 
 ---
 
-## ⚡ Kullanım ve Entegrasyon
-MCP modunda çalıştırmak için:
+## II. Kullanım ve İstemci Entegrasyonu
+
+MCP sunucusunu `stdio` modunda başlatmak için:
 ```bash
 python cli.py --mcp
 ```
-Claude Desktop veya harici bir MCP istemcisi konfigürasyonuna eklemek için:
+
+Harici bir MCP istemcisi konfigürasyonuna eklemek için:
 ```json
 {
   "mcpServers": {

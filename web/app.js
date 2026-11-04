@@ -15,14 +15,14 @@ function formatMarkdown(text) {
     if (mainText.includes("</think>")) {
       mainText = mainText.replace(/<think>([\s\S]*?)<\/think>/gi, (match, thought) => {
         return `<details class="thought-process" open>
-          <summary class="thought-summary">🧠 Düşünce Süreci (DeepSeek-R1 Akıl Yürütme)</summary>
+          <summary class="thought-summary">[CoT] Bilişsel Akıl Yürütme Zinciri</summary>
           <div class="thought-content">${thought.trim().replace(/\n/g, '<br>')}</div>
         </details>`;
       });
     } else {
       mainText = mainText.replace(/<think>([\s\S]*)$/gi, (match, thought) => {
         return `<details class="thought-process" open>
-          <summary class="thought-summary">🧠 Düşünce Süreci (Düşünüyor...)</summary>
+          <summary class="thought-summary">[CoT] Bilişsel Akıl Yürütme Sürüyor...</summary>
           <div class="thought-content">${thought.trim().replace(/\n/g, '<br>')} <span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></div>
         </details>`;
       });
@@ -100,6 +100,11 @@ async function fetchTelemetry() {
     const elChannel = document.getElementById("val-active-channel");
     if (elChannel) elChannel.innerText = data.active_telemetry;
 
+    if (data.ebpf_events_per_sec) {
+      const elEbpf = document.getElementById("val-ebpf-events");
+      if (elEbpf) elEbpf.innerText = `${data.ebpf_events_per_sec.toLocaleString("tr-TR")} /s`;
+    }
+
     // Aktif Model Etiketleri
     if (data.active_model) {
       const shortModel = data.active_model.split(":")[0];
@@ -115,12 +120,12 @@ async function fetchTelemetry() {
     const statusPill = document.getElementById("status-pill");
     if (statusText && statusPill) {
       if (data.chaos_detected) {
-        statusText.innerText = "KAOS & ENJİYON";
+        statusText.innerText = "KRİTİK ENTROPİ // CANLI ONARIM";
         statusPill.style.color = "var(--crimson-glow)";
         statusPill.style.borderColor = "var(--crimson-glow)";
         statusPill.style.background = "rgba(244, 63, 94, 0.15)";
       } else {
-        statusText.innerText = "DİRLİK & DENGE";
+        statusText.innerText = "DİRLİK VE NİZAM";
         statusPill.style.color = "var(--emerald-glow)";
         statusPill.style.borderColor = "rgba(16, 185, 129, 0.25)";
         statusPill.style.background = "rgba(16, 185, 129, 0.1)";

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAM 🐺⚡ Bilişsel Zihin & Otonom Sistem</title>
+  <title>KAM // Bilişsel Zihin ve Otonom Sistem Motoru</title>
   <link rel="icon" type="image/svg+xml" href="kam_logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,12 +18,12 @@
   <!-- Üst Gezinme Çubuğu (Iconic Header) -->
   <header class="app-header">
     <div class="header-left">
-      <div class="brand-badge" title="KAM: Kadim Bilişsel Şaman & Otonom Motor">
+      <div class="brand-badge" title="KAM: Bilişsel Zihin ve Otonom Sistem Motoru">
         <img src="kam_logo.png" alt="KAM" class="brand-badge-img">
       </div>
       <div class="brand-text">
         <span class="brand-name">KAM</span>
-        <span class="brand-version">R1 BİLİŞSEL</span>
+        <span class="brand-version">CORE v2.5</span>
       </div>
     </div>
 
@@ -31,8 +31,8 @@
     <div class="header-center">
       <div class="status-indicator-pill" id="status-pill">
         <span class="status-dot"></span>
-        <span id="system-status-text">DİRLİK & DENGE</span>
-        <span class="pill-divider">•</span>
+        <span id="system-status-text">DİRLİK VE NİZAM</span>
+        <span class="pill-divider">&bull;</span>
         <span class="pill-metric">Entropi: <strong id="val-entropy">%3</strong></span>
       </div>
     </div>
@@ -40,18 +40,16 @@
     <!-- Sağ Eylemler -->
     <div class="header-right">
       <button class="nav-btn model-pill-btn" onclick="openSettingsModal()" title="Aktif Modeli Seç / Yapılandır">
-        <span class="btn-icon">🧠</span>
-        <span id="active-model-text">kam:r1</span>
-        <span class="btn-arrow">▾</span>
+        <span id="active-model-text">kam:7b</span>
+        <span class="btn-arrow">&#9662;</span>
       </button>
 
-      <button class="nav-btn hud-toggle-btn" onclick="toggleTelemetryDrawer()" title="Siber-Şamanik Telemetri ve Kriz Masasını Aç/Kapat">
-        <span class="btn-icon">⚡</span>
-        <span class="btn-label">Telemetri & Kriz</span>
+      <button class="nav-btn hud-toggle-btn" onclick="toggleTelemetryDrawer()" title="Telemetri ve Kriz Masasını Aç/Kapat">
+        <span class="btn-label">Telemetri &amp; Kriz</span>
       </button>
 
       <button class="nav-btn icon-only-btn" onclick="clearChat()" title="Sohbeti Temizle">
-        <span>🗑️</span>
+        <span>TEMİZLE</span>
       </button>
     </div>
   </header>
@@ -60,37 +58,37 @@
   <main class="chat-viewport">
     <div class="chat-container">
 
-      <!-- Karşılama ve İkonik Hero Bölümü (Sohbet boşken öne çıkar) -->
+      <!-- Karşılama ve İkonik Hero Bölümü -->
       <section class="welcome-hero" id="welcome-hero">
         <div class="hero-crest">
           <div class="crest-ring"></div>
           <div class="crest-glow"></div>
-          <img src="kam_logo.png" alt="KAM Siber-Şamanik Logo" class="hero-crest-img">
+          <img src="kam_logo.png" alt="KAM Sovereign Mark" class="hero-crest-img">
         </div>
         <h1 class="hero-title">KAM BİLİŞSEL ZİHİN</h1>
         <p class="hero-subtitle">
-          Kadim Türk bilgeliği, <strong>Karl Friston Serbest Enerjisi</strong> ve <strong>Linux eBPF</strong> sinir kancalarıyla silikonda birleşti.
+          Dede Korkut hikmeti, <strong>Karl Friston Serbest Enerji Prensibi</strong> ve <strong>Linux eBPF</strong> çekirdek kancalarıyla silikonda birleşti.
         </p>
         <div class="hero-meta">
           <span>Baş Mimar: <strong>Bahattin Yunus ÇETİN</strong> (@bahattinyunus)</span>
-          <span class="dot">•</span>
-          <span>NVIDIA RTX 5060 GPU (%100 Cuda)</span>
-          <span class="dot">•</span>
-          <span>DeepSeek-R1 Akıl Yürütme</span>
+          <span class="dot">&bull;</span>
+          <span>NVIDIA RTX 5060 GPU (%100 CUDA)</span>
+          <span class="dot">&bull;</span>
+          <span>Air-Gapped Otonom Çekirdek</span>
         </div>
 
         <!-- 4 İkonik Başlangıç Kartı -->
         <div class="starter-cards-grid">
           <div class="starter-card" onclick="sendPrompt('Neden adın KAM ve varoluşsal felsefen nedir?')">
-            <div class="card-icon">🐺</div>
+            <div class="card-icon">I</div>
             <div class="card-content">
-              <h3>Öz Kimlik ve Felsefe</h3>
-              <p>Adın neden KAM ve Altay bozkırlarından gelen yoldaşlık ruhun nedir?</p>
+              <h3>Öz Kimlik ve Hikmet</h3>
+              <p>Adın neden KAM ve Dede Korkut geleneğinden gelen dirlik felsefen nedir?</p>
             </div>
           </div>
 
           <div class="starter-card" onclick="sendPrompt('Karl Friston serbest enerji prensibini bir mühendise mantıklı, matematiksel ve net açıkla.')">
-            <div class="card-icon">🌀</div>
+            <div class="card-icon">II</div>
             <div class="card-content">
               <h3>Friston Serbest Enerjisi</h3>
               <p>Varyasyonel serbest enerji (F) ve KL-diverjansı sistemi nasıl dengede tutar?</p>
@@ -98,18 +96,18 @@
           </div>
 
           <div class="starter-card" onclick="sendPrompt('Bir SİHA 3 boyutta düşman radarını aşarak nasıl yol planlaması yapar? Düşünerek adım adım açıkla.')">
-            <div class="card-icon">🧠</div>
+            <div class="card-icon">III</div>
             <div class="card-content">
-              <h3>R1 Derin Akıl Yürütme</h3>
+              <h3>Derin Akıl Yürütme</h3>
               <p>3B otonom İHA rota optimizasyonunu zincirleme düşünceyle analiz et.</p>
             </div>
           </div>
 
-          <div class="starter-card" onclick="sendPrompt('Uç sistemler için C++20 ile sıfır bellek sızıntılı ve kartsız çalışan bir Memory Arena kodu yaz.')">
-            <div class="card-icon">⚔️</div>
+          <div class="starter-card" onclick="sendPrompt('Uç sistemler için C++20 ile sıfır bellek sızıntılı ve deterministik çalışan bir Memory Arena kodu yaz.')">
+            <div class="card-icon">IV</div>
             <div class="card-content">
               <h3>C++20 Uç Mühendislik</h3>
-              <p>Dinamik bellek tahsisinden kaçınan taktiksel Memory Arena sınıfı üret.</p>
+              <p>Dinamik bellek tahsisinden kaçınan deterministik Memory Arena sınıfı üret.</p>
             </div>
           </div>
         </div>
@@ -117,7 +115,6 @@
 
       <!-- Mesaj Akışı -->
       <div class="chat-stream" id="chat-history">
-        <!-- Dinamik mesajlar buraya eklenir -->
       </div>
     </div>
   </main>
@@ -128,14 +125,14 @@
       <div class="input-actions-left">
         <button class="island-action-btn" onclick="openSettingsModal()" title="Model Değiştir">
           <span class="pill-dot"></span>
-          <span id="island-model-label">kam:r1</span>
+          <span id="island-model-label">kam:7b</span>
         </button>
       </div>
 
       <textarea 
         id="chat-input" 
         rows="1" 
-        placeholder="Bilge Kam'a danışın, derin akıl yürütme başlatın veya C++ kodu isteyin..." 
+        placeholder="KAM Bilişsel Zihnine danışın, derin akıl yürütme başlatın veya C++20 kodu isteyin..." 
         onkeydown="handleKeyDown(event)"
         oninput="autoResizeTextarea(this)"></textarea>
 
@@ -149,32 +146,31 @@
       </div>
     </div>
     <div class="input-caption">
-      <span>🐺 KAM v2.5</span>
-      <span class="dot">•</span>
+      <span>KAM CORE v2.5</span>
+      <span class="dot">&bull;</span>
       <span>Shift + Enter yeni satır</span>
-      <span class="dot">•</span>
-      <span>Altay Bozkırlarından Siber Uç Sistemlere</span>
+      <span class="dot">&bull;</span>
+      <span>Air-Gapped Autonomous Cognitive Engine</span>
     </div>
   </div>
 
-  <!-- SİBER-ŞAMANİK TELEMETRİ VE KRİZ PANELİ (Slide-Over HUD Drawer) -->
+  <!-- BİLİŞSEL TELEMETRİ VE KRİZ PANELİ (Slide-Over HUD Drawer) -->
   <div class="hud-drawer-backdrop" id="hud-backdrop" onclick="toggleTelemetryDrawer()"></div>
   <aside class="hud-drawer" id="hud-drawer">
     <div class="drawer-header">
       <div class="drawer-title-group">
-        <div class="drawer-icon">🛡️</div>
         <div>
-          <h2>SİBER-ŞAMANİK TELEMETRİ</h2>
-          <p>Donanım Düğümleri & Friston Kriz Masası</p>
+          <h2>BİLİŞSEL TELEMETRİ VE KRİZ MASASI</h2>
+          <p>Donanım Düğümleri, eBPF Kancaları ve Aktif Çıkarım Metrikleri</p>
         </div>
       </div>
-      <button class="drawer-close-btn" onclick="toggleTelemetryDrawer()" title="Kapat (Esc)">✕</button>
+      <button class="drawer-close-btn" onclick="toggleTelemetryDrawer()" title="Kapat (Esc)">&#10005;</button>
     </div>
 
     <div class="drawer-content">
       <!-- Canlı Metrikler -->
       <div class="hud-section">
-        <h3 class="hud-section-title">🌀 Kut & Dirlik Terazisi</h3>
+        <h3 class="hud-section-title">I. Dirlik ve Entropi Dengesi</h3>
         <div class="metric-hud-grid">
           <div class="metric-hud-card">
             <span class="metric-hud-label">Sistem Entropisi (S)</span>
@@ -193,7 +189,7 @@
           </div>
 
           <div class="metric-hud-card">
-            <span class="metric-hud-label">Silikon Harareti (NPU)</span>
+            <span class="metric-hud-label">Silikon Sıcaklığı (NPU)</span>
             <div class="metric-hud-val" id="val-npu-temp">48.2°C</div>
             <div class="progress-bar-container">
               <div class="progress-fill" id="bar-npu-temp" style="width: 48%; background: var(--amber-glow);"></div>
@@ -201,7 +197,7 @@
           </div>
 
           <div class="metric-hud-card">
-            <span class="metric-hud-label">eBPF Sinir Nabzı</span>
+            <span class="metric-hud-label">eBPF Çekirdek Akışı</span>
             <div class="metric-hud-val" id="val-ebpf-events">3,420 /s</div>
             <div class="progress-bar-container">
               <div class="progress-fill" id="bar-ebpf-events" style="width: 65%; background: var(--purple-glow);"></div>
@@ -217,22 +213,22 @@
 
       <!-- Donanım Düğümleri -->
       <div class="hud-section">
-        <h3 class="hud-section-title">🛡️ Donanım Otağı & Kutsal Hatlar</h3>
+        <h3 class="hud-section-title">II. Donanım Düğümleri ve Veri Yolları</h3>
         <div class="node-hud-list">
           <div class="node-hud-row">
             <span class="node-name">UART-2 Telemetri Bağı</span>
             <span class="node-status-tag tag-online" id="tag-uart">ONLINE</span>
           </div>
           <div class="node-hud-row">
-            <span class="node-name">SDR 868MHz Bilişsel Telsiz</span>
+            <span class="node-name">SDR 868MHz Bilişsel Radyo</span>
             <span class="node-status-tag tag-online" id="tag-sdr">STANDBY</span>
           </div>
           <div class="node-hud-row">
-            <span class="node-name">IMU & 6-DOF EKF Ataletsel Füzyon</span>
+            <span class="node-name">IMU &amp; 6-DOF EKF Ataletsel Füzyon</span>
             <span class="node-status-tag tag-online">ONLINE</span>
           </div>
           <div class="node-hud-row">
-            <span class="node-name">CAN-0 Taşıt Ağı</span>
+            <span class="node-name">CAN-0 Taşıt Veriyolu</span>
             <span class="node-status-tag tag-online" id="tag-can">ONLINE</span>
           </div>
           <div class="node-hud-row">
@@ -244,35 +240,31 @@
 
       <!-- Kaos ve Kriz Simülatörü -->
       <div class="hud-section">
-        <h3 class="hud-section-title">⚡ Kaos İmtihanı (Ayin Tetikleyici)</h3>
+        <h3 class="hud-section-title">III. Kriz Simülatörü ve Otonom Onarım</h3>
         <div class="crisis-grid">
           <button class="crisis-card-btn" onclick="triggerCrisis('uav_uart_cut'); toggleTelemetryDrawer();">
-            <span class="crisis-icon">💥</span>
             <span class="crisis-title">UART Kopuşu</span>
-            <span class="crisis-desc">JIT SDR telsiz geçişi</span>
+            <span class="crisis-desc">JIT SDR 868MHz geçişi</span>
           </button>
 
           <button class="crisis-card-btn" onclick="triggerCrisis('ew_jamming'); toggleTelemetryDrawer();">
-            <span class="crisis-icon">🌪️</span>
             <span class="crisis-title">Elektronik Harp</span>
             <span class="crisis-desc">FHSS spektral sıçrama</span>
           </button>
 
           <button class="crisis-card-btn" onclick="triggerCrisis('thermal_spike'); toggleTelemetryDrawer();">
-            <span class="crisis-icon">🔥</span>
-            <span class="crisis-title">92°C Hararet</span>
-            <span class="crisis-desc">Dinamik INT4 kuantizasyon</span>
+            <span class="crisis-title">92°C Termal Pik</span>
+            <span class="crisis-desc">Dinamik INT4-AWQ modu</span>
           </button>
 
           <button class="crisis-card-btn" onclick="triggerCrisis('can_spoof'); toggleTelemetryDrawer();">
-            <span class="crisis-icon">🛡️</span>
             <span class="crisis-title">CAN Spoofing</span>
             <span class="crisis-desc">eBPF paket karantinası</span>
           </button>
         </div>
 
         <button class="btn-reset-balance" onclick="resetSystem()">
-          🔄 Dirlik ve Dengeyi Sıfırla (Entropi %3)
+          Dirlik ve Dengeyi Sıfırla (Entropi %3)
         </button>
       </div>
     </div>
@@ -283,21 +275,20 @@
     <div class="modal-glass-card">
       <div class="modal-header">
         <div class="modal-title-group">
-          <span class="modal-icon">🧠</span>
-          <h3>Bilişsel Zihin & Model Yapılandırması</h3>
+          <h3>Bilişsel Zihin ve Model Yapılandırması</h3>
         </div>
-        <button class="modal-close" onclick="closeSettingsModal()">✕</button>
+        <button class="modal-close" onclick="closeSettingsModal()">&#10005;</button>
       </div>
       <div class="modal-body">
         <p class="modal-desc">
-          KAM, yerel <strong>kam:r1 (DeepSeek-R1 Akıl Yürütme)</strong>, <strong>kam:7b</strong> veya doğrudan bulut <strong>Google Gemini</strong> motorlarını kullanabilir.
+          KAM; yerel <strong>kam:7b (Duru Türkçe Bilişsel Zihin)</strong>, <strong>kam:r1 (DeepSeek-R1 Akıl Yürütme)</strong> veya hibrit <strong>Google Gemini</strong> motorlarını destekler.
         </p>
 
         <div class="form-group">
           <label class="form-label">Aktif Model Seçimi:</label>
           <select id="modal-model-select" class="form-select">
-            <option value="kam:r1">kam:r1 (DeepSeek-R1 Derin Düşünce - Yerel GPU)</option>
-            <option value="kam:7b">kam:7b (Kadim Bilişsel Şaman - Yerel GPU)</option>
+            <option value="kam:7b">kam:7b (Qwen 2.5 7B Duru Türkçe Bilişsel Zihin - Yerel GPU)</option>
+            <option value="kam:r1">kam:r1 (DeepSeek-R1 Derin Akıl Yürütme - Yerel GPU)</option>
             <option value="deepseek-r1:7b">deepseek-r1:7b (Ollama Yerel)</option>
             <option value="qwen2.5:7b">qwen2.5:7b (Ollama Standart 7B)</option>
             <option value="gemini-1.5-flash">gemini-1.5-flash (Google Gemini Bulut)</option>
@@ -307,13 +298,13 @@
 
         <div class="form-group" style="margin-top: 16px;">
           <label class="form-label">Google Gemini API Key (İsteğe Bağlı):</label>
-          <input type="password" id="modal-gemini-key" class="form-input" placeholder="AIzaSy... (Gemini bulut modu için)">
+          <input type="password" id="modal-gemini-key" class="form-input" placeholder="AIzaSy... (Gemini hibrit modu için)">
           <small class="form-hint">Key girilirse Gemini 1.5/2.0 modelleri hibrit olarak devreye girer.</small>
         </div>
 
         <div class="modal-footer">
           <button class="btn-ghost" onclick="closeSettingsModal()">İptal</button>
-          <button class="btn-primary" onclick="saveSettings()">💾 Kaydet & Uygula</button>
+          <button class="btn-primary" onclick="saveSettings()">Kaydet ve Uygula</button>
         </div>
       </div>
     </div>

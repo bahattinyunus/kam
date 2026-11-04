@@ -36,9 +36,25 @@ class TestKam(unittest.TestCase):
         sdr_code = CodeMutator.generate_sdr_fallback()
         self.assertIn("sdr_fallback_node.cpp", sdr_code)
         self.assertIn("kam_entrypoint", sdr_code)
+        self.assertTrue(CodeMutator.validate_ast(sdr_code)["valid"])
 
         thermal_code = CodeMutator.generate_thermal_fallback()
         self.assertIn("thermal_vision_fallback.cpp", thermal_code)
+        self.assertTrue(CodeMutator.validate_ast(thermal_code)["valid"])
+
+        ew_code = CodeMutator.generate_ew_fhss_fallback()
+        self.assertIn("ew_fhss_hopper.cpp", ew_code)
+        self.assertTrue(CodeMutator.validate_ast(ew_code)["valid"])
+
+        can_code = CodeMutator.generate_can_firewall_fallback()
+        self.assertIn("can_firewall_filter.cpp", can_code)
+        self.assertTrue(CodeMutator.validate_ast(can_code)["valid"])
+
+    def test_code_mutator_ast_sandbox(self):
+        unsafe_code = 'extern "C" int kam_entrypoint() { system("rm -rf /"); return 0; }'
+        res = CodeMutator.validate_ast(unsafe_code)
+        self.assertFalse(res["valid"])
+        self.assertGreater(len(res["violations"]), 0)
 
     def test_mcp_server(self):
         mcp = McpServer()
