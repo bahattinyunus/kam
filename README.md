@@ -1,9 +1,13 @@
 <p align="center">
-  <img src="assets/kam_logo.png" alt="KAM Master Insignia" width="210px" style="border-radius: 50%; box-shadow: 0 0 45px rgba(0, 242, 254, 0.40);" />
+  <img src="assets/kam_hero_banner.jpg" alt="KAM Autonomous Defense Edge Banner" width="100%" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 12px 45px rgba(0,0,0,0.65);" />
 </p>
 
 <p align="center">
-  <h1 align="center" style="letter-spacing: 4px; font-weight: 800;">🐺⚡ K A M</h1>
+  <img src="assets/kam_logo.png" alt="KAM Master Insignia" width="190px" style="border-radius: 50%; box-shadow: 0 0 45px rgba(0, 242, 254, 0.40); margin-top: 10px;" />
+</p>
+
+<p align="center">
+  <h1 align="center" style="letter-spacing: 5px; font-weight: 800; margin-top: -5px;">🐺⚡ K A M</h1>
   <p align="center"><strong>Uç Donanımlar (Edge-AI) İçin %100 Yerel Bilişsel Zihin & Kendi Kendini İyileştiren Otonom Sistem Motoru</strong></p>
   <p align="center"><em>Mission-Critical Edge Intelligence • Active Inference & Free Energy Principle • Linux eBPF Kernel Telemetry • In-Memory C++20 JIT Mutation</em></p>
 </p>
@@ -15,10 +19,6 @@
   <img src="https://img.shields.io/badge/JIT_Hot--Patch-41.2%20ms-00C9FF.svg?style=for-the-badge&logo=c%2B%2B" />
   <img src="https://img.shields.io/badge/NVIDIA-CUDA_12.x_%7C_RTX_5060-76B900.svg?style=for-the-badge&logo=nvidia" />
   <img src="https://img.shields.io/badge/License-Apache_2.0-black.svg?style=for-the-badge" />
-</p>
-
-<p align="center">
-  <img src="assets/kam_hero_banner.jpg" alt="KAM Autonomous Defense Edge Banner" width="100%" style="border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 40px rgba(0,0,0,0.6);" />
 </p>
 
 ---
@@ -68,26 +68,45 @@ Klasik otonom mimariler; bir sensör koptuğunda, elektronik harp karıştırmas
 
 ---
 
-## 🧭 Üç Sarsılmaz İlke
+## 🧭 İkiz Çekirdek Gücü: eBPF ve Bellek-İçi JIT Tekamülü
 
-```text
- ┌─────────────────────────────────────────────────────────────────────────────┐
- │  I. MUTLAK İZOLASYON (AIR-GAPPED SURVIVAL)                                  │
- │  Sıfır dış ağ bağımlılığı. Görev anında tamamen yerel, bağımsız bilişsel zihin. │
- ├─────────────────────────────────────────────────────────────────────────────┤
- │  II. ÇEKİRDEK SEVİYESİ BASİRET (eBPF KERNEL PROPRIOCEPTION)                 │
- │  Yüzeysel CPU izleyicisi değil; Linux çekirdeğine doğrudan tutunan sinir ağı.  │
- ├─────────────────────────────────────────────────────────────────────────────┤
- │  III. CANLI TEKAMÜL (IN-MEMORY JIT MUTATION)                                │
- │  Failsafe kilitlenme yok. Kodu bellekte derle, sıcak-yama yap ve görevi sürdür.│
- └─────────────────────────────────────────────────────────────────────────────┘
-```
+KAM'ın donanıma can veren iki temel organı silikon seviyesinde eşgüdümlü çalışır:
+
+<table align="center" width="100%">
+  <tr>
+    <td width="50%" align="center" style="border: 1px solid rgba(255,255,255,0.08); padding: 10px; border-radius: 8px;">
+      <img src="assets/kam_ebpf_neural_system.jpg" alt="eBPF Silicon Nervous System" width="100%" style="border-radius: 6px;" />
+      <br/>
+      <strong>⚡ Linux eBPF Sinir Kancası (&lt; 12 μs)</strong><br/>
+      <small>Çekirdek olaylarını lock-free SPSC RingBuffer ile mikrosaniyede okur.</small>
+    </td>
+    <td width="50%" align="center" style="border: 1px solid rgba(255,255,255,0.08); padding: 10px; border-radius: 8px;">
+      <img src="assets/kam_jit_self_healing.jpg" alt="In-Memory JIT Self-Healing" width="100%" style="border-radius: 6px;" />
+      <br/>
+      <strong>🛡️ In-Memory C++20 JIT Onarımı (41.2 ms)</strong><br/>
+      <small>Kurtarma kodunu bellekte derler ve çalışan sürece sıcak-yama yapar.</small>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 📡 Otonom Sürü Ağı ve Elektronik Harp Dirayeti (Swarm Mesh)
+
+<p align="center">
+  <img src="assets/kam_swarm_active_inference.jpg" alt="Autonomous Swarm Active Inference in EW Storm" width="100%" style="border-radius: 8px; box-shadow: 0 10px 35px rgba(99, 102, 241, 0.30);" />
+</p>
+
+Düşman elektronik harp karıştırması (-95 dBm gürültü) veya radar karartması anında:
+- **Dağıtık Markov Sınırı:** Sürüdeki her İHA, filo arkadaşlarını aktif çıkarım modelinin dinamik bir duyusal düğümü kabul eder.
+- **Kolektif Entropi Minimizasyonu:** Filo lideri sustuğunda Raft/eBPF protokolü mikrosaniyede en düşük varyasyonel serbest enerjiye ($F$) sahip İHA'yı yeni lider ilan eder.
+- **FHSS Bilişsel Sıçrama:** Karıştırılan frekans terk edilerek 868MHz bandında altın oran aralıklarla koordinasyon kesintisiz sürdürülür.
 
 ---
 
 ## 🤗 Hugging Face Model Ailesi & Tek Satırda Çalıştırma
 
-KAM modelleri resmi olarak **Hugging Face Hub** üzerinde yayınlanmıştır. Ollama ile tek komutla çalıştırılabilir:
+KAM modelleri resmi olarak **Hugging Face Hub** üzerinde yayınlanmıştır. Ollama ile tek komutla doğrudan çalıştırılabilir:
 
 | Model | Boyut | Mimari / Çap | Hugging Face Deposu | Tek Satır Başlatma Komutu |
 |:---|:---|:---|:---|:---|
@@ -103,14 +122,14 @@ Taktik telemetri, kriz yönetimi ve bilişsel model etkileşimi için **obsidian
 
 ```bash
 python web_ui.py
-# Kokpit yerel adresi: http://127.0.0.1:8080
+# Kokpit yerel erişim adresi: http://127.0.0.1:8080
 ```
 
 <p align="center">
   <img src="assets/kam_cyber_cockpit_hud.jpg" alt="KAM Cognitive Cockpit HUD" width="95%" style="border-radius: 8px; box-shadow: 0 0 35px rgba(0, 242, 254, 0.30);" />
 </p>
 
-- **Kristal Odak Tuvali:** Gereksiz gürültüden arındırılmış, merkez amblem ve asil Türkçeyle akan zihin diyaloğu.
+- **Kristal Odak Tuvali:** Gereksiz gürültüden arındırılmış merkez amblem ve asil Türkçeyle akan zihin diyaloğu.
 - **Slide-Over Telemetri & Kriz Çekmecesi:** NPU sıcaklığı, eBPF kancaları ve UART/SDR hat durumları sağ çekmecede anlık izlenir.
 - **DeepSeek-R1 Düşünce Akordeonu:** `<think>` zinciri mor ışıklı katlanabilir blok içinde akar; sonuç duru Türkçe ile sunulur.
 
