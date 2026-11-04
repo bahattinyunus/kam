@@ -863,7 +863,25 @@ class KamDesktopWindow(QMainWindow):
 
 
 def run_desktop_app():
+    if sys.platform == "win32":
+        try:
+            GENERIC_ALL = 0x10000000
+            hdesk = ctypes.windll.user32.OpenDesktopW("Default", 0, True, GENERIC_ALL)
+            if hdesk:
+                ctypes.windll.user32.SetThreadDesktop(hdesk)
+        except Exception:
+            pass
+
     app = QApplication(sys.argv)
     window = KamDesktopWindow()
     window.show()
+    window.raise_()
+    window.activateWindow()
+    if sys.platform == "win32":
+        try:
+            hwnd = int(window.winId())
+            ctypes.windll.user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+            ctypes.windll.user32.SetForegroundWindow(hwnd)
+        except Exception:
+            pass
     sys.exit(app.exec())
