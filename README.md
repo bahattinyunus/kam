@@ -116,22 +116,21 @@ KAM modelleri resmi olarak **Hugging Face Hub** üzerinde açık ağırlıklı G
 
 ---
 
-## VI. Bilişsel Kokpit (Web Arayüzü v2.5)
+## VI. Yerel Masaüstü Komuta Merkezi (Native Desktop UI v2.5)
 
-Taktik telemetri, kriz simülasyonu ve yerel bilişsel model etkileşimi için geliştirilmiş düşük gecikmeli komuta arayüzü:
+Tarayıcı veya web sunucusuna ihtiyaç duymadan doğrudan işletim sistemi üzerinde çalışan, donanım ivmeli (`PyQt6` / `QPainter`) **%100 yerel masaüstü komuta merkezi**:
 
 ```bash
-python web_ui.py
-# Yerel Erişim Adresi: http://127.0.0.1:8080
+python desktop_ui.py
 ```
 
 <p align="center">
   <img src="assets/kam_cyber_cockpit_hud.jpg" alt="KAM Cognitive Cockpit HUD" width="95%" style="border-radius: 8px; box-shadow: 0 0 35px rgba(0, 242, 254, 0.25);" />
 </p>
 
-- **Odaklı Komuta Tuvali:** Dikkat dağıtıcı unsurlardan arındırılmış merkez arayüz ve gerçek zamanlı SSE akışı.
-- **Açılır Telemetri ve Kriz Çekmecesi:** NPU sıcaklığı, eBPF kancaları, serbest enerji eğrisi ve donanım düğümlerini yan panelde sunar.
-- **Derin Düşünce Katmanı:** `kam:r1` modelinin `<think>` akıl yürütme adımlarını katlanabilir teknik bloklar halinde ayrıştırır.
+- **Sıfır Tarayıcı (100% Native Qt6):** Doğrudan işletim sistemi pencere yöneticisi, çoklu iş parçacıklı (`QThread`) LLM akışı ve 60 FPS `QPainter` vektör grafik motoru.
+- **Canlı Serbest Enerji Osiloskobu:** Varyasyonel serbest enerji $F(t)$ ve entropi $S(t)$ dalga formlarını gerçek zamanlı çizer.
+- **Canlı C++20 JIT Kod Müfettişi ve Kriz Simülatörü:** Donanım arızası tetiklendiğinde sentezlenen C++20 kurtarma kodunu, AST güvenlik doğrulamasını ve çekirdek olaylarını aynı ekranda sunar.
 
 ---
 
@@ -177,10 +176,9 @@ Donanım kopması anında sistemin çalışma zamanında ürettiği otonom teşh
 
 ## IX. Hızlı Başlangıç
 
-### 1. Web Kokpitini Başlatın
+### 1. Yerel Masaüstü Komuta Merkezini Başlatın (Native UI)
 ```bash
-python web_ui.py
-# Tarayici uzerinden erisim: http://127.0.0.1:8080
+python desktop_ui.py
 ```
 
 ### 2. Modelleri Yerelde Derleyin
