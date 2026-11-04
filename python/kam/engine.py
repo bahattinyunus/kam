@@ -28,12 +28,12 @@ class KamEngine:
 
     def awaken(self):
         self.running = True
-        self.log("[KAM-ÇEKİRDEK]", "⚡", "Sistem ruhu uyandırıldı. eBPF kancaları kernel'a tutundu.", CYAN)
+        self.log("[KAM-ÇEKİRDEK]", "⚡", "Bilişsel çekirdek devrede. eBPF kancaları kernel'a tutundu.", CYAN)
         time.sleep(0.4)
         entropy_pct = int(self.inference.entropy * 100)
-        self.log("[KAM-ÇEKİRDEK]", "🌀", f"Aktif Çıkarım devrede. Sistem entropisi: %{entropy_pct} (Stabil)", CYAN)
+        self.log("[KAM-ÇEKİRDEK]", "🌀", f"Aktif Çıkarım devrede. Sistem entropisi: %{entropy_pct} (Dirlik ve Nizam Sağlam)", CYAN)
 
-    def run_uav_failure_ritual(self):
+    def run_uav_recovery_protocol(self):
         self.awaken()
         time.sleep(0.5)
 
@@ -44,13 +44,13 @@ class KamEngine:
         # 2. Entropi Fırlaması
         chaos = self.inference.trigger_anomaly()
         chaos_pct = int(chaos * 100)
-        self.log("[SİNİR-SİSTEMİ]", "🔥", f"Entropi %{chaos_pct} seviyesine fırladı. Kritik Eşik aşıldı! Kaos tespit edildi.", RED)
+        self.log("[SİNİR-SİSTEMİ]", "🔥", f"Entropi %{chaos_pct} seviyesine fırladı. Kritik Eşik aşıldı! Donanım anomalisi tespit edildi.", RED)
         time.sleep(0.4)
 
         # 3. LLM Ajanı Devreye Girer
-        self.log("[KAM-AJAN]     ", "🧠", "Otonom iyileştirme ayini başlatılıyor...", MAGENTA)
+        self.log("[KAM-AJAN]     ", "🧠", "Otonom iyileştirme ve topolojik rekonfigürasyon başlatılıyor...", MAGENTA)
         time.sleep(0.4)
-        self.log("[KAM-AJAN]     ", "📡", "UART-2 düğümü koparıldı. İletişim için geçici olarak SDR (Yazılım Tanımlı Radyo) yedek frekansını kullanacak yeni C++ rotası yazılıyor.", MAGENTA)
+        self.log("[KAM-AJAN]     ", "📡", "UART-2 düğümü izole edildi. İletişim için geçici olarak SDR (Yazılım Tanımlı Radyo) yedek frekansını kullanacak yeni C++ rotası yazılıyor.", MAGENTA)
         time.sleep(0.5)
 
         # 4. Kod Üretimi ve Bellekte Derleme
@@ -61,4 +61,8 @@ class KamEngine:
         # 5. Başarılı İyileşme
         self.active_telemetry = "SDR-YEDEK"
         self.inference.reset_equilibrium(0.15)
-        self.log("[KAM-ÇEKİRDEK]", "🛡️ ", "İyileşme başarılı. Sistem entropisi: %15. Göreve devam ediliyor.", GREEN)
+        self.log("[KAM-ÇEKİRDEK]", "🛡️ ", "İyileşme başarılı. Sistem entropisi: %15. Dirlik ve nizam sağlandı. Göreve devam ediliyor.", GREEN)
+
+    # Geriye dönük uyumluluk takma adı
+    run_uav_failure_ritual = run_uav_recovery_protocol
+

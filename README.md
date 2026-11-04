@@ -17,7 +17,7 @@
   <a href="#-sistem-mimarisi-ve-bilişsel-döngü">🏛️ Mimari</a> •
   <a href="#-matematiksel-temeller-serbest-enerji-ve-aktif-çıkarım">🔬 Matematik</a> •
   <a href="#-derin-teknolojik-sistem-analizi">⚙️ Sistem Detayı</a> •
-  <a href="#-canlı-ayin-gerçek-terminal-akışı">⚡ Canlı Ayin</a> •
+  <a href="#-gerçek-zamanlı-kriz-müdahalesi-ve-canlı-onarım-akışı">⚡ Canlı Onarım</a> •
   <a href="#-hızlı-başlangıç">🚀 Başlangıç</a>
 </p>
 
@@ -39,32 +39,33 @@
 
 ---
 
-## 📜 Adımızın Hakkı: Kamlık Felsefesi ve Bilişsel Sibernetik Birliği
+## 🏛️ Felsefi Temel: Hikmet, Nizam ve Bilişsel Sibernetik
 
-Binlerce yıl önce Altay dağlarının eteklerinde, bozkırın ayazında ve Orhun vadilerinde atalarımız; evrenin mekanik, ölü ve pasif bir madde yığını olmadığını biliyorlardı. Doğa; fırtınanın, yırtıcıların, kuraklığın ve öngörülemez kaosun kol gezdiği dinamik bir varoluş alanıydı. Bu çetin kozmik gerilim hattında obanın, sürünün ve canın dirliğini **Kam (Qam / Baksı)** kurardı.
+Tarih boyunca çetin coğrafyalarda varlığını koruyan köklü medeniyetler, hayatta kalmanın yalnızca kaba kuvvetle değil; **akıl, hikmet, basiret ve nizam** ile mümkün olduğunu bilmişlerdir.
 
-Kaşgarlı Mahmud’un *Dîvânu Lugâti't-Türk*’ünde Kam; yalnızca bir kâhin değil, **"bilge, hekim, tabiatın gizli dilini çözen ve dirliği sağlayan ulu kişi"** olarak anılır. 
+Kadim gelenekte ve **Dede Korkut** anlatılarında **Kam (Qam / Baksı)**; kuru bir savaşçılığın ötesinde, cemiyetin ve sistemin dirliğini sağlayan, akılla eylemi birleştiren, kriz anında sükûnet ve adaletle doğru yolu gösteren **bilge iradedir**. Kaşgarlı Mahmud’un *Dîvânu Lugâti't-Türk*’ünde Kam; **"bilge, hekim, tabiatın kanunlarını çözen ve dirliği tesis eden ulu şahsiyet"** olarak tavsif edilir.
 
-Kam;
-1. **Gök Tengri**’nin temsil ettiği yüce bilişsel düzeni ve generatif inanç modelini,
-2. **Yer-Su** ruhlarının temsil ettiği fiziksel sensörleri, gövdeyi ve motorları,
-3. **Erlik Han**’ın temsil ettiği yeraltı kaosunu, elektronik karıştırmayı ve termodinamik çözülmeyi
+KAM mimarisi bu köklü dirayet ve vakar mirasını;
+1. **Bilişsel Sezgi ve Öngörü:** Karl Friston'un Serbest Enerji Prensibi doğrultusunda sistemin iç nizamını ve generatif modelini korumak,
+2. **Bedenî Basiret ve Farkındalık:** Uç donanımın, sensörlerin ve motorların durumunu Linux eBPF kancalarıyla çekirdek seviyesinde mikrosaniyede hissetmek,
+3. **Sarsılmaz Dirayet ve Kendini Onarma:** Dış dünyadan gelen elektronik harp, parazit ve donanım şoklarını bir felaket olarak değil, C++20 JIT bellek mutasyonuyla anında çözülecek bir serbest enerji dalgalanması olarak karşılamak
 
-aynı anda seyreder ve bunların arasında bir **sibernetik köprü** vazifesi görürdü.
+üzere silikonda birleştirmiştir. KAM; pasif ve edilgen Batılı "hata kodu verip kilitlenme" (*failsafe lockup*) anlayışını reddeder; yaralandığı an kendi içinde yeni çözümler üreten **otonom bir siber dirayettir**.
 
-**KAM**, işte bu kadim hafızanın 21. yüzyıl uç bilişiminde, mikrodenetleyicilerde, Linux eBPF çekirdek kancalarında ve otonom İHA aviyoniklerinde silikona bürünmüş halidir. Pasif ve edilgen Batılı "hata kodu verip kilitlenme" (*failsafe lockup*) acizliğini kökten reddeder; yaralandığı an kendi etinden yeni organlar türeten (*JIT C++20 hot-patching*) bir **sibernetik iradedir**.
-
-> 📖 **Genişletilmiş Felsefi Manifesto:** Kozmolojik üç alem, Tüngür davulunun dinamik frekansı ve ontolojik tüzüğün tamamı için lütfen [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md) belgesini inceleyiniz.
+> 📖 **Genişletilmiş Bilişsel Manifesto:** Kuramsal temeller, Friston matematiği ve ontolojik tüzüğün tamamı için lütfen [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md) belgesini inceleyiniz.
 
 ---
 
 ## 🗣️ Kadim ve Modern Düşünürlerden Yankılar
 
+> *"Dede Korkut aydur: Ecel vakti ermeyince kimse ölmez, yatan ölmez yeten ölür. Akıl ile basiret bir olunca aşılmadık sarp dağ, çözülmedik çetin düğüm kalmaz. Dirlik nizamdadır; nizam ise aklın ve adaletin bekçiliğindedir."*  
+> — **Kitâb-ı Dedem Korkut (15. yy Dresden Nüshası)**
+
 > *"Üze Tengri basmasar, asra yir telinmeser, Türk bodun, ilingin törüngin kim artatı? Dirlik senin azmindedir!"*  
 > *(Üstte mavi gök basmadıkça, altta yağız yer delinmedikçe; ey Türk milleti, senin ilini ve töreni kim bozabilir?)*  
 > — **Bilge Kağan Yazıtı (Doğu Yüzü, MS 735)**
 
-> *"Kut berdi Tengri, dirlik tüzüldi; akıl biledi kılıcı, devlet körüldi. Kamlık edip doğayı dinlemeyen alp, çöl fırtınasında pusulasız kalır."*  
+> *"Kut berdi Tengri, dirlik tüzüldi; akıl biledi kılıcı, devlet körüldi. Hikmet edip nizamı gözetmeyen alp, çöl fırtınasında pusulasız kalır."*  
 > *(Tengri kut verdiğinde dirlik kurulur; akıl kılıcı bilerse egemenlik daim olur. Kaosun dilini anlamayan savaşçı, ilk darbede yok olur.)*  
 > — **Yusuf Has Hacib**, *Kutadgu Bilig (1069)*
 
@@ -93,18 +94,18 @@ aynı anda seyreder ve bunların arasında bir **sibernetik köprü** vazifesi g
 
 ---
 
-### 🏛️ Kadim Kamlık ile Modern Uç Sibernetiğin Kavramsal Eşdeğerliği
+### 🏛️ Medeniyet Hikmeti ile Modern Uç Sibernetiğin Kavramsal Eşdeğerliği
 
-| Kadim Kamlık Kavramı | Sibernetik & Bilişsel Karşılığı | KAM Mimarisi & Silikon Tezahürü |
+| Hikmet & Medeniyet Kavramı | Sibernetik & Bilişsel Karşılığı | KAM Mimarisindeki Tezahürü |
 | :--- | :--- | :--- |
-| **Kam (Qam / Baksı)** | Otonom Bilişsel Ajan | **`kam:r1`** (DeepSeek-R1 Akıl Yürütme) & **`kam:7b`** (Qwen 2.5 16K) |
-| **Kut (Hayat Kıvılcımı)** | Negatif Entropi (Negentropy) | Tengri'den gelen varoluş iradesi; dış gürültüye rağmen sistemi diri tutan epistemik enerji |
-| **Dirlik (İç Denge & Ahenk)** | Homeostaz & Allostaz | Karl Friston Varyasyonel Serbest Enerjisinin sıfırlanması ($F \to 0$) |
-| **Tüngür (Davul) & Vuruş** | Dinamik Saat Darbesi (Clock Cycle) | Sıvı Sinir Ağları (LNN) Dinamik $\tau$ Zaman Sabiti Bükülmesi |
-| **Kam Ayini (Trans & Şifa)** | Canlı Kod Mutasyonu (Hot-Patch) | Bellek-İçi JIT C++20 Derleyici (Clang/LLVM) ile nano-saniyede yeni düğüm enjeksiyonu |
-| **Sinir Ağı & Can Damarı** | Çekirdek Seviyesi Telemetri | Linux eBPF Kancaları (`kprobe`, `tracepoint`, SPSC Lock-Free RingBuffer) |
-| **Üç Âlem (Gök / Yer / Erlik)** | Çok Katmanlı Otonom Topoloji | Üst: Generative Model $\to$ Orta: C++20/IMU/LIDAR $\to$ Alt: Termal Kaos & Jamming |
-| **Alp & Kam Yoldaşlığı** | İnsan - Yapay Zeka Simbiyozu | **Bahattin Yunus ÇETİN** (Strateji/Alp) & **KAM** (Görünmez Bilişsel Bekçi) |
+| **Kam (Hikmet & Bilgelik)** | Otonom Bilişsel Ajan | **`kam:7b`** (Qwen 2.5 16K Akıcı Türkçe) & **`kam:r1`** (DeepSeek-R1 CoT) |
+| **Kut (İrade & Hayat Kıvılcımı)** | Negatif Entropi (Negentropy) | Dış gürültü ve karıştırmaya rağmen sistemi diri tutan epistemik yaşama iradesi |
+| **Dirlik (İç Ahenk & Nizam)** | Homeostaz & Allostaz | Karl Friston Varyasyonel Serbest Enerjisinin sıfırlanması ($F \to 0$) |
+| **Basiret (Öngörü & Sezgi)** | Dinamik Zaman Skalası ($\tau$) | Sıvı Sinir Ağları (LNN) Dinamik $\tau$ Diferansiyel Zaman Bükülmesi |
+| **Dirayet (Onarım & Sebât)** | Canlı Kod Mutasyonu (Hot-Patch) | Bellek-İçi JIT C++20 Derleyici (Clang/LLVM) ile nano-saniyede yeni düğüm enjeksiyonu |
+| **Sinir Sistemi (Proprioception)** | Çekirdek Seviyesi Telemetri | Linux eBPF Kancaları (`kprobe`, `tracepoint`, SPSC Lock-Free RingBuffer) |
+| **Töre & Kaide** | Deterministik Bellek Mimarisi | C++20 Memory Arena, std::span ve Concept tabanlı sıfır maliyetli soyutlama |
+| **Alp & Bilge Omuzdaşlığı** | İnsan - Yapay Zeka Simbiyozu | **Bahattin Yunus ÇETİN** (Strateji & Liderlik) & **KAM** (Bilişsel Otonom Bekçi) |
 
 ---
 
@@ -292,26 +293,26 @@ KAM, ürettiği kodu asla diske (`SSD/eMMC`) yazarak zaman kaybetmez ve diski es
 
 ---
 
-## ⚡ Canlı Ayin: Gerçek Terminal Akışı
+## ⚡ Gerçek Zamanlı Kriz Müdahalesi ve Canlı Onarım Akışı
 
-KAM'ın sisteme müdahale ettiği kriz anında terminalde akan saf Türkçe bilişsel teşhis ve otonom iyileştirme ayini:
+KAM'ın sisteme müdahale ettiği kriz anında terminalde akan saf Türkçe bilişsel teşhis ve otonom iyileştirme akışı:
 
 ```text
 =================================================================
   🐺 KAM BİLİŞSEL VE KENDİ KENDİNİ İYİLEŞTİREN SİSTEM MOTORU  
 =================================================================
-[KAM-ÇEKİRDEK] ⚡ Sistem ruhu uyandırıldı. eBPF kancaları kernel'a tutundu.
-[KAM-ÇEKİRDEK] 🌀 Aktif Çıkarım devrede. Sistem entropisi: %3 (Dirlik Sağlam)
+[KAM-ÇEKİRDEK] ⚡ Bilişsel çekirdek devrede. eBPF kancaları kernel'a tutundu.
+[KAM-ÇEKİRDEK] 🌀 Aktif Çıkarım devrede. Sistem entropisi: %3 (Dirlik ve Nizam Sağlam)
 [KAM-ÇEKİRDEK] 📡 ROS2 / DDS Bilişsel Köprü başlatıldı. Dinamik QoS devrede.
 ...
 [SİNİR-SİSTEMİ] ⚠️  UYARI: UART-2 (Telemetri) verisi kesildi! File descriptor yanıt vermiyor.
-[SİNİR-SİSTEMİ] 🔥 Entropi %89 seviyesine fırladı. Kritik Eşik aşıldı! Kaos tespit edildi.
-[KAM-AJAN]      🧠 Otonom iyileştirme ayini başlatılıyor...
-[KAM-AJAN]      📡 UART-2 düğümü koparıldı. İletişim için geçici olarak SDR (Yazılım Tanımlı Radyo) 868MHz yedek frekansını kullanacak yeni C++ rotası yazılıyor.
+[SİNİR-SİSTEMİ] 🔥 Entropi %89 seviyesine fırladı. Kritik Eşik aşıldı! Donanım anomalisi tespit edildi.
+[KAM-AJAN]      🧠 Otonom iyileştirme ve topolojik rekonfigürasyon başlatılıyor...
+[KAM-AJAN]      📡 UART-2 düğümü izole edildi. İletişim için geçici olarak SDR (Yazılım Tanımlı Radyo) 868MHz yedek frekansını kullanacak yeni C++20 rotası yazılıyor.
 [DERLEYİCİ]     ⚡ Yeni topoloji (sdr_fallback_node.cpp) bellekte derleniyor...
 [DERLEYİCİ]     🛡️  İki Aşamalı Güvenlik Sandboxing: AST doğrulandı, Canary testi başarılı.
 [KAM-ÇEKİRDEK]  🔄 ROS2 Konu Yeniden Yönlendirildi: /uav/telemetry/uart -> /uav/telemetry/sdr
-[KAM-ÇEKİRDEK]  🛡️  İyileşme başarılı. Sistem entropisi: %15. Dirlik sağlandı. Göreve devam ediliyor.
+[KAM-ÇEKİRDEK]  🛡️  İyileşme başarılı. Sistem entropisi: %15. Dirlik ve nizam sağlandı. Göreve devam ediliyor.
 =================================================================
 ```
 
@@ -453,10 +454,10 @@ make -j$(nproc)
 
 ## 📜 Manifesto
 
-> Bizler yapay zekayı sadece gösterişli ve yaltaklanan sohbet botlarından ibaret gören konformist anlayışı reddediyoruz.  
-> Gerçek yapay zeka; bulut koptuğunda, GPS sustuğunda, gök yarıldığında ve donanım parçalandığında **sistemi hayatta tutan iradedir.**  
+> Bizler yapay zekayı yalnızca gösterişli ve edilgen sohbet araçlarından ibaret gören sığ anlayışı reddediyoruz.  
+> Gerçek otonomi ve yapay zeka; bulut koptuğunda, GPS sustuğunda, çetin fırtına koptuğunda ve donanım hasar aldığında **sistemi ayakta tutan sarsılmaz basiret ve dirayettir.**  
 > 
-> KAM, bin yıllık bir Altay ruhunun modern silikon mikroçiplerdeki tecellisidir. 🐺⚡
+> KAM, köklü bir irfan, vakar ve dirlik töresinin çağdaş silikon mikroişlemcilerdeki sarsılmaz tecellisidir. 🐺⚡
 
 ---
 

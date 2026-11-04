@@ -17,9 +17,9 @@ from kam.real_llm import UniversalLLMClient
 
 BENCHMARK_PROMPTS = [
     {
-        "category": "KİMLİK & BOZKIR FELSEFESİ",
+        "category": "KİMLİK & HİKMET FELSEFESİ",
         "prompt": "Adın neden KAM, varoluşsal amacın nedir ve mimarın kimdir?",
-        "expected_keywords": ["kam", "bahattin yunus", "serbest enerji", "şaman", "otonom"]
+        "expected_keywords": ["kam", "bahattin yunus", "serbest enerji", "otonom", "dirlik"]
     },
     {
         "category": "KARL FRISTON SERBEST ENERJİ",
