@@ -165,28 +165,39 @@ class TestKam(unittest.TestCase):
         opt = EdgeModelOptimizer()
 
         # Tier-1 Ultra Kisitli Donanim (1.5 GB RAM, 8W TDP)
-        tier1 = opt.plan_optimal_deployment(EdgeHardwareBudget(vram_mb=1536, max_tdp_watts=8.0, npu_temp_c=60.0))
-        self.assertEqual(tier1.selected_tier, "kam:1.5b")
+        tier1 = opt.plan_optimal_deployment(EdgeHardwareBudget(ram_mb=1536, tdp_watts=8.0, npu_temp_c=60.0))
+        self.assertEqual(tier1.model_id, "kam:1.5b")
         self.assertLessEqual(tier1.estimated_vram_mb, 1536)
 
         # Tier-2 Taktik Uc Donanim (4 GB RAM, 18W TDP)
-        tier2 = opt.plan_optimal_deployment(EdgeHardwareBudget(vram_mb=4096, max_tdp_watts=18.0, npu_temp_c=65.0))
-        self.assertEqual(tier2.selected_tier, "kam:edge-3b-moe")
-        self.assertAlmostEqual(tier2.active_params_b, 0.75, places=2)
+        tier2 = opt.plan_optimal_deployment(EdgeHardwareBudget(ram_mb=4096, tdp_watts=18.0, npu_temp_c=65.0))
+        self.assertEqual(tier2.model_id, "kam:edge-3b-moe")
+        self.assertAlmostEqual(tier2.active_params_billions, 0.75, places=2)
 
         # Tier-3 Komuta Donanimi (8 GB RAM, 35W TDP) + Speculative Decoding
-        tier3 = opt.plan_optimal_deployment(EdgeHardwareBudget(vram_mb=8192, max_tdp_watts=35.0, npu_temp_c=70.0))
-        self.assertEqual(tier3.selected_tier, "kam:7b")
+        tier3 = opt.plan_optimal_deployment(EdgeHardwareBudget(ram_mb=8192, tdp_watts=35.0, npu_temp_c=70.0))
+        self.assertEqual(tier3.model_id, "kam:7b")
         self.assertEqual(tier3.speculative_draft_model, "kam:1.5b")
 
         # Termal koruma altinda 4-bit KV-Cache aktivasyonu
-        throttled = opt.plan_optimal_deployment(EdgeHardwareBudget(vram_mb=4096, max_tdp_watts=18.0, npu_temp_c=90.0))
+        throttled = opt.plan_optimal_deployment(EdgeHardwareBudget(ram_mb=4096, tdp_watts=18.0, npu_temp_c=90.0))
         self.assertEqual(throttled.kv_cache_bits, 4)
 
         # GRPO Aktif Cikarim Odul Fonksiyonu
-        reward_good = opt.compute_grpo_reward(ast_valid=True, free_energy_after=0.10, latency_ms=20.0, has_foreign_leakage=False)
-        reward_bad = opt.compute_grpo_reward(ast_valid=False, free_energy_after=0.90, latency_ms=250.0, has_foreign_leakage=True)
-        self.assertGreater(reward_good, reward_bad)
+        valid_cpp = CodeMutator.generate_sdr_fallback()
+        reward_good = opt.compute_grpo_reward(
+            response_text="Karl Friston Serbest Enerji Ilkesi geregince SDR yedek dugumu sentezlendi.",
+            cpp_code=valid_cpp,
+            free_energy=0.08,
+        )
+        reward_bad = opt.compute_grpo_reward(
+            response_text="Sistem hatasi 中文字",
+            cpp_code='extern "C" int kam_entrypoint() { system("rm -rf /"); }',
+            free_energy=0.92,
+        )
+        self.assertGreater(reward_good["total_reward"], reward_bad["total_reward"])
+        self.assertFalse(reward_good["foreign_leak_detected"])
+        self.assertTrue(reward_bad["foreign_leak_detected"])
 
 if __name__ == "__main__":
     unittest.main()
