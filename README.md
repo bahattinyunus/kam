@@ -256,8 +256,8 @@ kam/
 ├── python/kam/              # PyQt6 yerel masaüstü uygulaması, web sunucusu, LFM ve RAG bilgi motoru
 ├── models/                  # kam:7b ve kam:r1 Ollama Modelfile tanımları
 ├── data/                    # Doğrulanmış Türkçe mühendislik, sibernetik ve hikmet veri tabanı
-├── docs/                    # Felsefi manifesto, matematiksel mimari ve MCP spesifikasyon belgeleri
-├── tests/                   # Birim ve entegrasyon test takımı (17/17 Başarılı)
+├── docs/                    # Felsefi manifesto, matematiksel mimari, MCP ve Ar-Ge yol haritası belgeleri
+├── tests/                   # Birim ve entegrasyon test takımı (18/18 Başarılı)
 ├── desktop_ui.py            # %100 Yerel PyQt6 Masaüstü Komuta Merkezi başlatıcısı
 ├── web_ui.py                # Tarayıcı tabanlı Web Kokpiti başlatıcısı
 ├── cli.py                   # Komut satırı, TUI gösterge paneli ve MCP sunucu başlatıcısı
@@ -315,6 +315,7 @@ make -j$(nproc)
 |:---|:---|
 | [**`docs/PHILOSOPHY.md`**](docs/PHILOSOPHY.md) | Bilişsel Manifesto, Dede Korkut hikmeti, Karl Friston FEP ve sibernetik dirayet |
 | [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) | Matematiksel spesifikasyon, Varyasyonel/Beklenen Serbest Enerji ve AST Sandboxing |
+| [**`docs/ROADMAP.md`**](docs/ROADMAP.md) | Kısıtlı donanımda (Edge-AI) zirve bilişsel model mimarisi, Liquid-SSM MoE, GRPO ve BitNet yol haritası |
 | [**`docs/MCP_SPEC.md`**](docs/MCP_SPEC.md) | Model Context Protocol (MCP) JSON-RPC araç ve telemetri entegrasyonu |
 
 - **Lisans:** [Apache License 2.0](LICENSE)

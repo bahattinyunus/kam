@@ -16,6 +16,7 @@ from kam.swarm_mesh import SwarmMeshController
 from kam.models.liquid_moe import KamLiquidFoundationModel
 from kam.models.trainer import ActiveInferenceTrainer
 from kam.knowledge_engine import LocalKnowledgeEngine
+from kam.edge_optimizer import EdgeHardwareBudget, EdgeModelOptimizer
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -159,6 +160,33 @@ class TestKam(unittest.TestCase):
         ans_ebpf = ke.query("ebpf kancasi ne ise yarar")
         self.assertIsNotNone(ans_ebpf)
         self.assertIn("eBPF", ans_ebpf)
+
+    def test_edge_model_optimizer(self):
+        opt = EdgeModelOptimizer()
+
+        # Tier-1 Ultra Kisitli Donanim (1.5 GB RAM, 8W TDP)
+        tier1 = opt.plan_optimal_deployment(EdgeHardwareBudget(vram_mb=1536, max_tdp_watts=8.0, npu_temp_c=60.0))
+        self.assertEqual(tier1.selected_tier, "kam:1.5b")
+        self.assertLessEqual(tier1.estimated_vram_mb, 1536)
+
+        # Tier-2 Taktik Uc Donanim (4 GB RAM, 18W TDP)
+        tier2 = opt.plan_optimal_deployment(EdgeHardwareBudget(vram_mb=4096, max_tdp_watts=18.0, npu_temp_c=65.0))
+        self.assertEqual(tier2.selected_tier, "kam:edge-3b-moe")
+        self.assertAlmostEqual(tier2.active_params_b, 0.75, places=2)
+
+        # Tier-3 Komuta Donanimi (8 GB RAM, 35W TDP) + Speculative Decoding
+        tier3 = opt.plan_optimal_deployment(EdgeHardwareBudget(vram_mb=8192, max_tdp_watts=35.0, npu_temp_c=70.0))
+        self.assertEqual(tier3.selected_tier, "kam:7b")
+        self.assertEqual(tier3.speculative_draft_model, "kam:1.5b")
+
+        # Termal koruma altinda 4-bit KV-Cache aktivasyonu
+        throttled = opt.plan_optimal_deployment(EdgeHardwareBudget(vram_mb=4096, max_tdp_watts=18.0, npu_temp_c=90.0))
+        self.assertEqual(throttled.kv_cache_bits, 4)
+
+        # GRPO Aktif Cikarim Odul Fonksiyonu
+        reward_good = opt.compute_grpo_reward(ast_valid=True, free_energy_after=0.10, latency_ms=20.0, has_foreign_leakage=False)
+        reward_bad = opt.compute_grpo_reward(ast_valid=False, free_energy_after=0.90, latency_ms=250.0, has_foreign_leakage=True)
+        self.assertGreater(reward_good, reward_bad)
 
 if __name__ == "__main__":
     unittest.main()
