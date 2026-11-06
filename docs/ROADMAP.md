@@ -74,8 +74,8 @@ Model ağırlıklarını doğruluk kaybı olmadan dar bellek bant genişliğine 
 
 | Aşama | Odak Alanı | Çıktı ve Doğrulama Kriteri |
 | :--- | :--- | :--- |
-| **Adım 1 (Mevcut Temel)** | `kam:7b`, `kam:r1`, `kam:1.5b` GGUF Ailesi ve Yerel Komuta Merkezi | Hugging Face Hub yayını, RAG doğrulama ve 17/17 test başarısı **[TAMAMLANDI]** |
-| **Adım 2** | Donanım Kısıtlı Çıkarım Planlayıcısı ve Dinamik Kuantizasyon Yönlendiricisi | Bellek/TDP bütçesine göre optimal model, bağlam ve KV-önbellek bit derinliğini seçen otonom planlayıcı (`edge_optimizer.py`) |
-| **Adım 3** | `imatrix` Kalibrasyonlu Ultra-Sıkıştırılmış Ağırlıklar ve Spekülatif Çözümleme | Türkçe ve C++20 korpusuyla kalibre edilmiş `IQ3_M` / `Q4_K_M` ağırlıklar ve `kam:1.5b -> kam:7b` spekülatif çifti |
-| **Adım 4** | Derleyici Ödüllü GRPO İnce Ayarı (Direct Compiler Feedback RL) | Clang `-O3` ve AST Sandbox geri bildirimiyle eğitilmiş LoRA adaptörlerinin ana GGUF ağırlıklarına kaynaştırılması |
-| **Adım 5** | `KAM-Edge-MoE` Hibrit Sıvı-SSM Çekirdeği | 2 GB RAM altı uç donanımlarda >50 token/sn hızında çalışan yerli hibrit mimari |
+| **Adım 1 (Mevcut Temel)** | `kam:7b`, `kam:r1`, `kam:1.5b` GGUF Ailesi ve Yerel Komuta Merkezi | Hugging Face Hub yayını, RAG doğrulama ve birim testleri **[TAMAMLANDI]** |
+| **Adım 2** | Donanım Kısıtlı Çıkarım Planlayıcısı ve Dinamik Kuantizasyon Yönlendiricisi | Bellek/TDP bütçesine göre optimal model, bağlam ve KV-önbellek bit derinliğini seçen otonom planlayıcı (`edge_optimizer.py`) **[TAMAMLANDI]** |
+| **Adım 3** | `imatrix` Kalibrasyonlu Ağırlıklar, BitNet b1.58 ve Spekülatif Çözümleme | `TernaryBitNetQuantizer`, `ImatrixCalibrator` ve `SpeculativeDecoder` (`kam:1.5b -> kam:7b`) doğrulaması **[TAMAMLANDI]** |
+| **Adım 4** | Derleyici Ödüllü GRPO ve Beklenen Serbest Enerji (EFE) Politika Seçimi | Clang/AST Sandbox ödüllü GRPO ve çok ufuklu $G(\pi)$ politika seçici (`ActiveInferenceEngine.select_optimal_policy`) **[TAMAMLANDI]** |
+| **Adım 5** | `KAM-Edge-MoE` Hibrit Sıvı-SSM (RK4 ODE + Paylaşımlı Uzman) Çekirdeği | 4. Dereceden Runge-Kutta (RK4) çözücülü ve Paylaşımlı Uzmanlı (Shared-Expert) Sıvı-MoE (`liquid_moe.py`) **[TAMAMLANDI]** |

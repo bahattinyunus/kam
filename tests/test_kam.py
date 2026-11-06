@@ -16,7 +16,13 @@ from kam.swarm_mesh import SwarmMeshController
 from kam.models.liquid_moe import KamLiquidFoundationModel
 from kam.models.trainer import ActiveInferenceTrainer
 from kam.knowledge_engine import LocalKnowledgeEngine
-from kam.edge_optimizer import EdgeHardwareBudget, EdgeModelOptimizer
+from kam.edge_optimizer import (
+    EdgeHardwareBudget,
+    EdgeModelOptimizer,
+    TernaryBitNetQuantizer,
+    ImatrixCalibrator,
+    SpeculativeDecoder,
+)
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -25,9 +31,19 @@ class TestKam(unittest.TestCase):
         fe = engine.compute_free_energy()
         self.assertGreaterEqual(fe, 0.0)
 
+        # Nominal durumda optimal politika NOMINAL_UART_MONITOR olmalı
+        nominal_plan = engine.select_optimal_policy()
+        self.assertEqual(nominal_plan["optimal_policy"], "NOMINAL_UART_MONITOR")
+
         # Anomali enjeksiyonu
         chaos = engine.trigger_anomaly()
         self.assertGreaterEqual(chaos, 0.80)
+
+        # Kriz durumunda EFE (Beklenen Serbest Enerji) politikası seçimi
+        crisis_plan = engine.select_optimal_policy(crisis_hint="SDR")
+        self.assertEqual(crisis_plan["optimal_policy"], "SDR_868MHZ_FHSS_REROUTE")
+        self.assertEqual(crisis_plan["recommended_cpp_module"], "sdr_fallback_node.cpp")
+        self.assertGreater(crisis_plan["optimal_probability"], 0.25)
 
         # İyileşme
         engine.reset_equilibrium(0.15)
@@ -66,10 +82,33 @@ class TestKam(unittest.TestCase):
         self.assertIn("calculate_entropy", tool_names)
         self.assertIn("compile_module", tool_names)
         self.assertIn("deploy_topology", tool_names)
+        self.assertIn("inspect_kernel", tool_names)
+        self.assertIn("evaluate_efe_policies", tool_names)
+        self.assertIn("optimize_edge_deployment", tool_names)
 
         # Tool execution test
         res = mcp.call_tool("read_telemetry", {})
         self.assertEqual(res["active_telemetry"], "UART-2")
+
+        # AST Sandbox rejection in compile_module
+        bad_compile = mcp.call_tool(
+            "compile_module",
+            {"module_name": "evil", "cpp_source": 'int main() { system("rm -rf /"); }'},
+        )
+        self.assertEqual(bad_compile["status"], "rejected_by_ast_sandbox")
+
+        # JSON-RPC 2.0 protocol test
+        rpc_init = mcp.handle_jsonrpc({"jsonrpc": "2.0", "id": 10, "method": "initialize"})
+        self.assertEqual(rpc_init["id"], 10)
+        self.assertIn("protocolVersion", rpc_init["result"])
+
+        rpc_call = mcp.handle_jsonrpc({
+            "jsonrpc": "2.0",
+            "id": 11,
+            "method": "tools/call",
+            "params": {"name": "inspect_kernel", "arguments": {}},
+        })
+        self.assertEqual(rpc_call["result"]["ringbuffer_capacity"], 1024)
 
         res_deploy = mcp.call_tool("deploy_topology", {"module_name": "sdr_fallback_node"})
         self.assertEqual(res_deploy["status"], "deployed")
@@ -111,19 +150,33 @@ class TestKam(unittest.TestCase):
         ok = ekf.update_gps(1.5, 0.0, 100.0)
         self.assertTrue(ok)
         self.assertFalse(ekf.dead_reckoning)
+        self.assertLess(ekf.last_mahalanobis_distance, 5.0)
 
         # GPS Spoofing Sıçraması (100 metre aniden kayma)
         spoof_ok = ekf.update_gps(250.0, 0.0, 100.0)
         self.assertFalse(spoof_ok)
         self.assertTrue(ekf.dead_reckoning)
+        self.assertEqual(ekf.spoofing_events_detected, 1)
+
+        # Optik akış ve barometre ile ölü-hesaplama (Dead-Reckoning) güncellemesi
+        state = ekf.update_optical_flow(vx_flow=16.2, vy_flow=0.4, baro_alt_z=100.5, dt=0.1)
+        self.assertTrue(state.dead_reckoning)
+        self.assertGreater(state.x, 1.5)
 
     def test_swarm_mesh_consensus(self):
         swarm = SwarmMeshController()
         self.assertEqual(swarm.active_leader, "Alpha-1")
 
+        hops = swarm.generate_fhss_hop_sequence(num_hops=6, base_freq_mhz=868.0, bandwidth_mhz=2.0)
+        self.assertEqual(len(hops), 6)
+        self.assertTrue(all(868.0 <= f <= 870.0 for f in hops))
+
         new_leader = swarm.simulate_leader_loss()
         self.assertNotEqual(new_leader, "Alpha-1")
+        self.assertEqual(new_leader, "Bravo-2")
         self.assertTrue(swarm.drones[new_leader].is_leader)
+        telemetry = swarm.get_swarm_telemetry()
+        self.assertEqual(telemetry["alive_units"], 3)
 
     def test_liquid_foundation_model_inference_and_routing(self):
         model = KamLiquidFoundationModel()
@@ -131,8 +184,11 @@ class TestKam(unittest.TestCase):
         out = model.forward(sensory)
 
         self.assertIn("model", out)
+        self.assertEqual(out["ode_solver"], "RK4")
+        self.assertEqual(out["shared_expert"], "TURKISH_SOVEREIGN_REASONING_SHARED_EXPERT")
         self.assertEqual(len(out["active_experts"]), 2)
         self.assertGreater(out["free_energy_nats"], 0.0)
+        self.assertGreaterEqual(out["moe_aux_balance_loss"], 0.0)
         self.assertIn("selected_optimal_action", out)
 
     def test_active_inference_trainer(self):
@@ -198,6 +254,39 @@ class TestKam(unittest.TestCase):
         self.assertGreater(reward_good["total_reward"], reward_bad["total_reward"])
         self.assertFalse(reward_good["foreign_leak_detected"])
         self.assertTrue(reward_bad["foreign_leak_detected"])
+
+    def test_bitnet_imatrix_and_speculative_decoding(self):
+        # 1. BitNet b1.58 Ternary Quantization
+        weights = [0.45, -0.42, 0.01, 0.52, -0.48, -0.02, 0.39, -0.41]
+        q_res = TernaryBitNetQuantizer.quantize_tensor(weights)
+        self.assertEqual(len(q_res["ternary_weights"]), len(weights))
+        self.assertTrue(all(w in (-1, 0, 1) for w in q_res["ternary_weights"]))
+        self.assertGreater(q_res["compression_ratio_vs_fp16"], 10.0)
+        self.assertEqual(q_res["energy_saving_factor"], 4.6)
+
+        # 2. Hessian imatrix Calibration
+        profile = ImatrixCalibrator.compute_layer_importance(
+            layer_activations={
+                "blk.0.moe_router": [1.2, -1.1, 0.9, 1.4],
+                "blk.3.ffn_mid": [0.1, -0.1, 0.05, 0.08],
+                "output.weight": [0.8, 0.9, -0.7, 0.85],
+            },
+            layer_weight_norms={"blk.0.moe_router": 2.5, "blk.3.ffn_mid": 0.8, "output.weight": 2.2},
+        )
+        self.assertEqual(profile["blk.0.moe_router"]["assigned_quantization"], "Q6_K")
+        self.assertEqual(profile["output.weight"]["assigned_quantization"], "Q6_K")
+        self.assertEqual(profile["blk.3.ffn_mid"]["assigned_quantization"], "IQ3_M")
+
+        # 3. Self-Speculative Decoding (kam:1.5b -> kam:7b)
+        spec_dec = SpeculativeDecoder()
+        step_res = spec_dec.verify_draft_step(
+            draft_tokens=["constexpr", "uint32_t", "freq", "=", "868000000"],
+            draft_probs_q=[0.90, 0.85, 0.88, 0.95, 0.91],
+            target_probs_p=[0.92, 0.89, 0.90, 0.96, 0.93],
+        )
+        self.assertEqual(step_res["num_generated_single_pass"], 6)
+        self.assertEqual(step_res["acceptance_rate"], 1.0)
+        self.assertGreater(step_res["speedup_factor"], 2.0)
 
 if __name__ == "__main__":
     unittest.main()

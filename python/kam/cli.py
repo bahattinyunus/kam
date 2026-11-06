@@ -9,6 +9,12 @@ from .models.liquid_moe import KamLiquidFoundationModel
 from .models.trainer import ActiveInferenceTrainer
 from .interactive_chat import KamInteractiveChat
 from .web_server import run_gui
+from .edge_optimizer import (
+    EdgeHardwareBudget,
+    EdgeModelOptimizer,
+    TernaryBitNetQuantizer,
+    SpeculativeDecoder,
+)
 
 def main():
     parser = argparse.ArgumentParser(
@@ -51,6 +57,11 @@ def main():
         help="Donanım model çıkarım ve enerji verimlilik kıyaslamasını göster"
     )
     parser.add_argument(
+        "--edge-plan",
+        action="store_true",
+        help="Kısıtlı donanım (Edge-Apex) dağıtım planlayıcısı, BitNet b1.58 ve Spekülatif Çözümleme analizi"
+    )
+    parser.add_argument(
         "--export-metrics",
         action="store_true",
         help="Prometheus formatında telemetri metriklerini yazdır"
@@ -70,6 +81,27 @@ def main():
     if args.chat:
         chat = KamInteractiveChat()
         chat.run()
+        return
+
+    if args.edge_plan:
+        profiles = {
+            "Tier-1 (Mikro İHA / 1.5GB RAM / 8W)": EdgeModelOptimizer.plan_optimal_deployment(
+                EdgeHardwareBudget(ram_mb=1536, tdp_watts=8.0, npu_temp_c=55.0)
+            ).__dict__,
+            "Tier-2 (Taktik SİHA / 4GB RAM / 18W)": EdgeModelOptimizer.plan_optimal_deployment(
+                EdgeHardwareBudget(ram_mb=4096, tdp_watts=18.0, npu_temp_c=62.0)
+            ).__dict__,
+            "Tier-3 (Mobil Komuta RTX 5060 / 8GB / 35W)": EdgeModelOptimizer.plan_optimal_deployment(
+                EdgeHardwareBudget(ram_mb=8192, tdp_watts=35.0, npu_temp_c=68.0)
+            ).__dict__,
+            "Speculative_Decoding": SpeculativeDecoder().verify_draft_step(
+                ["extern", '"C"', "int", "kam_entrypoint", "()"],
+                [0.92, 0.88, 0.95, 0.90, 0.94],
+                [0.94, 0.91, 0.96, 0.92, 0.95],
+            ),
+            "BitNet_b158_Sample": TernaryBitNetQuantizer.quantize_tensor([0.42, -0.38, 0.02, 0.51, -0.49, 0.01]),
+        }
+        print(json.dumps(profiles, indent=2, ensure_ascii=False))
         return
 
     if args.infer:

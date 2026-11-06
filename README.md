@@ -194,6 +194,8 @@ Harici otonom ajanların JSON-RPC 2.0 (`stdio`) üzerinden KAM çekirdeğiyle ko
 | `compile_module` | C++20 kurtarma kodunu AST güvenlik denetiminden geçirerek bellek içinde JIT derler. |
 | `deploy_topology` | Derlenmiş paylaşımlı kütüphaneyi canlı çalışma alanına sıcak-yama (`hot-patch`) olarak bağlar. |
 | `inspect_kernel` | Linux eBPF `kprobe`/`tracepoint` kanca sayaçlarını ve termal bölgeleri denetler. |
+| `evaluate_efe_policies` | Beklenen Serbest Enerji $G(\pi)$ üzerinden epistemik/pragmatik değer ayrıştırması yaparak optimal kurtarma politikasını seçer. |
+| `optimize_edge_deployment` | Donanım RAM/TDP/Sıcaklık zarfına göre en uygun KAM model, `imatrix` kuantizasyon ve spekülatif çözümleme planını çıkarır. |
 
 ---
 
@@ -257,7 +259,7 @@ kam/
 ├── models/                  # kam:7b ve kam:r1 Ollama Modelfile tanımları
 ├── data/                    # Doğrulanmış Türkçe mühendislik, sibernetik ve hikmet veri tabanı
 ├── docs/                    # Felsefi manifesto, matematiksel mimari, MCP ve Ar-Ge yol haritası belgeleri
-├── tests/                   # Birim ve entegrasyon test takımı (18/18 Başarılı)
+├── tests/                   # Birim ve entegrasyon test takımı (19/19 Başarılı)
 ├── desktop_ui.py            # %100 Yerel PyQt6 Masaüstü Komuta Merkezi başlatıcısı
 ├── web_ui.py                # Tarayıcı tabanlı Web Kokpiti başlatıcısı
 ├── cli.py                   # Komut satırı, TUI gösterge paneli ve MCP sunucu başlatıcısı
@@ -273,7 +275,7 @@ kam/
 python desktop_ui.py
 ```
 
-### 2. Alternatif Arayüzleri Başlatın (Web Kokpiti / TUI / MCP)
+### 2. Alternatif Arayüzleri Başlatın (Web Kokpiti / TUI / MCP / Edge-Plan)
 ```bash
 # Tarayici tabanli Web Kokpiti (http://127.0.0.1:8080):
 python web_ui.py
@@ -283,6 +285,9 @@ python cli.py --dashboard
 
 # Model Context Protocol (MCP) sunucusu:
 python cli.py --mcp
+
+# Kisitli donanim (Edge-Apex) dagitim plani, BitNet b1.58 ve Spekulatif Cozumleme analizi:
+python cli.py --edge-plan
 ```
 
 ### 3. Modelleri Yerelde Derleyin veya Hugging Face Üzerinden Çalıştırın
@@ -298,7 +303,7 @@ ollama create kam:r1 -f models/Modelfile.kam-r1
 
 ### 4. Otomatik Test Takımını ve C++20 Çekirdeğini Derleyin
 ```bash
-# 17/17 Birim ve Entegrasyon Testi:
+# 19/19 Birim ve Entegrasyon Testi:
 pytest -v
 
 # C++20 Motoru Derlemesi:
