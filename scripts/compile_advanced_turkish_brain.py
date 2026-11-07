@@ -74,6 +74,26 @@ def compile_corpus():
             "keywords": ["popper", "yanlislanabilirlik", "bilimsel yontem", "hipotez", "dogrulama"],
             "question": "Karl Popper'ın Yanlışlanabilirlik İlkesi otonom karar mekanizmalarına nasıl uygulanır?",
             "answer": "Popper'a göre bir önermenin bilimsel olabilmesi için doğrulanabilir olması değil, gözlem yoluyla çürütülebilir (yanlışlanabilir) olması gerekir. KAM'ın bilişsel hipotezleri (örn. 'İHA rotası güvenlidir') körü körüne kabul edilmez; telemetriden gelen her anomali mevcut hipotezi çürütmeye aday bir kanıttır. Hipotez yanlışlandığı anda sistem inat etmez, saniyeler içinde yeni bir inanç dağılımı ve rota inşa eder."
+        },
+        {
+            "keywords": ["lyapunov", "clf", "asimptotik kararlilik", "tta", "faz uzayi", "taylor"],
+            "question": "KAM'da Kontrol-Lyapunov Fonksiyonu (CLF) ve Faz Uzayı Kriz Öngörüsü (TTA) nasıl çalışır?",
+            "answer": "Aleksandr Lyapunov'un asimptotik kararlılık teoremi ile Karl Friston'un Varyasyonel Serbest Enerjisi birleştirilerek V(e, F) = 1/2 e^T P e + alpha * F > 0 aday fonksiyonu tanımlanır. Sistemin kararlı kalması için zamana göre türevin dV/dt + lambda * V <= 0 eşitsizliğini sağlaması zorunludur. Ayrıca 2. dereceden Taylor faz uzayı ekstrapolasyonu x(t + dt) = x_t + v*dt + 1/2 a*dt^2 ile kritik eşik aşımına kalan süre (Time-To-Anomaly - TTA) önceden hesaplanarak önleyici C++20 JIT yaması tetiklenir."
+        },
+        {
+            "keywords": ["cbf", "kontrol bariyer fonksiyonu", "ansr", "guvenlik kalkani", "neuro symbolic", "izdusum"],
+            "question": "Nöro-Sembolik Kontrol Bariyer Fonksiyonu (CBF) uçuş güvenliğini nasıl garanti eder?",
+            "answer": "DARPA ANSR mimarisinin ötesine geçen NeuroSymbolicSafetyShield, sinir ağından çıkan uçuş komutlarını aktüatörlere göndermeden önce h(x) >= 0 güvenli kümesi ve dh/dt + alpha * h(x) >= 0 Kontrol Bariyer Fonksiyonu eşitsizliğiyle denetler. İrtifa tabanı (z >= z_min), perdövites hızı (v >= v_stall), yatış açısı ve batarya geri dönüş rezervi ihlal edildiğinde komutu güvenli zarfın en yakın sınır noktasına matematiksel olarak izdüşürür."
+        },
+        {
+            "keywords": ["pdw", "drfm", "elektronik harp", "cirra", "rgpo", "vgpo", "radar", "emiter"],
+            "question": "Bilişsel Elektronik Harp (Cognitive EW) PDW radar sınıflandırma ve DRFM aldatma nasıl işler?",
+            "answer": "CognitiveEwEmitterClassifier, gelen radar darbe tanımlama kelimelerini (PDW: RF frekansı, PRI darbe tekrarlama aralığı, PW darbe genişliği, AOA geliş açısı ve LFM Chirp bant genişliği) gerçek zamanlı analiz eder. Bilinen hava savunma radarlarını (S-400 92N6E, Pantsir-S1, X-Band AESA) anında teşhis eder; kütüphanede bulunmayan frekans-çevik (frequency-agile) bilinmeyen radarları ise Dirichlet Süreci çevrimiçi kümeleme ile uçuş esnasında öğrenerek otonom DRFM RGPO/VGPO sahte hedef aldatması ve Altın Oran çentik (notch) frekans planı üretir."
+        },
+        {
+            "keywords": ["komutan niyeti", "task dag", "lattice", "c2", "filo", "orkestrasyon"],
+            "question": "Üst düzey Komutan Niyeti otonom İHA/SİHA filosuna nasıl görev olarak dağıtılır?",
+            "answer": "IntentToTaskOrchestrator, doğal Türkçe ile verilen Komutan Niyetini bağımlılıklarıyla birlikte 4 aşamalı yönlü çevrimsiz görev grafına (Task DAG: SEAD Elektronik Harp -> FHSS Röle -> Vadi İçi Stealth Sızma -> Optik Akış Hasar Kıymetlendirme) ayrıştırır ve heterojen filodaki her platform için Karl Friston Beklenen Serbest Enerji G(pi) maliyetini hesaplayarak en uygun düğümlere otonom tahsis eder."
         }
     ]
 

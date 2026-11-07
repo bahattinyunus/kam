@@ -41,8 +41,8 @@ class UniversalLLMClient:
                     models = [m["name"] for m in data.get("models", [])]
                     # En yetkin Türkçe ve dengeli bilişsel modeli otomatik önceliklendir (kam:7b en başta)
                     preferred = [
-                        "kam:7b", "kam:r1", "kam:coder", "kam:r1-nano", "kam:1.5b",
-                        "qwen2.5:7b", "deepseek-r1:7b", "qwen2.5-coder:1.5b", "deepseek-r1:1.5b",
+                        "kam:7b", "kam:apex", "kam:r1", "kam:coder", "kam:coder-nano", "kam:r1-nano", "kam:1.5b",
+                        "qwen2.5:7b", "qwen3:8b", "deepseek-r1:7b", "qwen2.5-coder:7b", "qwen2.5-coder:1.5b", "deepseek-r1:1.5b",
                         "llama3.1:8b", "llama3.2:3b", "qwen2.5:1.5b"
                     ]
                     for pref in preferred:
@@ -66,12 +66,16 @@ class UniversalLLMClient:
                     data = json.loads(resp.read().decode("utf-8"))
                     for m in data.get("models", []):
                         m_name = m["name"]
-                        if "kam:r1-nano" in m_name:
+                        if "kam:apex" in m_name:
+                            source_label = "KAM Başbuğ Apex (Qwen3 8B Yeni Nesil Hibrit Zihin - 5.2 GB)"
+                        elif "kam:r1-nano" in m_name:
                             source_label = "KAM Taktik R1-Nano (1.5B CoT Akıl Yürütme)"
                         elif "kam:r1" in m_name:
                             source_label = "KAM Derin Düşünce (R1 Akıl Yürütme - 7B)"
+                        elif "kam:coder-nano" in m_name:
+                            source_label = "KAM Taktik Demirci (C++20 JIT Kod Uzmanı - 1.5B)"
                         elif "kam:coder" in m_name:
-                            source_label = "KAM Demirci (C++20 JIT & eBPF Kod Uzmanı - 1.5B)"
+                            source_label = "KAM Ulu Demirci (C++20 JIT & eBPF Başmimarı - 7B)"
                         elif "kam:1.5b" in m_name:
                             source_label = "KAM Mikro-Uç Zihin & Spekülatif Taslak (1.5B)"
                         elif "kam" in m_name:
@@ -110,15 +114,26 @@ class UniversalLLMClient:
             accumulated = []
             try:
                 url = f"{self.ollama_url}/api/chat"
-                messages = [{"role": "system", "content": system_instruction}] + self.conversation_history[-6:]
+                if self.current_model.startswith("kam:") and grounded_fact:
+                    enriched_user = (
+                        f"[DOĞRULANMIŞ KESİN BİLGİ KAYNAĞI]:\n{grounded_fact}\n\n"
+                        f"[KULLANICI SORUSU]:\n{user_prompt}\n\n"
+                        f"(Yukarıdaki doğrulanmış bilgi kaynağındaki tüm teknik terimleri, anahtar kavramları, "
+                        f"tarih ve özel isimleri eksiksiz koruyarak duru bir Türkçeyle yanıtla.)"
+                    )
+                    messages = self.conversation_history[:-1][-5:] + [{"role": "user", "content": enriched_user}]
+                elif self.current_model.startswith("kam:"):
+                    messages = self.conversation_history[-6:]
+                else:
+                    messages = [{"role": "system", "content": system_instruction}] + self.conversation_history[-6:]
                 payload = json.dumps({
                     "model": self.current_model,
                     "messages": messages,
                     "stream": True,
                     "options": {
-                        "temperature": 0.5,
+                        "temperature": 0.35,
                         "top_p": 0.90,
-                        "repeat_penalty": 1.18
+                        "repeat_penalty": 1.15
                     }
                 }).encode("utf-8")
                 req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
@@ -186,16 +201,31 @@ class UniversalLLMClient:
     def _call_ollama(self, user_prompt: str, system_instruction: str) -> str:
         try:
             url = f"{self.ollama_url}/api/chat"
-            messages = [{"role": "system", "content": system_instruction}] + self.conversation_history[-4:]
+            grounded_fact = self.knowledge.query(user_prompt)
+            # Özel derlenmiş kam:* modellerinde Modelfile içindeki SYSTEM ve MESSAGE few-shot örneklerini korumak için
+            # system rolünü ezmeden, doğrulanmış RAG bilgisini doğrudan kullanıcı bağlamına ekle:
+            if self.current_model.startswith("kam:") and grounded_fact:
+                enriched_user = (
+                    f"[DOĞRULANMIŞ KESİN BİLGİ KAYNAĞI]:\n{grounded_fact}\n\n"
+                    f"[KULLANICI SORUSU]:\n{user_prompt}\n\n"
+                    f"(Yukarıdaki doğrulanmış bilgi kaynağındaki tüm teknik terimleri, anahtar kavramları, "
+                    f"tarih ve özel isimleri eksiksiz koruyarak duru bir Türkçeyle yanıtla.)"
+                )
+                history_prefix = self.conversation_history[:-1][-3:]
+                messages = history_prefix + [{"role": "user", "content": enriched_user}]
+            elif self.current_model.startswith("kam:"):
+                messages = self.conversation_history[-4:]
+            else:
+                messages = [{"role": "system", "content": system_instruction}] + self.conversation_history[-4:]
 
             payload = json.dumps({
                 "model": self.current_model,
                 "messages": messages,
                 "stream": False,
                 "options": {
-                    "temperature": 0.5,
+                    "temperature": 0.35,
                     "top_p": 0.90,
-                    "repeat_penalty": 1.18
+                    "repeat_penalty": 1.15
                 }
             }).encode("utf-8")
 

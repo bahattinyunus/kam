@@ -84,14 +84,25 @@ class KamLiquidFoundationModel:
         self.router = SparseMoERouter(self.config.input_dim, self.config.num_experts, self.config.top_k)
         self.hidden_state = [0.05] * self.config.hidden_dim
         self.current_tau = 0.5  # Dinamik zaman sabiti (LTC)
-        # Öğrenilebilir ağırlık vektörleri (RK4 LTC giriş, tekrarlayan ve politika başlığı)
+        # Öğrenilebilir ağırlık vektörleri (RK4 LTC giriş, tekrarlayan, 8 Uzman ve çoklu görev başlıkları)
         self.w_in = [1.2 + 0.1 * math.cos(i) for i in range(self.config.hidden_dim)]
         self.w_rec = [0.18 + 0.02 * math.sin(i) for i in range(self.config.hidden_dim)]
+        self.w_shared_expert = [0.42 * math.cos(i * 0.3) for i in range(self.config.hidden_dim)]
+        self.w_experts = [
+            [0.28 * math.sin(e * 1.1 + i * 0.25) for i in range(self.config.hidden_dim)]
+            for e in range(self.config.num_experts)
+        ]
         self.w_action = [
             [0.35 * math.cos(a * 1.7 + j * 0.4) for j in range(16)]
             for a in range(4)
         ]
         self.action_bias = [0.0, 0.0, 0.0, 0.0]
+        self.w_ew_emitter = [
+            [0.30 * math.sin(e * 1.3 + j * 0.5) for j in range(16)]
+            for e in range(4)
+        ]
+        self.ew_bias = [0.0, 0.0, 0.0, 0.0]
+        self.w_cbf_margin = [0.22 * math.cos(j * 0.6) for j in range(16)]
 
     def _ltc_derivative(self, idx: int, h_val: float, x_val: float, tau: float, bias_a: float = 1.0) -> float:
         """
@@ -199,6 +210,22 @@ class KamLiquidFoundationModel:
 
         best_action = max(action_probs.items(), key=lambda item: item[1])[0]
 
+        # 5. Çoklu Görev Başlığı-2: Bilişsel EW Radar Emiter Tehdit Dağılımı
+        ew_names = ["S400_92N6E", "PANTSIR_S1", "X_BAND_AESA", "AGILE_LPI_SDR"]
+        ew_scores = [
+            sum(self.w_ew_emitter[e][j] * (h_updated[j] + tri_features[j % len(tri_features)]) for j in range(16)) + self.ew_bias[e]
+            for e in range(4)
+        ]
+        max_ew = max(ew_scores)
+        exp_ew = [math.exp(s - max_ew) for s in ew_scores]
+        sum_ew = sum(exp_ew) + 1e-12
+        ew_probs = {ew_names[i]: round(exp_ew[i] / sum_ew, 6) for i in range(4)}
+
+        # 6. Çoklu Görev Başlığı-3: Nöro-Sembolik CBF Güvenlik Marjı h(x) Tahmini
+        cbf_margin_est = math.tanh(
+            sum(self.w_cbf_margin[j] * h_updated[j] for j in range(16))
+        )
+
         return {
             "model": "KAM-1-Liquid-MoE (Air-Gapped)",
             "ode_solver": "RK4" if self.config.use_rk4_ode else "Euler",
@@ -210,5 +237,7 @@ class KamLiquidFoundationModel:
             "kv_cache_reduction_pct": round(self.config.hybrid_ssm_layer_ratio * 104.0, 1),
             "action_probabilities": action_probs,
             "selected_optimal_action": best_action,
+            "ew_emitter_probabilities": ew_probs,
+            "predicted_cbf_safety_margin": round(cbf_margin_est, 4),
         }
 

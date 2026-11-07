@@ -1,0 +1,55 @@
+{
+  "total_models": 7,
+  "total_size_gb": 20.83,
+  "models": [
+    {
+      "model": "qwen3:8b",
+      "title": "KAM-Apex 8B (Qwen3 8B Hibrit Düşünen Başbuğ Zihin)",
+      "filename": "kam_apex_qwen3_8b.gguf",
+      "size_gb": 4.87,
+      "blob_source": "sha256-a3de86cd1c132c822487ededd47a324c50491393e6565cd14bafa40d0b8e686f"
+    },
+    {
+      "model": "qwen2.5:7b",
+      "title": "KAM-7B (Qwen 2.5 7B Ulu Kam Bilişsel Zihin)",
+      "filename": "kam_7b_qwen_foundation.gguf",
+      "size_gb": 4.36,
+      "blob_source": "sha256-2bada8a7450677000f678be90653b85d364de7db25eb5ea54136ada5f3933730"
+    },
+    {
+      "model": "deepseek-r1:7b",
+      "title": "KAM-R1 7B (DeepSeek-R1 7B Baş Bilge CoT Muhakeme)",
+      "filename": "kam_r1_deepseek_7b.gguf",
+      "size_gb": 4.36,
+      "blob_source": "sha256-96c415656d377afbff962f6cdb2394ab092ccbcbaab4b82525bc4ca800fe8a49"
+    },
+    {
+      "model": "qwen2.5-coder:7b",
+      "title": "KAM-Coder 7B (Qwen 2.5 Coder 7B Ulu Demirci C++20/eBPF Başmimarı)",
+      "filename": "kam_coder_7b_qwen.gguf",
+      "size_gb": 4.36,
+      "blob_source": "sha256-60e05f2100071479f596b964f89f510f057ce397ea22f2833a0cfe029bfc2463"
+    },
+    {
+      "model": "deepseek-r1:1.5b",
+      "title": "KAM-R1-Nano 1.5B (DeepSeek-R1 1.5B Taktik Bilge CoT)",
+      "filename": "deepseek-r1-1.5b-q4_k_m.gguf",
+      "size_gb": 1.04,
+      "blob_source": "sha256-aabd4debf0c8f08881923f2c25fc0fdeed24435271c2b3e92c4af36704040dbc"
+    },
+    {
+      "model": "qwen2.5-coder:1.5b",
+      "title": "KAM-Coder-Nano 1.5B (Qwen 2.5 Coder 1.5B Taktik Demirci)",
+      "filename": "qwen2.5-coder-1.5b-q4_k_m.gguf",
+      "size_gb": 0.92,
+      "blob_source": "sha256-29d8c98fa6b098e200069bfb88b9508dc3e85586d20cba59f8dda9a808165104"
+    },
+    {
+      "model": "qwen2.5:1.5b",
+      "title": "KAM-1.5B (Qwen 2.5 1.5B Uç Gözcü & Spekülatif Taslak)",
+      "filename": "qwen_1.5b_lightweight_fallback.gguf",
+      "size_gb": 0.92,
+      "blob_source": "sha256-183715c435899236895da3869489cc30ac241476b4971a20285b1a462818a5b4"
+    }
+  ]
+}

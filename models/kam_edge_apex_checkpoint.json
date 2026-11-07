@@ -1,27 +1,61 @@
 {
-  "architecture": "KAM-Edge-MoE-RK4-BitNet-b1.58",
+  "architecture": "KAM-Edge-MoE-v2-TriHybrid-RK4-BitNet-b1.58",
   "epochs_trained": 20,
   "final_metrics": {
     "epoch": 20,
     "mean_free_energy": 0.0301,
-    "total_loss": 0.21499,
+    "total_loss": 0.36108,
     "policy_accuracy_pct": 100.0,
+    "ew_emitter_accuracy_pct": 100.0,
     "convergence_status": "MINIMIZED_EQUILIBRIUM",
     "tau_adaptive": 0.5318
   },
   "bitnet_quantization": {
-    "num_parameters_quantized": 192,
-    "scale_gamma": 0.564942,
-    "sparsity_ratio": 0.4375,
-    "rmse": 0.320626,
+    "num_parameters_quantized": 848,
+    "scale_gamma": 0.297326,
+    "sparsity_ratio": 0.2913,
+    "rmse": 0.271428,
     "compression_ratio_vs_fp16": 10.13,
     "energy_saving_factor": 4.6
+  },
+  "hessian_imatrix_calibration": {
+    "blk.0.rk4_ltc": {
+      "importance_score": 1.0,
+      "assigned_quantization": "Q6_K",
+      "effective_bits": 6.5
+    },
+    "blk.0.moe_router": {
+      "importance_score": 0.1769,
+      "assigned_quantization": "Q6_K",
+      "effective_bits": 6.5
+    },
+    "blk.0.shared_expert": {
+      "importance_score": 0.0206,
+      "assigned_quantization": "IQ3_M",
+      "effective_bits": 3.4
+    },
+    "blk.0.ew_head": {
+      "importance_score": 0.2897,
+      "assigned_quantization": "IQ3_M",
+      "effective_bits": 3.4
+    },
+    "output.weight": {
+      "importance_score": 0.0017,
+      "assigned_quantization": "Q6_K",
+      "effective_bits": 6.5
+    }
   },
   "action_bias": [
     0.219297,
     -0.157847,
     -0.2092,
     0.147751
+  ],
+  "ew_bias": [
+    0.276816,
+    -0.298032,
+    -0.264193,
+    0.285409
   ],
   "binary_file": "G:\\Diğer bilgisayarlar\\Dizüstü Bilgisayarım\\github repolarım\\kam\\models\\kam_edge_apex_b158.bin"
 }

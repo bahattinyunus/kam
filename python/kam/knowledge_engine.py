@@ -63,7 +63,12 @@ class LocalKnowledgeEngine:
 
         # Özel Kısayol: Türkiye başkenti
         if ("tr" in words or "turkiye" in words or "turkiyenin" in words) and ("baskent" in words or "baskenti" in words or "neresi" in words or "neresidir" in words):
-            return "Türkiye Cumhuriyeti'nin başkenti Ankara'dır. 13 Ekim 1923 tarihinde Türkiye Büyük Millet Meclisi kararıyla başkent ilan edilmiştir."
+            return (
+                "Türkiye Cumhuriyeti'nin başkenti Ankara'dır. 13 Ekim 1923 tarihinde Türkiye Büyük Millet Meclisi "
+                "(TBMM) kararıyla başkent ilan edilmiştir. Milli Mücadele'nin karargahı olan Ankara, coğrafi olarak "
+                "Anadolu'nun tam merkezinde bulunması ve stratejik güvenliği nedeniyle Gazi Mustafa Kemal Atatürk "
+                "önderliğinde başkent seçilmiştir."
+            )
 
         best_match = None
         best_score = 0.0

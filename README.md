@@ -354,12 +354,14 @@ KAM modelleri resmi olarak **Hugging Face Hub** üzerinde açık ağırlıklı G
 
 | Model | Boyut | Mimari ve Görev Profili | Modelfile / Kaynak | Tek Satır Çalıştırma Komutu |
 |:---|:---|:---|:---|:---|
+| **`kam:apex`** | `5.20 GB` | **Başbuğ Kam:** Qwen3 8B Yeni Nesil Hibrit Düşünen Bilişsel Zihin (16K Bağlam, Öz Türkçe) | `models/Modelfile.kam-apex` | `ollama run kam:apex` |
 | [**`kam:7b`**](https://huggingface.co/bahattinyunus/kam-7b-gguf) | `4.68 GB` | **Ulu Kam:** Qwen 2.5 7B Bilişsel Zihin (16K Bağlam, Duru Türkçe) | `models/Modelfile.kam` | `ollama run hf.co/bahattinyunus/kam-7b-gguf` |
 | [**`kam:r1`**](https://huggingface.co/bahattinyunus/kam-r1-gguf) | `4.68 GB` | **Baş Bilge:** DeepSeek-R1 7B Zincirleme Akıl Yürütme (`<think>`) | `models/Modelfile.kam-r1` | `ollama run hf.co/bahattinyunus/kam-r1-gguf` |
-| **`kam:coder`** | `986 MB` | **Demirci:** Qwen 2.5 Coder 1.5B Otonom C++20 JIT, eBPF & AST Sandbox Uzmanı | `models/Modelfile.kam-coder` | `ollama run kam:coder` |
-| **`kam:r1-nano`** | `1.1 GB` | **Taktik Bilge:** DeepSeek-R1 1.5B Kısıtlı Donanım CoT (`<think>`) Muhakeme Motoru | `models/Modelfile.kam-r1-nano` | `ollama run kam:r1-nano` |
+| **`kam:coder`** | `4.68 GB` | **Ulu Demirci:** Qwen 2.5 Coder 7B Otonom C++20 JIT, Linux eBPF & AST Sandbox Başmimarı | `models/Modelfile.kam-coder` | `ollama run kam:coder` |
+| **`kam:r1-nano`** | `1.10 GB` | **Taktik Bilge:** DeepSeek-R1 1.5B Kısıtlı Donanım CoT (`<think>`) Muhakeme Motoru | `models/Modelfile.kam-r1-nano` | `ollama run kam:r1-nano` |
+| **`kam:coder-nano`** | `986 MB` | **Taktik Demirci:** Qwen 2.5 Coder 1.5B Mikro-Uç C++20 JIT Kod Sentezleyici | `models/Modelfile.kam-coder-nano` | `ollama run kam:coder-nano` |
 | [**`kam:1.5b`**](https://huggingface.co/bahattinyunus/kam-1.5b-edge-gguf) | `986 MB` | **Uç Gözcü:** Qwen 2.5 1.5B Mikro Uç Donanım ve Öz-Spekülatif Taslak Modeli | `models/Modelfile.kam-1.5b` | `ollama run hf.co/bahattinyunus/kam-1.5b-edge-gguf` |
-| **`KAM-Edge-MoE-b158`** | `208 B` *(Ternary)* | **Refleks Çekirdek:** RK4 Liquid-SSM + BitNet b1.58 (`%100` Kriz İsabeti, `%44.8` Seyreklik) | `models/kam_edge_apex_b158.bin` | `python scripts/train_edge_apex_bitnet.py` |
+| **`KAM-Edge-MoE-v2`** | `848 Param` *(Ternary)* | **Refleks Çekirdek:** Tri-Hybrid RK4 + 8 Uzman MoE + BitNet b1.58 (`%100` Kriz & EW İsabeti) | `models/kam_edge_apex_b158.bin` | `python scripts/train_edge_apex_bitnet.py` |
 
 ### Halüsinasyon Önleyici Yerel Bilgi Motoru (`LocalKnowledgeEngine`)
 `python/kam/knowledge_engine.py`, `data/kam_master_dataset.json` ve `data/kam_lore_dataset.json` veri tabanlarını kullanarak sorguları Türkçe karakter duyarsız kök eşleştirme ve semantik yakınlık algoritmasıyla tarar; kesin doğrulanmış mühendislik, sibernetik, coğrafya ve Dede Korkut hikmet kayıtlarını sistem istemine (*RAG Grounding*) enjekte ederek **%0 halüsinasyon** garantisi sağlar.

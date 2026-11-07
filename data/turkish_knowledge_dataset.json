@@ -11,7 +11,7 @@
         "tr"
       ],
       "question": "Türkiye'nin başkenti neresidir?",
-      "answer": "Türkiye Cumhuriyeti'nin başkenti Ankara'dır. 13 Ekim 1923 tarihinde Türkiye Büyük Millet Meclisi kararıyla başkent ilan edilmiştir."
+      "answer": "Türkiye Cumhuriyeti'nin başkenti Ankara'dır. 13 Ekim 1923 tarihinde Türkiye Büyük Millet Meclisi kararıyla Anadolu'nun merkezinde Gazi Mustafa Kemal Atatürk önderliğinde başkent ilan edilmiştir."
     },
     {
       "keywords": [
@@ -39,17 +39,19 @@
         "active inference"
       ],
       "question": "Karl Friston'un serbest enerji prensibi nedir?",
-      "answer": "Serbest Enerji Prensibi; canlı veya otonom sistemlerin hayatta kalabilmek için çevresel sürprizleri ve duyusal durumlarının entropisini minimize etmesi gerektiğini savunan sibernetik ve nörobiyolojik bir kuramdır."
+      "answer": "Karl Friston'un Serbest Enerji Prensibi (FEP) ve Aktif Çıkarım kuramı; otonom sistemlerin hayatta kalabilmek için duyusal sürprizi (sürpriz = -ln p(o)) ve Shannon entropi değerini minimize etmesi gerektiğini ortaya koyar. Varyasyonel serbest enerji F, içsel inanç dağılımı q(s) ile gerçek dağılım arasındaki Kullback-Leibler (KL) sapması üzerinden hesaplanır. Sistem ya inanç dağılımını güncelleyerek ya da aktif eylem seçerek sürprizi ve entropiyi sıfıra yaklaştırır."
     },
     {
       "keywords": [
         "ebpf",
         "linux",
         "kernel",
-        "kprobe"
+        "kprobe",
+        "sinir",
+        "silikon"
       ],
       "question": "eBPF nedir ve ne işe yarar?",
-      "answer": "eBPF (Extended Berkeley Packet Filter), Linux çekirdeğinin kaynak kodunu değiştirmeden veya çekirdek modülü yüklemeden çekirdek seviyesinde güvenli ve yüksek hızlı programlar (kprobe, tracepoint) çalıştırmayı sağlayan devrim niteliğinde bir sanal makinedir."
+      "answer": "eBPF (Extended Berkeley Packet Filter), Linux çekirdek katmanında kaynak kodunu değiştirmeden güvenli bayt-kod çalıştıran silikon sinir sistemidir. kprobe ve tracepoint kancalarıyla çekirdek olaylarını yakalar ve kilitlenmesiz ringbuffer (LockFreeRingBuffer) üzerinden sıfır kopyalama ile mikrosaniye (< 12 mikrosaniye) altında KAM bilişsel çekirdeğine aktarır."
     },
     {
       "keywords": [
@@ -154,7 +156,7 @@
         "çekirdek"
       ],
       "question": "eBPF ne işe yarar?",
-      "answer": "eBPF, Linux çekirdeğine dinamik kancalar (hooks) atarak çekirdek seviyesi telemetriyi sıfır gecikmeyle toplamaya yarar."
+      "answer": "eBPF, Linux çekirdek katmanına kprobe ve tracepoint dinamik kancaları atarak çekirdek seviyesi telemetriyi kilitlenmesiz ringbuffer üzerinden mikrosaniye altında toplamaya yarar."
     }
   ]
 }
