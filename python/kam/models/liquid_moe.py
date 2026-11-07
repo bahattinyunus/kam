@@ -84,13 +84,23 @@ class KamLiquidFoundationModel:
         self.router = SparseMoERouter(self.config.input_dim, self.config.num_experts, self.config.top_k)
         self.hidden_state = [0.05] * self.config.hidden_dim
         self.current_tau = 0.5  # Dinamik zaman sabiti (LTC)
+        # Öğrenilebilir ağırlık vektörleri (RK4 LTC giriş, tekrarlayan ve politika başlığı)
+        self.w_in = [1.2 + 0.1 * math.cos(i) for i in range(self.config.hidden_dim)]
+        self.w_rec = [0.18 + 0.02 * math.sin(i) for i in range(self.config.hidden_dim)]
+        self.w_action = [
+            [0.35 * math.cos(a * 1.7 + j * 0.4) for j in range(16)]
+            for a in range(4)
+        ]
+        self.action_bias = [0.0, 0.0, 0.0, 0.0]
 
-    def _ltc_derivative(self, h_val: float, x_val: float, tau: float, bias_a: float = 1.0) -> float:
+    def _ltc_derivative(self, idx: int, h_val: float, x_val: float, tau: float, bias_a: float = 1.0) -> float:
         """
         Sıvı Zaman Sabitli (LTC) Diferansiyel Denklem:
         dh/dt = - [1/tau + f(h, x)] * h + A * f(h, x)
         """
-        f_gate = math.tanh(x_val * 1.5 + h_val * 0.2)
+        w_i = self.w_in[idx % len(self.w_in)]
+        u_i = self.w_rec[idx % len(self.w_rec)]
+        f_gate = math.tanh(x_val * w_i + h_val * u_i)
         effective_decay = (1.0 / max(tau, 1e-4)) + abs(f_gate) * 0.35
         return -effective_decay * h_val + bias_a * f_gate
 
@@ -104,13 +114,13 @@ class KamLiquidFoundationModel:
             x_val = x[i % len(x)]
             if self.config.use_rk4_ode:
                 # 4. Dereceden Runge-Kutta (RK4) İntegrasyonu
-                k1 = self._ltc_derivative(h_val, x_val, self.current_tau)
-                k2 = self._ltc_derivative(h_val + 0.5 * dt * k1, x_val, self.current_tau)
-                k3 = self._ltc_derivative(h_val + 0.5 * dt * k2, x_val, self.current_tau)
-                k4 = self._ltc_derivative(h_val + dt * k3, x_val, self.current_tau)
+                k1 = self._ltc_derivative(i, h_val, x_val, self.current_tau)
+                k2 = self._ltc_derivative(i, h_val + 0.5 * dt * k1, x_val, self.current_tau)
+                k3 = self._ltc_derivative(i, h_val + 0.5 * dt * k2, x_val, self.current_tau)
+                k4 = self._ltc_derivative(i, h_val + dt * k3, x_val, self.current_tau)
                 h_next = h_val + (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
             else:
-                dh_dt = self._ltc_derivative(h_val, x_val, self.current_tau)
+                dh_dt = self._ltc_derivative(i, h_val, x_val, self.current_tau)
                 h_next = h_val + dt * dh_dt
             new_h.append(h_next)
 
@@ -126,12 +136,16 @@ class KamLiquidFoundationModel:
         h_updated = self.continuous_ode_step(sensory_stream, dt)
 
         # 3. Active Inference Variational Free Energy
-        h_norm = sum(v * v for v in h_updated)
-        free_energy = 0.03 + 0.05 * h_norm
+        h_norm = sum(v * v for v in h_updated) / float(len(h_updated))
+        free_energy = 0.03 + 0.12 * h_norm
 
         # 4. Politika Aksiyonu Dağılımı (4 Aksiyon)
         action_names = ["UART_STABILIZE", "SDR_FREQUENCY_HOP", "I2C_BUS_REMAP", "THERMAL_THROTTLE_DOWNGRADE"]
-        action_scores = [h_updated[i] * active_experts[0][1] for i in range(4)]
+        action_scores = []
+        for a in range(4):
+            proj = sum(self.w_action[a][j] * (h_updated[j] + sensory_stream[j % len(sensory_stream)]) for j in range(16))
+            action_scores.append(proj * active_experts[0][1] + self.action_bias[a])
+
         max_score = max(action_scores)
         exp_scores = [math.exp(s - max_score) for s in action_scores]
         sum_exp = sum(exp_scores)

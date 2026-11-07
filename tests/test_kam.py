@@ -24,6 +24,8 @@ from kam.edge_optimizer import (
     SpeculativeDecoder,
 )
 from kam.tactical_planner import TacticalRoutePlanner3D
+from kam.lyapunov_controller import LyapunovCognitiveController
+from kam.cognitive_council import CognitiveCouncilRouter
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -312,6 +314,46 @@ class TestKam(unittest.TestCase):
         mcp = McpServer()
         mcp_route = mcp.call_tool("plan_tactical_3d_route", {"target_x_km": 45.0, "num_segments": 8})
         self.assertEqual(len(mcp_route["waypoints"]), 9)
+
+    def test_lyapunov_stability_and_cognitive_council(self):
+        clf = LyapunovCognitiveController()
+        # 1. Kararlı (azalan hata ve düşük serbest enerji) adım
+        r1 = clf.evaluate_stability_step([0.05, 0.02, 0.01, 0.01, 0.0, 0.0], free_energy=0.04)
+        self.assertTrue(r1.is_asymptotically_stable)
+        self.assertEqual(r1.recommended_damping_action, "ATTRACTOR_EQUILIBRIUM_HOLD")
+
+        # 2. Kaotik sıçrama -> Sontag CLF sönümleme kazancı devreye girmeli
+        r2 = clf.evaluate_stability_step([1.8, -1.5, 2.1, 0.9, -0.8, 1.2], free_energy=1.65)
+        self.assertFalse(r2.is_asymptotically_stable)
+        self.assertGreater(r2.stabilizing_control_gain, 0.0)
+        self.assertEqual(r2.recommended_damping_action, "CLF_EMERGENCY_ENTROPY_DAMPING_JIT")
+
+        # 3. 2. Dereceden Taylor Faz Uzayı Kriz Öngörüsü (TTA)
+        tta = clf.forecast_time_to_anomaly([62.0, 68.0, 75.0, 83.0], critical_threshold=85.0, sample_dt_sec=1.0)
+        self.assertIsNotNone(tta["estimated_tta_sec"])
+        self.assertLess(tta["estimated_tta_sec"], 1.0)
+        self.assertTrue(tta["preemptive_alert"])
+
+        # 4. 5-Modelli Bilişsel Kurul Yönlendiricisi (kam:coder, kam:r1, kam:r1-nano, kam:1.5b, kam:7b)
+        c_code = CognitiveCouncilRouter.select_specialist_model("C++20 JIT ve eBPF kancası yaz")
+        self.assertEqual(c_code["selected_model"], "kam:coder")
+
+        c_math = CognitiveCouncilRouter.select_specialist_model("Karl Friston serbest enerji denklemini ispatla")
+        self.assertEqual(c_math["selected_model"], "kam:r1")
+
+        c_nano = CognitiveCouncilRouter.select_specialist_model("Lyapunov denklemini hesapla", ram_mb=1536, npu_temp_c=88.0)
+        self.assertEqual(c_nano["selected_model"], "kam:r1-nano")
+
+        c_edge = CognitiveCouncilRouter.select_specialist_model("Durum raporu ver", ram_mb=1536, npu_temp_c=88.0)
+        self.assertEqual(c_edge["selected_model"], "kam:1.5b")
+
+        c_main = CognitiveCouncilRouter.select_specialist_model("Dede Korkut töresi ve dirlik nedir?")
+        self.assertEqual(c_main["selected_model"], "kam:7b")
+
+        council = CognitiveCouncilRouter()
+        verdict = council.synthesize_council_verdict(crisis_hint="THERMAL")
+        self.assertEqual(verdict["council_status"], "UNANIMOUS_SOVEREIGN_INTERVENTION")
+        self.assertTrue(verdict["demirci_jit_synthesis"]["ast_verified"])
 
 if __name__ == "__main__":
     unittest.main()

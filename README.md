@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Architecture-Air--Gapped_%7C_Zero--Cloud-00F2FE.svg?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Kernel_Latency-%3C_12_%CE%BCs_eBPF-4FACFE.svg?style=for-the-badge&logo=linux&logoColor=white" />
   <img src="https://img.shields.io/badge/JIT_Hot--Patch-41.2_ms-00C9FF.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tests-21%2F21_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tests-22%2F22_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
   <img src="https://img.shields.io/badge/NVIDIA-CUDA_12.x_%7C_RTX_5060-76B900.svg?style=for-the-badge&logo=nvidia&logoColor=white" />
   <img src="https://img.shields.io/badge/License-Apache_2.0-0D1117.svg?style=for-the-badge" />
 </p>
@@ -179,7 +179,14 @@ GNSS/GPS ölçümü $\mathbf{z}_k$ geldiğinde yenilik (*innovation*) vektörü 
 $$d_M(\mathbf{z}_k) = \sqrt{\mathbf{y}_k^T \mathbf{S}_k^{-1} \mathbf{y}_k}$$
 
 - Eğer $d_M(\mathbf{z}_k) > \tau_{\chi^2}$ ise sahte uydu sinyali (*GNSS Spoofing*) tespit edilir, GPS hattı karantinaya alınır ve **Optik Akış + Barometrik İrtifa Ölü-Hesaplama (`update_optical_flow`)** moduna kesintisiz geçilir.
-- Eğer $d_M(\mathbf{z}_k) \le \tau_{\chi^2}$ ise Kalman kazancı $\mathbf{K}_k = \mathbf{P}_{k \mid k-1}\mathbf{H}^T \mathbf{S}_k^{-1}$ ile durum ve kovaryans güncellenir: $\mathbf{P}_{k \mid k} = (\mathbf{I} - \mathbf{K}_k\mathbf{H})\mathbf{P}_{k \mid k-1}$.
+- **Eğer $d_M(\mathbf{z}_k) \le \tau_{\chi^2}$ ise** Kalman kazancı $\mathbf{K}_k = \mathbf{P}_{k \mid k-1}\mathbf{H}^T \mathbf{S}_k^{-1}$ ile durum ve kovaryans güncellenir: $\mathbf{P}_{k \mid k} = (\mathbf{I} - \mathbf{K}_k\mathbf{H})\mathbf{P}_{k \mid k-1}$.
+
+### 5. Kontrol-Lyapunov Fonksiyonu (CLF) ve Faz Uzayı Kriz Öngörüsü (`LyapunovCognitiveController`)
+Otonom onarım döngüsünün salınıma (*oscillation*) girmesini önlemek ve krizleri gerçekleşmeden önce yakalamak için Aleksandr Lyapunov'un asimptotik kararlılık teoremi ile Karl Friston'un Varyasyonel Serbest Enerjisi birleştirilir (`python/kam/lyapunov_controller.py`):
+
+$$V(\mathbf{e}, F) = \frac{1}{2}\mathbf{e}^T \mathbf{P} \mathbf{e} + \alpha F(o, q) > 0, \qquad \frac{dV}{dt} + \lambda V \le 0$$
+
+Ayrıca 2. dereceden Taylor faz uzayı ekstrapolasyonu $x(t + \Delta\tau) = x_t + \dot{x}_t \Delta\tau + \frac{1}{2}\ddot{x}_t (\Delta\tau)^2$ ile kritik eşik aşımına kalan süre (**Time-To-Anomaly — TTA**) saniye hassasiyetinde hesaplanarak önleyici (*preemptive*) JIT yaması tetiklenir.
 
 ---
 
@@ -282,11 +289,14 @@ $$f_k = f_{\text{base}} + \left(\left(\phi_0 + k \cdot \varphi^{-1}\right) \bmod
 
 KAM modelleri resmi olarak **Hugging Face Hub** üzerinde açık ağırlıklı GGUF formatında yayınlanmıştır ve Ollama aracılığıyla tek komutla doğrudan çalıştırılabilir:
 
-| Model | Boyut | Mimari ve Görev Profili | Hugging Face Deposu | Tek Satır Çalıştırma Komutu |
+| Model | Boyut | Mimari ve Görev Profili | Modelfile / Kaynak | Tek Satır Çalıştırma Komutu |
 |:---|:---|:---|:---|:---|
-| [**`kam:7b`**](https://huggingface.co/bahattinyunus/kam-7b-gguf) | `4.68 GB` | Qwen 2.5 7B Bilişsel Zihin (16K Bağlam, Duru Türkçe) | `bahattinyunus/kam-7b-gguf` | `ollama run hf.co/bahattinyunus/kam-7b-gguf` |
-| [**`kam:r1`**](https://huggingface.co/bahattinyunus/kam-r1-gguf) | `4.68 GB` | DeepSeek-R1 7B Zincirleme Akıl Yürütme (`<think>`) | `bahattinyunus/kam-r1-gguf` | `ollama run hf.co/bahattinyunus/kam-r1-gguf` |
-| [**`kam:1.5b`**](https://huggingface.co/bahattinyunus/kam-1.5b-edge-gguf) | `986 MB` | Qwen 2.5 1.5B Mikro Uç Donanım ve Spekülatif Taslak Modeli | `bahattinyunus/kam-1.5b-edge-gguf` | `ollama run hf.co/bahattinyunus/kam-1.5b-edge-gguf` |
+| [**`kam:7b`**](https://huggingface.co/bahattinyunus/kam-7b-gguf) | `4.68 GB` | **Ulu Kam:** Qwen 2.5 7B Bilişsel Zihin (16K Bağlam, Duru Türkçe) | `models/Modelfile.kam` | `ollama run hf.co/bahattinyunus/kam-7b-gguf` |
+| [**`kam:r1`**](https://huggingface.co/bahattinyunus/kam-r1-gguf) | `4.68 GB` | **Baş Bilge:** DeepSeek-R1 7B Zincirleme Akıl Yürütme (`<think>`) | `models/Modelfile.kam-r1` | `ollama run hf.co/bahattinyunus/kam-r1-gguf` |
+| **`kam:coder`** | `986 MB` | **Demirci:** Qwen 2.5 Coder 1.5B Otonom C++20 JIT, eBPF & AST Sandbox Uzmanı | `models/Modelfile.kam-coder` | `ollama run kam:coder` |
+| **`kam:r1-nano`** | `1.1 GB` | **Taktik Bilge:** DeepSeek-R1 1.5B Kısıtlı Donanım CoT (`<think>`) Muhakeme Motoru | `models/Modelfile.kam-r1-nano` | `ollama run kam:r1-nano` |
+| [**`kam:1.5b`**](https://huggingface.co/bahattinyunus/kam-1.5b-edge-gguf) | `986 MB` | **Uç Gözcü:** Qwen 2.5 1.5B Mikro Uç Donanım ve Öz-Spekülatif Taslak Modeli | `models/Modelfile.kam-1.5b` | `ollama run hf.co/bahattinyunus/kam-1.5b-edge-gguf` |
+| **`KAM-Edge-MoE-b158`** | `208 B` *(Ternary)* | **Refleks Çekirdek:** RK4 Liquid-SSM + BitNet b1.58 (`%100` Kriz İsabeti, `%44.8` Seyreklik) | `models/kam_edge_apex_b158.bin` | `python scripts/train_edge_apex_bitnet.py` |
 
 ### Halüsinasyon Önleyici Yerel Bilgi Motoru (`LocalKnowledgeEngine`)
 `python/kam/knowledge_engine.py`, `data/kam_master_dataset.json` ve `data/kam_lore_dataset.json` veri tabanlarını kullanarak sorguları Türkçe karakter duyarsız kök eşleştirme ve semantik yakınlık algoritmasıyla tarar; kesin doğrulanmış mühendislik, sibernetik, coğrafya ve Dede Korkut hikmet kayıtlarını sistem istemine (*RAG Grounding*) enjekte ederek **%0 halüsinasyon** garantisi sağlar.
@@ -322,6 +332,7 @@ Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`)
 | `evaluate_efe_policies` | `crisis_hint` *(opsiyonel)* | Beklenen Serbest Enerji $G(\pi)$ üzerinden epistemik/pragmatik değer ayrıştırması yaparak optimal kurtarma politikasını seçer. |
 | `optimize_edge_deployment` | `ram_mb`, `tdp_watts`, `npu_temp_c` | Donanım RAM/TDP/Sıcaklık zarfına göre en uygun KAM model, `imatrix` kuantizasyon ve spekülatif çözümleme planını çıkarır. |
 | `plan_tactical_3d_route` | `target_x_km`, `target_y_km`, `num_segments` | 3-Boyutlu SİHA arazi maskeleme (*Nap-of-the-Earth*) ve $1/R^4$ radar sönümleme denklemiyle en güvenli stealth uçuş koridorunu hesaplar. |
+| `evaluate_lyapunov_council` | `crisis_hint` | 5-Modelli Bilişsel Kurul (**Bilge** EFE + **Gözcü** Lyapunov CLF/TTA + **Demirci** C++20 JIT) ortak kriz kararını sentezler. |
 
 ---
 
@@ -459,6 +470,12 @@ python cli.py --edge-plan
 # 3B SIHA Radar Sonumleme (1/R^4) ve Vadi Suzulus (Nap-of-the-Earth) rota planlamasi:
 python cli.py --tactical-route
 
+# 5-Modelli Bilissel Kurul (Bilge EFE + Gozcu Lyapunov CLF/TTA + Demirci JIT) ortak kriz karari:
+python cli.py --council
+
+# KAM-Edge-MoE RK4 & BitNet b1.58 uclu agirlik egitimi ve ikili (.bin) kontrol noktasi uretimi:
+python scripts/train_edge_apex_bitnet.py
+
 # Karl Friston Serbest Enerji minimizasyonu egitim dongusu:
 python cli.py --train
 
@@ -483,7 +500,7 @@ ollama create kam:r1 -f models/Modelfile.kam-r1
 
 ### 4. Otomatik Test Takımını ve C++20 Çekirdeğini Derleyin
 ```bash
-# 21/21 Birim ve Entegrasyon Testi:
+# 22/22 Birim ve Entegrasyon Testi:
 python -m pytest -v
 
 # C++20 Motoru Derlemesi:

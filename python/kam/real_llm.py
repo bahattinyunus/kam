@@ -41,7 +41,8 @@ class UniversalLLMClient:
                     models = [m["name"] for m in data.get("models", [])]
                     # En yetkin Türkçe ve dengeli bilişsel modeli otomatik önceliklendir (kam:7b en başta)
                     preferred = [
-                        "kam:7b", "kam:r1", "qwen2.5:7b", "deepseek-r1:7b", "deepseek-r1:8b",
+                        "kam:7b", "kam:r1", "kam:coder", "kam:r1-nano", "kam:1.5b",
+                        "qwen2.5:7b", "deepseek-r1:7b", "qwen2.5-coder:1.5b", "deepseek-r1:1.5b",
                         "llama3.1:8b", "llama3.2:3b", "qwen2.5:1.5b"
                     ]
                     for pref in preferred:
@@ -65,8 +66,14 @@ class UniversalLLMClient:
                     data = json.loads(resp.read().decode("utf-8"))
                     for m in data.get("models", []):
                         m_name = m["name"]
-                        if "kam:r1" in m_name:
+                        if "kam:r1-nano" in m_name:
+                            source_label = "KAM Taktik R1-Nano (1.5B CoT Akıl Yürütme)"
+                        elif "kam:r1" in m_name:
                             source_label = "KAM Derin Düşünce (R1 Akıl Yürütme - 7B)"
+                        elif "kam:coder" in m_name:
+                            source_label = "KAM Demirci (C++20 JIT & eBPF Kod Uzmanı - 1.5B)"
+                        elif "kam:1.5b" in m_name:
+                            source_label = "KAM Mikro-Uç Zihin & Spekülatif Taslak (1.5B)"
                         elif "kam" in m_name:
                             source_label = "KAM Kadim Bilişsel Şaman (Özel 7B Yerel)"
                         elif "deepseek-r1" in m_name:

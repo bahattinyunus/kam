@@ -16,6 +16,7 @@ from .edge_optimizer import (
     SpeculativeDecoder,
 )
 from .tactical_planner import TacticalRoutePlanner3D
+from .cognitive_council import CognitiveCouncilRouter
 
 def main():
     parser = argparse.ArgumentParser(
@@ -68,6 +69,11 @@ def main():
         help="3B SİHA Radar Sönümleme ve Aktif Çıkarım vadi süzülüş (Nap-of-the-Earth) rota planlaması"
     )
     parser.add_argument(
+        "--council",
+        action="store_true",
+        help="5-Modelli Bilişsel Kurul (Bilge + Gözcü Lyapunov CLF + Demirci JIT) ortak kriz kararı"
+    )
+    parser.add_argument(
         "--export-metrics",
         action="store_true",
         help="Prometheus formatında telemetri metriklerini yazdır"
@@ -116,6 +122,12 @@ def main():
         print(json.dumps(route, indent=2, ensure_ascii=False))
         return
 
+    if args.council:
+        council = CognitiveCouncilRouter()
+        verdict = council.synthesize_council_verdict(crisis_hint="THERMAL")
+        print(json.dumps(verdict, indent=2, ensure_ascii=False))
+        return
+
     if args.infer:
         model = KamLiquidFoundationModel()
         sensory_telemetry = [0.02, 0.03, 0.15, 0.80, 48.0, 1.2, 0.05, 0.9] * 2
@@ -128,12 +140,16 @@ def main():
         return
 
     if args.train:
-        trainer = ActiveInferenceTrainer()
-        print("\n[KAM-1 MODEL] Karl Friston Serbest Enerji Minimizasyon Eğitimi Başlatılıyor...")
-        history = trainer.run_training_cycle(steps=4)
+        trainer = ActiveInferenceTrainer(lr=0.12)
+        print("\n[KAM-1 MODEL] Karl Friston Serbest Enerji & BitNet b1.58 Eğitimi Başlatılıyor...")
+        history = trainer.run_training_cycle(steps=12)
         for h in history:
-            print(f"  • Epok {h['epoch']}: Ortalama Serbest Enerji = {h['mean_free_energy']} nats | Durum: {h['convergence_status']} | Tau: {h['tau_adaptive']:.3f}s")
-        print("[KAM-1 MODEL] Eğitim tamamlandı. Ağırlıklar yerel NPU/INT8 biçimine uyarlandı.\n")
+            print(
+                f"  • Epok {h['epoch']:02d}: VFE = {h['mean_free_energy']} nats | "
+                f"Kayıp = {h['total_loss']} | İsabet = %{h['policy_accuracy_pct']} | "
+                f"Durum: {h['convergence_status']} | Tau: {h['tau_adaptive']:.3f}s"
+            )
+        print("[KAM-1 MODEL] Eğitim tamamlandı. Ağırlıklar BitNet b1.58 {-1, 0, +1} biçimine uyarlandı.\n")
         return
 
     if args.export_metrics:

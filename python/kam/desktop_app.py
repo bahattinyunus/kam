@@ -419,7 +419,7 @@ class KamDesktopWindow(QMainWindow):
 
         self.combo_model = QComboBox()
         models = [m["name"] for m in self.llm_client.list_available_models()]
-        for m in ["kam:7b", "kam:r1", "qwen2.5:7b", "deepseek-r1:7b", "kam-1-liquid-moe"]:
+        for m in ["kam:7b", "kam:r1", "kam:coder", "kam:r1-nano", "kam:1.5b", "qwen2.5:7b", "deepseek-r1:7b", "kam-1-liquid-moe"]:
             if m not in models:
                 models.append(m)
         self.combo_model.addItems(models)

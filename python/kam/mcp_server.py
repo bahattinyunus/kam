@@ -3,6 +3,7 @@ from .active_inference import ActiveInferenceEngine
 from .code_mutator import CodeMutator
 from .edge_optimizer import EdgeHardwareBudget, EdgeModelOptimizer
 from .tactical_planner import TacticalRoutePlanner3D
+from .cognitive_council import CognitiveCouncilRouter
 
 
 class McpServer:
@@ -94,6 +95,16 @@ class McpServer:
                         },
                     },
                 },
+                {
+                    "name": "evaluate_lyapunov_council",
+                    "description": "5-Modelli Bilişsel Kurul (EFE Bilge + Lyapunov CLF/TTA Gözcü + C++20 JIT Demirci) ortak kriz kararını sentezle.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "crisis_hint": {"type": "string"},
+                        },
+                    },
+                },
             ]
         }
 
@@ -170,6 +181,10 @@ class McpServer:
             segs = int(args.get("num_segments", 10))
             planner = TacticalRoutePlanner3D()
             return planner.plan_stealth_trajectory(target_xyz=(tx, ty, 580.0), num_segments=segs)
+        elif name == "evaluate_lyapunov_council":
+            hint = str(args.get("crisis_hint", "THERMAL"))
+            council = CognitiveCouncilRouter()
+            return council.synthesize_council_verdict(crisis_hint=hint)
         return {"error": f"Bilinmeyen araç: {name}"}
 
     def handle_jsonrpc(self, request: Dict[str, Any]) -> Dict[str, Any]:

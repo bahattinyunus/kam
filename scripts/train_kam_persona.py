@@ -29,8 +29,26 @@ def train_model(model_name: str, use_offline: bool = True) -> bool:
         online_file = os.path.join(models_dir, "Modelfile.kam")
         weight_file = os.path.join(weights_dir, "kam_7b_qwen_foundation.gguf")
         desc = "Qwen 2.5 7B Yüksek Hızlı Bilişsel Şaman Motoru"
+    elif model_name in ["kam:1.5b", "kam-1.5b", "1.5b"]:
+        tag = "kam:1.5b"
+        offline_file = os.path.join(models_dir, "Modelfile.kam-1.5b")
+        online_file = os.path.join(models_dir, "Modelfile.kam-1.5b")
+        weight_file = ""
+        desc = "Qwen 2.5 1.5B Mikro-Uç Zihin ve Öz-Spekülatif Taslak Motoru"
+    elif model_name in ["kam:r1-nano", "kam-r1-nano", "r1-nano"]:
+        tag = "kam:r1-nano"
+        offline_file = os.path.join(models_dir, "Modelfile.kam-r1-nano")
+        online_file = os.path.join(models_dir, "Modelfile.kam-r1-nano")
+        weight_file = ""
+        desc = "DeepSeek-R1 1.5B Taktik Uç Zincirleme Akıl Yürütme (<think>) Motoru"
+    elif model_name in ["kam:coder", "kam-coder", "coder"]:
+        tag = "kam:coder"
+        offline_file = os.path.join(models_dir, "Modelfile.kam-coder")
+        online_file = os.path.join(models_dir, "Modelfile.kam-coder")
+        weight_file = ""
+        desc = "Qwen 2.5 Coder 1.5B Otonom C++20 JIT, Linux eBPF ve AST Sandbox Uzmanı"
     else:
-        print(f"\033[1;31m[HATA] Bilinmeyen model adı: {model_name}. ('kam:r1' veya 'kam:7b' seçiniz)\033[0m")
+        print(f"\033[1;31m[HATA] Bilinmeyen model adı: {model_name}.\033[0m")
         return False
 
     # Modelfile seçimi (çevrimdışı GGUF var mı?)
@@ -74,18 +92,22 @@ def train_model(model_name: str, use_offline: bool = True) -> bool:
 
 def main():
     parser = argparse.ArgumentParser(description="KAM Şaman & Bilişsel Model Derleyici")
-    parser.add_argument("--model", type=str, default="all", choices=["all", "kam:r1", "kam:7b", "r1", "7b"],
-                        help="Derlenecek model (all, kam:r1, kam:7b)")
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="all",
+        choices=["all", "kam:r1", "kam:7b", "kam:1.5b", "kam:r1-nano", "kam:coder", "r1", "7b", "1.5b", "r1-nano", "coder"],
+        help="Derlenecek model (all, kam:r1, kam:7b, kam:1.5b, kam:r1-nano, kam:coder)",
+    )
     parser.add_argument("--online", action="store_true", help="Yerel GGUF yerine online Ollama registry tabanını kullan")
     args = parser.parse_args()
 
     use_offline = not args.online
 
     if args.model in ["all"]:
-        s1 = train_model("kam:r1", use_offline=use_offline)
-        s2 = train_model("kam:7b", use_offline=use_offline)
-        if s1 and s2:
-            print("\033[1;32m[TAMAMLANDI] Hem kam:r1 hem de kam:7b zihinleri hazır ve göreve amade!\033[0m")
+        for m in ["kam:r1", "kam:7b", "kam:1.5b", "kam:r1-nano", "kam:coder"]:
+            train_model(m, use_offline=use_offline)
+        print("\033[1;32m[TAMAMLANDI] Tüm KAM model ailesi (kam:7b, kam:r1, kam:1.5b, kam:r1-nano, kam:coder) hazır!\033[0m")
     else:
         train_model(args.model, use_offline=use_offline)
 
