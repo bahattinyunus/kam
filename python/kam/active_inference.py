@@ -54,6 +54,18 @@ class ActiveInferenceEngine:
             "cost": 0.10,
             "cpp_module": "can_firewall_filter.cpp",
         },
+        "GNSS_OPTICAL_FLOW_DEAD_RECKONING": {
+            "predicted_obs": [0.91, 0.06, 0.02, 0.01],
+            "info_gain_base": 0.86,
+            "cost": 0.11,
+            "cpp_module": "gnss_optical_flow_ekf.cpp",
+        },
+        "SWARM_RAFT_LEADER_HANDOVER": {
+            "predicted_obs": [0.90, 0.06, 0.03, 0.01],
+            "info_gain_base": 0.84,
+            "cost": 0.13,
+            "cpp_module": "swarm_raft_leader_handover.cpp",
+        },
     }
 
     def __init__(self, precision_gamma: float = 4.0):

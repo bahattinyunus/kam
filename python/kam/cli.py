@@ -15,6 +15,7 @@ from .edge_optimizer import (
     TernaryBitNetQuantizer,
     SpeculativeDecoder,
 )
+from .tactical_planner import TacticalRoutePlanner3D
 
 def main():
     parser = argparse.ArgumentParser(
@@ -62,6 +63,11 @@ def main():
         help="Kısıtlı donanım (Edge-Apex) dağıtım planlayıcısı, BitNet b1.58 ve Spekülatif Çözümleme analizi"
     )
     parser.add_argument(
+        "--tactical-route",
+        action="store_true",
+        help="3B SİHA Radar Sönümleme ve Aktif Çıkarım vadi süzülüş (Nap-of-the-Earth) rota planlaması"
+    )
+    parser.add_argument(
         "--export-metrics",
         action="store_true",
         help="Prometheus formatında telemetri metriklerini yazdır"
@@ -102,6 +108,12 @@ def main():
             "BitNet_b158_Sample": TernaryBitNetQuantizer.quantize_tensor([0.42, -0.38, 0.02, 0.51, -0.49, 0.01]),
         }
         print(json.dumps(profiles, indent=2, ensure_ascii=False))
+        return
+
+    if args.tactical_route:
+        planner = TacticalRoutePlanner3D()
+        route = planner.plan_stealth_trajectory()
+        print(json.dumps(route, indent=2, ensure_ascii=False))
         return
 
     if args.infer:

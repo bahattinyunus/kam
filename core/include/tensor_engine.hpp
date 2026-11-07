@@ -34,11 +34,26 @@ public:
     // Matris-Vektör Çarpımı: y = W * x + b
     static Tensor1D linear(const Tensor2D& W, const Tensor1D& x, const Tensor1D& b);
 
-    // Aktivasyon Fonksiyonları
+    // BitNet b1.58 Üçlü (Ternary {-1, 0, +1}) Çarpmasız Doğrusal Katman:
+    // FP16 çarpma kullanmadan yalnızca toplama/çıkarma ve absmean ölçeği (gamma) ile hesaplar
+    static Tensor1D ternaryLinear(
+        const std::vector<int8_t>& W_ternary,
+        size_t rows,
+        size_t cols,
+        float scale_gamma,
+        const Tensor1D& x,
+        const Tensor1D& b
+    );
+
+    // Sürekli ağırlıkları BitNet b1.58 {-1, 0, +1} uzayına absmean ile kuantize eder
+    static std::vector<int8_t> quantizeTernaryAbsmean(const Tensor2D& W, float& out_gamma);
+
+    // Aktivasyon ve Normalizasyon Fonksiyonları
     static Tensor1D silu(const Tensor1D& x);
     static Tensor1D gelu(const Tensor1D& x);
     static Tensor1D softmax(const Tensor1D& x);
     static Tensor1D layerNorm(const Tensor1D& x, float eps = 1e-5f);
+    static Tensor1D rmsNorm(const Tensor1D& x, float eps = 1e-6f);
 
     // Runge-Kutta 4. Derece (RK4) Neural ODE Çözücüsü:
     // dx/dt = f(x, t) denklemini [t, t+dt] aralığında sürekli zamanda çözer

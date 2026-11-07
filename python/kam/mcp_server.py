@@ -2,6 +2,7 @@ from typing import Dict, Any
 from .active_inference import ActiveInferenceEngine
 from .code_mutator import CodeMutator
 from .edge_optimizer import EdgeHardwareBudget, EdgeModelOptimizer
+from .tactical_planner import TacticalRoutePlanner3D
 
 
 class McpServer:
@@ -81,6 +82,18 @@ class McpServer:
                         "required": ["ram_mb", "tdp_watts"],
                     },
                 },
+                {
+                    "name": "plan_tactical_3d_route",
+                    "description": "3-Boyutlu SİHA arazi maskeleme ve 1/R^4 radar sönümleme denklemiyle en güvenli stealth uçuş rotasını hesapla.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "target_x_km": {"type": "number"},
+                            "target_y_km": {"type": "number"},
+                            "num_segments": {"type": "integer"},
+                        },
+                    },
+                },
             ]
         }
 
@@ -151,6 +164,12 @@ class McpServer:
                 "estimated_tokens_per_sec": plan.estimated_tokens_per_sec,
                 "active_params_billions": plan.active_params_billions,
             }
+        elif name == "plan_tactical_3d_route":
+            tx = float(args.get("target_x_km", 50.0))
+            ty = float(args.get("target_y_km", 0.0))
+            segs = int(args.get("num_segments", 10))
+            planner = TacticalRoutePlanner3D()
+            return planner.plan_stealth_trajectory(target_xyz=(tx, ty, 580.0), num_segments=segs)
         return {"error": f"Bilinmeyen araç: {name}"}
 
     def handle_jsonrpc(self, request: Dict[str, Any]) -> Dict[str, Any]:

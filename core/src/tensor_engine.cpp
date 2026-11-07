@@ -18,6 +18,56 @@ Tensor1D TensorEngine::linear(const Tensor2D& W, const Tensor1D& x, const Tensor
     return y;
 }
 
+std::vector<int8_t> TensorEngine::quantizeTernaryAbsmean(const Tensor2D& W, float& out_gamma) {
+    const size_t total = W.data.size();
+    if (total == 0) {
+        out_gamma = 0.0f;
+        return {};
+    }
+    float abs_sum = 0.0f;
+    for (float v : W.data) {
+        abs_sum += std::fabs(v);
+    }
+    out_gamma = abs_sum / static_cast<float>(total);
+    const float denom = out_gamma + 1e-8f;
+
+    std::vector<int8_t> ternary(total, 0);
+    for (size_t i = 0; i < total; ++i) {
+        int q = static_cast<int>(std::lround(W.data[i] / denom));
+        q = std::clamp(q, -1, 1);
+        ternary[i] = static_cast<int8_t>(q);
+    }
+    return ternary;
+}
+
+Tensor1D TensorEngine::ternaryLinear(
+    const std::vector<int8_t>& W_ternary,
+    size_t rows,
+    size_t cols,
+    float scale_gamma,
+    const Tensor1D& x,
+    const Tensor1D& b
+) {
+    Tensor1D y;
+    y.data.resize(rows, 0.0f);
+
+    for (size_t r = 0; r < rows; ++r) {
+        float acc = 0.0f;
+        const size_t row_offset = r * cols;
+        for (size_t c = 0; c < cols; ++c) {
+            const int8_t t = W_ternary[row_offset + c];
+            if (t == 1) {
+                acc += x[c];
+            } else if (t == -1) {
+                acc -= x[c];
+            }
+        }
+        float bias = (r < b.size()) ? b[r] : 0.0f;
+        y[r] = bias + scale_gamma * acc;
+    }
+    return y;
+}
+
 Tensor1D TensorEngine::silu(const Tensor1D& x) {
     Tensor1D y;
     y.data.resize(x.size());
@@ -69,6 +119,22 @@ Tensor1D TensorEngine::layerNorm(const Tensor1D& x, float eps) {
 
     for (size_t i = 0; i < x.size(); ++i) {
         y[i] = (x[i] - mean) * inv_std;
+    }
+    return y;
+}
+
+Tensor1D TensorEngine::rmsNorm(const Tensor1D& x, float eps) {
+    Tensor1D y;
+    y.data.resize(x.size());
+    if (x.size() == 0) return y;
+
+    float sq_sum = 0.0f;
+    for (float v : x.data) {
+        sq_sum += v * v;
+    }
+    float inv_rms = 1.0f / std::sqrt((sq_sum / static_cast<float>(x.size())) + eps);
+    for (size_t i = 0; i < x.size(); ++i) {
+        y[i] = x[i] * inv_rms;
     }
     return y;
 }

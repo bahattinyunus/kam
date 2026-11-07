@@ -118,3 +118,53 @@ int kam_entrypoint() {
 }
 }
 '''
+
+    @staticmethod
+    def generate_gnss_spoof_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] gnss_optical_flow_ekf.cpp
+// Tetikleyici: GNSS/GPS Spoofing (Mahalanobis d_M > 16.0) -> Optik Akış + Barometre EKF
+#include <cstdint>
+#include <iostream>
+
+namespace kam::navigation {
+struct DeadReckoningConfig {
+    double mahalanobis_gate{16.0};
+    double optical_flow_hz{200.0};
+    bool   isolate_ubx_uart{true};
+};
+} // namespace kam::navigation
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::navigation::DeadReckoningConfig nav{};
+    std::cout << "[GNSS-KALKAN] Spoofing reddedildi (d_M > " << nav.mahalanobis_gate
+              << "). Optik akış (" << nav.optical_flow_hz << " Hz) + EKF devrede.\\n";
+    return 0;
+}
+}
+'''
+
+    @staticmethod
+    def generate_swarm_handover_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] swarm_raft_leader_handover.cpp
+// Tetikleyici: Sürü Lideri (Alpha-1) Kaybı -> Markov Battaniyesi Raft Lider Seçimi
+#include <cstdint>
+#include <iostream>
+
+namespace kam::swarm {
+struct ConsensusHandover {
+    const char* elected_leader{"Bravo-2"};
+    double      leader_free_energy{0.14};
+    double      fhss_hop_mhz{868.9};
+};
+} // namespace kam::swarm
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::swarm::ConsensusHandover state{};
+    std::cout << "[SÜRÜ-KONSENSÜS] Yeni lider: " << state.elected_leader
+              << " (F=" << state.leader_free_energy << " nats, " << state.fhss_hop_mhz << " MHz).\\n";
+    return 0;
+}
+}
+'''

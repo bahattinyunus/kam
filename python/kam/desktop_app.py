@@ -599,6 +599,8 @@ class KamDesktopWindow(QMainWindow):
             ("ew_jamming", "[II] Elektronik Harp (-95 dBm)\nFHSS Spektral Sıçrama"),
             ("thermal_spike", "[III] 92.4 °C Termal Pik\nINT4-AWQ Kuantizasyon"),
             ("can_spoof", "[IV] CAN-0 Spoofing (0x1BA)\neBPF Paket Karantinası"),
+            ("gnss_spoof", "[V] GNSS Spoofing (d_M > 16)\nOptik Akış + EKF Geçişi"),
+            ("swarm_loss", "[VI] Sürü Lideri Kaybı (Alpha-1)\nMarkov Raft Lider Seçimi"),
         ]):
             c_btn = QPushButton(c_label)
             c_btn.setObjectName("CrisisBtn")
@@ -783,6 +785,28 @@ class KamDesktopWindow(QMainWindow):
             )
             self._log_kernel("[NERV-SYS]   [WARN]  NPU 92.4 C termal pik!")
             self._log_kernel("[JIT-COMP]   [BUILD] thermal_vision_fallback.cpp devrede.")
+        elif crisis_type == "gnss_spoof":
+            self.engine.inference.reset_equilibrium(0.28)
+            self.engine.active_telemetry = "IMU + Optik Akış (GNSS İzole)"
+            code = CodeMutator.generate_gnss_spoof_fallback()
+            msg = (
+                "GNSS/GPS Spoofing saldırısı saptandı (Mahalanobis mesafesi d_M > 16.0). "
+                "gnss_optical_flow_ekf.cpp bellekte JIT derlenerek sahte uydu koordinatları reddedildi ve "
+                "200 Hz Optik Akış + Barometrik EKF ölü-hesaplama seyrüseferine geçildi."
+            )
+            self._log_kernel("[NERV-SYS]   [CRIT]  GNSS Spoofing (d_M > 16.0) reddedildi!")
+            self._log_kernel("[JIT-COMP]   [BUILD] gnss_optical_flow_ekf.cpp devrede.")
+        elif crisis_type == "swarm_loss":
+            self.engine.inference.reset_equilibrium(0.22)
+            self.engine.active_telemetry = "SDR-868.9MHz (Bravo-2 Lider)"
+            code = CodeMutator.generate_swarm_handover_fallback()
+            msg = (
+                "Sürü lideri Alpha-1 devre dışı kaldı. Dağıtık Markov Battaniyesi serbest enerji konsensüsü "
+                "en düşük F=0.14 nats değerine sahip Bravo-2 birimini yeni lider atadı; "
+                "swarm_raft_leader_handover.cpp sıcak-yama olarak bağlandı."
+            )
+            self._log_kernel("[NERV-SYS]   [WARN]  Sürü lideri (Alpha-1) kaybı!")
+            self._log_kernel("[JIT-COMP]   [BUILD] swarm_raft_leader_handover.cpp -> Bravo-2 lider.")
         else:
             self.engine.inference.reset_equilibrium(0.18)
             code = CodeMutator.generate_can_firewall_fallback()
@@ -791,6 +815,9 @@ class KamDesktopWindow(QMainWindow):
                 "can_firewall_filter.cpp mikrosaniyede eBPF halkasına bağlanarak sahte paketler karantinaya alındı."
             )
             self._log_kernel("[NERV-SYS]   [CRIT]  CAN-0 Spoofing (ID 0x1BA) engellendi!")
+
+        efe_plan = self.engine.inference.select_optimal_policy(crisis_hint=crisis_type)
+        self._log_kernel(f"[KAM-EFE]    [POLICY] Secilen Politika: {efe_plan['optimal_policy']} (G={efe_plan['expected_free_energy_g']})")
 
         ast_check = CodeMutator.validate_ast(code)
         self.lbl_ast_badge.setText(

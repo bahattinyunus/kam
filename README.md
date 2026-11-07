@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Architecture-Air--Gapped_%7C_Zero--Cloud-00F2FE.svg?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Kernel_Latency-%3C_12_%CE%BCs_eBPF-4FACFE.svg?style=for-the-badge&logo=linux&logoColor=white" />
   <img src="https://img.shields.io/badge/JIT_Hot--Patch-41.2_ms-00C9FF.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tests-19%2F19_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tests-21%2F21_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
   <img src="https://img.shields.io/badge/NVIDIA-CUDA_12.x_%7C_RTX_5060-76B900.svg?style=for-the-badge&logo=nvidia&logoColor=white" />
   <img src="https://img.shields.io/badge/License-Apache_2.0-0D1117.svg?style=for-the-badge" />
 </p>
@@ -321,6 +321,7 @@ Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`)
 | `inspect_kernel` | `{}` | Linux eBPF `kprobe`/`tracepoint` kanca sayaçlarını, SPSC RingBuffer kapasitesini ve termal bölgeleri denetler. |
 | `evaluate_efe_policies` | `crisis_hint` *(opsiyonel)* | Beklenen Serbest Enerji $G(\pi)$ üzerinden epistemik/pragmatik değer ayrıştırması yaparak optimal kurtarma politikasını seçer. |
 | `optimize_edge_deployment` | `ram_mb`, `tdp_watts`, `npu_temp_c` | Donanım RAM/TDP/Sıcaklık zarfına göre en uygun KAM model, `imatrix` kuantizasyon ve spekülatif çözümleme planını çıkarır. |
+| `plan_tactical_3d_route` | `target_x_km`, `target_y_km`, `num_segments` | 3-Boyutlu SİHA arazi maskeleme (*Nap-of-the-Earth*) ve $1/R^4$ radar sönümleme denklemiyle en güvenli stealth uçuş koridorunu hesaplar. |
 
 ---
 
@@ -368,6 +369,8 @@ sequenceDiagram
 | **II. Elektronik Harp** | `-95 dBm` geniş bant RF karıştırma | `EW_ANTI_JAMMING_HOPPER` | `ew_fhss_hopper.cpp` | `433/868 MHz` Altın Oran FHSS spektral sıçrama |
 | **III. Termal Pik** | NPU sıcaklığının `92.4 °C`'yi aşması | `THERMAL_INT4_AWQ_DOWNGRADE` | `thermal_vision_fallback.cpp` | `INT4-AWQ` kuantizasyona geçiş (`45W -> 14.5W`) |
 | **IV. CAN-Bus Spoofing** | `CAN-0` üzerinde yetkisiz `0x1BA` çerçevesi | `CAN_EBPF_PACKET_QUARANTINE` | `can_firewall_filter.cpp` | Sahte ID'nin eBPF halkasında atomik karantinası |
+| **V. GNSS Spoofing** | Mahalanobis yenilik kapısı aşımı ($d_M > 16.0$) | `GNSS_OPTICAL_FLOW_DEAD_RECKONING` | `gnss_optical_flow_ekf.cpp` | Sahte GPS reddi + 200 Hz Optik Akış & Barometre EKF geçişi |
+| **VI. Sürü Lideri Kaybı** | `Alpha-1` sürü liderinin devre dışı kalması | `SWARM_RAFT_LEADER_HANDOVER` | `swarm_raft_leader_handover.cpp` | Markov serbest enerji konsensüsüyle `Bravo-2` lider ataması |
 
 ### 4. Canlı Kriz Müdahale Çekirdek Kaydı
 ```text
@@ -418,11 +421,12 @@ kam/
 │   ├── mcp_server.py        # 7 araçlı JSON-RPC 2.0 Model Context Protocol (MCP) sunucusu
 │   ├── sensor_fusion.py     # Kovaryans yayılımlı 6-DOF EKF, Mahalanobis kapısı ve Optik Akış ölü-hesaplama
 │   ├── swarm_mesh.py        # Dağıtık Markov Battaniyesi sürü konsensüsü ve Altın Oran FHSS üreteci
+│   ├── tactical_planner.py  # 3B SİHA Radar Sönümleme (1/R^4) ve Arazi Maskeleme (EFE) rota planlayıcısı
 │   └── models/              # RK4 çözücülü ve Paylaşımlı Uzmanlı (Shared-Expert) Liquid-SSM MoE mimarisi
 ├── models/                  # kam:7b ve kam:r1 Ollama Modelfile tanımları ve yerel ağırlık ikilileri
 ├── data/                    # Doğrulanmış Türkçe mühendislik, sibernetik ve Dede Korkut hikmet külliyatı
 ├── docs/                    # Felsefi manifesto, matematiksel mimari, MCP ve Edge-Apex yol haritası belgeleri
-├── tests/                   # Birim ve entegrasyon test takımı (19/19 Başarılı)
+├── tests/                   # Birim ve entegrasyon test takımı (21/21 Başarılı)
 ├── desktop_ui.py            # %100 Yerel PyQt6 Masaüstü Komuta Merkezi başlatıcısı
 ├── web_ui.py                # Tarayıcı tabanlı Web Kokpiti başlatıcısı
 ├── cli.py                   # Komut satırı, TUI gösterge paneli, Edge-Plan ve MCP sunucu başlatıcısı
@@ -452,6 +456,9 @@ python cli.py --infer
 # Kisitli donanim (Edge-Apex) dagitim plani, BitNet b1.58 ve Spekulatif Cozumleme analizi:
 python cli.py --edge-plan
 
+# 3B SIHA Radar Sonumleme (1/R^4) ve Vadi Suzulus (Nap-of-the-Earth) rota planlamasi:
+python cli.py --tactical-route
+
 # Karl Friston Serbest Enerji minimizasyonu egitim dongusu:
 python cli.py --train
 
@@ -476,7 +483,7 @@ ollama create kam:r1 -f models/Modelfile.kam-r1
 
 ### 4. Otomatik Test Takımını ve C++20 Çekirdeğini Derleyin
 ```bash
-# 19/19 Birim ve Entegrasyon Testi:
+# 21/21 Birim ve Entegrasyon Testi:
 python -m pytest -v
 
 # C++20 Motoru Derlemesi:

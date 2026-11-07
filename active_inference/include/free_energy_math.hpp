@@ -21,6 +21,18 @@ public:
         const std::vector<double>& likelihood
     );
 
+    // Beklenen Serbest Enerji (Expected Free Energy - EFE):
+    // G(pi) = -Epistemik_Deger(Bilgi_Kazanimi) - Pragmatik_Deger(Tercih_Edilen_Dirlik_Uyumu)
+    static double computeExpectedFreeEnergy(
+        const std::vector<double>& predicted_observations,
+        const std::vector<double>& preferred_prior_beliefs,
+        double epistemic_info_gain,
+        double control_cost = 0.05
+    );
+
+    // Aday politikalar arasından en düşük G(pi) değerine sahip optimal politikanın indeksini seçer
+    static size_t selectOptimalPolicyIndex(const std::vector<double>& policy_efe_values);
+
     // Entropiyi yüzdeye normalize et (0.0 - 1.0)
     static double normalizeChaosPercentage(double free_energy, double baseline_fe = 0.15);
 };

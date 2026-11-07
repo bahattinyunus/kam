@@ -23,6 +23,7 @@ from kam.edge_optimizer import (
     ImatrixCalibrator,
     SpeculativeDecoder,
 )
+from kam.tactical_planner import TacticalRoutePlanner3D
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -66,6 +67,14 @@ class TestKam(unittest.TestCase):
         can_code = CodeMutator.generate_can_firewall_fallback()
         self.assertIn("can_firewall_filter.cpp", can_code)
         self.assertTrue(CodeMutator.validate_ast(can_code)["valid"])
+
+        gnss_code = CodeMutator.generate_gnss_spoof_fallback()
+        self.assertIn("gnss_optical_flow_ekf.cpp", gnss_code)
+        self.assertTrue(CodeMutator.validate_ast(gnss_code)["valid"])
+
+        swarm_code = CodeMutator.generate_swarm_handover_fallback()
+        self.assertIn("swarm_raft_leader_handover.cpp", swarm_code)
+        self.assertTrue(CodeMutator.validate_ast(swarm_code)["valid"])
 
     def test_code_mutator_ast_sandbox(self):
         unsafe_code = 'extern "C" int kam_entrypoint() { system("rm -rf /"); return 0; }'
@@ -287,6 +296,22 @@ class TestKam(unittest.TestCase):
         self.assertEqual(step_res["num_generated_single_pass"], 6)
         self.assertEqual(step_res["acceptance_rate"], 1.0)
         self.assertGreater(step_res["speedup_factor"], 2.0)
+
+    def test_tactical_3d_route_planner_and_mcp(self):
+        planner = TacticalRoutePlanner3D()
+        res = planner.plan_stealth_trajectory(
+            start_xyz=(0.0, 0.0, 620.0),
+            target_xyz=(50.0, 0.0, 580.0),
+            num_segments=10,
+        )
+        self.assertEqual(res["planner"], "KAM-3D-EFE-Stealth-Navigator")
+        self.assertEqual(len(res["waypoints"]), 11)
+        self.assertGreater(res["mission_survival_probability_pct"], 75.0)
+        self.assertLess(res["max_radar_exposure_risk"], 0.5)
+
+        mcp = McpServer()
+        mcp_route = mcp.call_tool("plan_tactical_3d_route", {"target_x_km": 45.0, "num_segments": 8})
+        self.assertEqual(len(mcp_route["waypoints"]), 9)
 
 if __name__ == "__main__":
     unittest.main()

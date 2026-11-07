@@ -12,6 +12,8 @@ from .models.liquid_moe import KamLiquidFoundationModel
 from .code_mutator import CodeMutator
 from .knowledge_engine import LocalKnowledgeEngine
 from .real_llm import UniversalLLMClient
+from .edge_optimizer import EdgeHardwareBudget, EdgeModelOptimizer, TernaryBitNetQuantizer, SpeculativeDecoder
+from .tactical_planner import TacticalRoutePlanner3D
 
 class KamWebHandler(SimpleHTTPRequestHandler):
     engine = None
@@ -59,6 +61,30 @@ class KamWebHandler(SimpleHTTPRequestHandler):
                 "current_model": KamWebHandler.llm_client.current_model,
                 "active_backend": KamWebHandler.llm_client.active_backend
             }, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/edge_plan":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            plan_data = {
+                "tier1_micro_uav": EdgeModelOptimizer.plan_optimal_deployment(
+                    EdgeHardwareBudget(ram_mb=1536, tdp_watts=8.0, npu_temp_c=55.0)
+                ).__dict__,
+                "tier2_tactical_siha": EdgeModelOptimizer.plan_optimal_deployment(
+                    EdgeHardwareBudget(ram_mb=4096, tdp_watts=18.0, npu_temp_c=62.0)
+                ).__dict__,
+                "tier3_command_rtx5060": EdgeModelOptimizer.plan_optimal_deployment(
+                    EdgeHardwareBudget(ram_mb=8192, tdp_watts=35.0, npu_temp_c=68.0)
+                ).__dict__,
+                "bitnet_b158": TernaryBitNetQuantizer.quantize_tensor([0.45, -0.41, 0.01, 0.52, -0.49]),
+                "speculative_decoding": SpeculativeDecoder().verify_draft_step(
+                    ["extern", '"C"', "int", "kam_entrypoint", "()"],
+                    [0.92, 0.88, 0.95, 0.90, 0.94],
+                    [0.94, 0.91, 0.96, 0.92, 0.95],
+                ),
+            }
+            self.wfile.write(json.dumps(plan_data, ensure_ascii=False).encode("utf-8"))
             return
 
         super().do_GET()
@@ -147,6 +173,19 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"message": reply, "code": code}, ensure_ascii=False).encode("utf-8"))
             return
 
+        elif self.path == "/api/tactical_route":
+            tx = float(body.get("target_x_km", 50.0))
+            ty = float(body.get("target_y_km", 0.0))
+            segs = int(body.get("num_segments", 10))
+            planner = TacticalRoutePlanner3D()
+            route = planner.plan_stealth_trajectory(target_xyz=(tx, ty, 580.0), num_segments=segs)
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps(route, ensure_ascii=False).encode("utf-8"))
+            return
+
         elif self.path == "/api/reset":
             KamWebHandler.engine.active_telemetry = "UART-2 (Primary)"
             KamWebHandler.engine.inference.reset_equilibrium(0.03)
@@ -203,6 +242,20 @@ class KamWebHandler(SimpleHTTPRequestHandler):
                 "Veriyolu Anomalisi: CAN-0 hattına yetkisiz çerçeve (ID 0x1BA) enjeksiyonu tespit edildi. "
                 "Bellek-içi eBPF güvenlik filtresi (can_firewall_filter.cpp) derlenerek sahte paketler mikrosaniyede karantinaya alındı.",
                 CodeMutator.generate_can_firewall_fallback()
+            )
+        elif c_type == "gnss_spoof":
+            KamWebHandler.engine.active_telemetry = "IMU + Optik Akış (GNSS İzole)"
+            return (
+                "GNSS/GPS Spoofing Tespit Edildi: Mahalanobis yenilik kapısı (d_M > 16.0) aşıldı. "
+                "Sahte uydu koordinatları reddedilerek gnss_optical_flow_ekf.cpp bellekte JIT derlendi; 200 Hz Optik Akış + Barometre EKF ölü-hesaplama moduna geçildi.",
+                CodeMutator.generate_gnss_spoof_fallback()
+            )
+        elif c_type == "swarm_loss":
+            KamWebHandler.engine.active_telemetry = "SDR-868.9MHz (Bravo-2 Lider)"
+            return (
+                "Sürü Lideri Kaybı: Alpha-1 düğümüyle bağlantı koptu. Dağıtık Markov Battaniyesi serbest enerji konsensüsü "
+                "en düşük F=0.14 nats değerine sahip Bravo-2 birimini yeni lider seçti; swarm_raft_leader_handover.cpp sıcak-yama olarak bağlandı.",
+                CodeMutator.generate_swarm_handover_fallback()
             )
         return "Bilinmeyen kriz tipi", None
 

@@ -49,13 +49,35 @@ class TestWebServer(unittest.TestCase):
 
     def test_crisis_api(self):
         url = f"http://127.0.0.1:{self.port}/api/crisis"
-        payload = json.dumps({"crisis_type": "uav_uart_cut"}).encode("utf-8")
-        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        for c_type, expected_substr in [
+            ("uav_uart_cut", "UART-2"),
+            ("gnss_spoof", "Mahalanobis"),
+            ("swarm_loss", "Bravo-2"),
+        ]:
+            payload = json.dumps({"crisis_type": c_type}).encode("utf-8")
+            req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req) as resp:
+                self.assertEqual(resp.status, 200)
+                data = json.loads(resp.read().decode("utf-8"))
+                self.assertIn(expected_substr, data["message"])
+                self.assertIsNotNone(data["code"])
+
+    def test_edge_plan_and_tactical_route_api(self):
+        url_edge = f"http://127.0.0.1:{self.port}/api/edge_plan"
+        with urllib.request.urlopen(urllib.request.Request(url_edge)) as resp:
+            self.assertEqual(resp.status, 200)
+            edge_data = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("tier1_micro_uav", edge_data)
+            self.assertIn("bitnet_b158", edge_data)
+
+        url_route = f"http://127.0.0.1:{self.port}/api/tactical_route"
+        payload = json.dumps({"target_x_km": 40.0, "num_segments": 8}).encode("utf-8")
+        req = urllib.request.Request(url_route, data=payload, headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req) as resp:
             self.assertEqual(resp.status, 200)
-            data = json.loads(resp.read().decode("utf-8"))
-            self.assertIn("UART-2", data["message"])
-            self.assertIsNotNone(data["code"])
+            route_data = json.loads(resp.read().decode("utf-8"))
+            self.assertEqual(len(route_data["waypoints"]), 9)
+            self.assertGreater(route_data["mission_survival_probability_pct"], 75.0)
 
 if __name__ == "__main__":
     unittest.main()

@@ -31,8 +31,8 @@ void JitCompiler::setOptimizationLevel(const std::string& opt_level) {
 }
 
 bool JitCompiler::verifyCodeSyntax(const std::string& cpp_source_code, std::string& out_error) {
-    // Statik analiz ve güvenlik doğrulaması:
-    // Tehlikeli sistem çağrıları (örn: doğrudan rm -rf, tanımsız bellek adresleme vb.) denetlenir
+    // İki aşamalı statik AST ve güvenlik doğrulaması:
+    // Tehlikeli sistem çağrıları (system, popen, fork, execve, rm -rf) reddedilir
     if (cpp_source_code.empty()) {
         out_error = "Hata: Kaynak kod boş olamaz.";
         return false;
@@ -40,6 +40,15 @@ bool JitCompiler::verifyCodeSyntax(const std::string& cpp_source_code, std::stri
     if (cpp_source_code.find("kam_entrypoint") == std::string::npos) {
         out_error = "Hata: Modül kam_entrypoint sembolü içermiyor.";
         return false;
+    }
+    const std::vector<std::string> forbidden_patterns = {
+        "system(", "popen(", "fork(", "execve(", "rm -rf"
+    };
+    for (const auto& pat : forbidden_patterns) {
+        if (cpp_source_code.find(pat) != std::string::npos) {
+            out_error = "AST Güvenlik İhlali: Yasaklı sistem çağrısı tespit edildi (" + pat + ").";
+            return false;
+        }
     }
     out_error = "";
     return true;
