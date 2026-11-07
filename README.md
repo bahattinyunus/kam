@@ -45,8 +45,8 @@
 
 - [I. Sistem Tanımı, Taktik Vizyon ve Otonom Bekâ Mimarisi](#i-sistem-tanımı-taktik-vizyon-ve-otonom-bekâ-mimarisi)
 - [II. Felsefi Temel ve Kavramsal Eşdeğerlik Matrisi](#ii-felsefi-temel-ve-kavramsal-eşdeğerlik-matrisi)
-- [III. Otonom Hayatta Kalma Standartları (Benchmark Matrisi)](#iii-otonom-hayatta-kalma-standartları-benchmark-matrisi)
-- [IV. Derin Matematiksel Temeller: Aktif Çıkarım, RK4 Sıvı-SSM ve Mahalanobis EKF](#iv-derin-matematiksel-temeller-aktif-çıkarım-rk4-sıvı-ssm-ve-mahalanobis-ekf)
+- [III. Otonom Hayatta Kalma Standartları ve Küresel Rakip Analizi](#iii-otonom-hayatta-kalma-standartları-ve-küresel-rakip-analizi)
+- [IV. Derin Matematiksel Temeller: Aktif Çıkarım, RK4 Sıvı-SSM, Mahalanobis EKF ve Lyapunov CLF](#iv-derin-matematiksel-temeller-aktif-çıkarım-rk4-sıvı-ssm-ve-mahalanobis-ekf)
 - [V. Kısıtlı Donanımda Zirve Bilişsel Zihin (Edge-Apex): BitNet b1.58, `imatrix`, Spekülatif Çözümleme ve GRPO](#v-kısıtlı-donanımda-zirve-bilişsel-zihin-edge-apex-bitnet-b158-imatrix-spekülatif-çözümleme-ve-grpo)
 - [VI. İkiz Çekirdek Mimarisi ve Derin Mühendislik Katmanları](#vi-ikiz-çekirdek-mimarisi-ve-derin-mühendislik-katmanları)
 - [VII. Otonom Sürü Ağı (Swarm Mesh) ve Elektronik Harp Dirayeti](#vii-otonom-sürü-ağı-swarm-mesh-ve-elektronik-harp-dirayeti)
@@ -103,20 +103,77 @@ KAM mimarisi, bu kadim kavramsal çerçeveyi bir edebî metafor olarak değil, d
 
 ---
 
-## III. Otonom Hayatta Kalma Standartları (Benchmark Matrisi)
+## III. Otonom Hayatta Kalma Standartları ve Küresel Rakip Analizi
 
-| Bilişsel Yetenek ve Mühendislik Metriği | Geleneksel Gömülü / ROS2 | Bulut Tabanlı LLM Ajanları | **KAM Bilişsel Çekirdeği** |
-| :--- | :--- | :--- | :--- |
-| **Bağlantı Bağımsızlığı (Air-Gap)** | Kısmi (Telemetri bağımlı) | %0 (Bulut koparsa tamamen durur) | **%100 Tam İzolasyon (Zero-Cloud)** |
-| **Donanım Arıza Tepkisi** | Failsafe / Sistem Kilitlenmesi | API Timeout / Kararsızlık | **In-Memory C++20 JIT Canlı Topoloji Mutasyonu** |
-| **Çekirdek Algılama Gecikmesi** | User-Space Polling (`10 - 50 ms`) | Yok (Çekirdeği algılayamaz) | **Linux eBPF RingBuffer (`< 12 μs`)** |
-| **Bilişsel Karar Matematiği** | Kural Tabanlı / Statik PID Döngüsü | Yüzeysel Olasılıksal Token Tahmini | **Karl Friston Aktif Çıkarım (VFE $F$ & EFE $G(\pi)$)** |
-| **Sürekli Zaman Diferansiyel Çözücü** | Sabit Adımlı Ayrık Döngü | Yok | **4. Dereceden Runge-Kutta (RK4) Liquid-SSM ODE** |
-| **GNSS Spoofing ve Karartma Tepkisi** | Rota Sapması / Görev İptali | Yok | **Mahalanobis $\chi^2$ Reddi + Optik Akış Ölü-Hesaplama** |
-| **Kısıtlı Donanım Sıkıştırması** | Sabit FP32 / FP16 | Veri Merkezi GPU Kümesi (`> 300W`) | **BitNet b1.58 (`10.1x`) + Hessian `imatrix` + INT4 KV** |
-| **Çıkarım İvmelendirme** | Standart Tekli Çözümleme | Ağ Gecikmeli (`250 - 800 ms`) | **Öz-Spekülatif Çözümleme (`kam:1.5b -> kam:7b`, `3.53x`)** |
-| **Bellek Mimarisi** | Dinamik Heap (Fragmantasyon riski) | Sunucu RAM Havuzu | **C++20 Lock-Free Arena (`alignas(64)`, Sıfır Tahsisat)** |
-| **Uç Cihaz Güç Tüketimi (TDP)** | Düşük (Bilişsel Yetenek Yok) | Veri Merkezi Ölçeği | **5W – 45W (RPi 5 / Jetson Orin / RTX 5060)** |
+KAM; **taktik savunma otonomisi**, **Karl Friston aktif çıkarım bilişi**, **sürekli zamanlı sıvı sinir ağları (LFM)** ve **çekirdek seviyesi öz-onarımlı (self-healing) uç sistemler** kesişiminde yer alır. Bu alanda dünyadaki en güçlü 7 küresel oyuncu ve araştırma programı aşağıda derinlemesine incelenmiş ve KAM mimarisiyle kıyaslanmıştır:
+
+### 1. Küresel Oyuncuların Derin Teknik Analizi
+
+#### A. Shield AI — `Hivemind` (ABD)
+- **Odak Alanı ve Platformlar:** GPS ve iletişimin kesildiği (*GPS/Comms-Denied*) yoğun elektronik harp ortamlarında F-16 (*X-62A VISTA*), *V-BAT*, *MQ-20 Avenger* ve *YFQ-44A Fury* (Collaborative Combat Aircraft) platformlarını uçuran uç-yerel (*edge-native*) yapay zeka pilotu.
+- **Teknik Mimari:** Derin Takviyeli Öğrenme (*Deep RL*), A-GRA (*Autonomy Government Reference Architecture*) modüler ayrımı, görsel-ataletsel SLAM ve kural/ağaç tabanlı taktik manevra planlayıcıları.
+- **Mimari Sınır ve Zafiyet:** Önceden derlenmiş **statik C++ ikilileri (binaries)** ile uçar. Uçuş esnasında işletim sistemi çekirdeğinde bir dosya tanımlayıcısı çöktüğünde, CAN-Bus üzerinden daha önce görülmemiş bir spoofing çerçevesi geldiğinde veya birincil sensör sürücüsü kilitlendiğinde **çalışma zamanında yeni C++20 kurtarma kodu sentezleyip bellekte derleyerek (`hot-patch`) kendine enjekte edemez**. Tamamen kapalı kaynaklıdır ve ağır ITAR ihracat kısıtlamalarına tabidir.
+
+#### B. Anduril Industries — `Lattice OS` & `Lattice for Mission Autonomy` (ABD)
+- **Odak Alanı ve Platformlar:** Hava, kara, deniz ve uzay unsurlarını tek bir ortak harekât resminde (*Common Operating Picture — COP*) birleştiren, yüksek seviyeli komutan niyetini (*intent-to-task*) otonom görevlere bölen savunma işletim sistemi ve komuta-kontrol (C2) omurgası (*Ghost*, *Altius*, *Roadrunner*, *Dive-LD*, *YFQ-44A*).
+- **Teknik Mimari:** Dağıtık sensör füzyonu, gRPC/DDS tabanlı taktik örgü ağı (*Mesh*), çoklu üretici orkestrasyonu.
+- **Mimari Sınır ve Zafiyet:** `Lattice` birincil olarak **filo ve görev orkestrasyon (C2) katmanıdır**; tekil platformun mikro-saniye seviyesindeki çekirdek öz-onarım veya düşük seviye uçuş refleks motoru değildir (bu nedenle YFQ-44A testlerinde uçuş otonomisi için Shield AI `Hivemind` ile birlikte entegre edilmiştir). Karl Friston Aktif Çıkarım matematiği, Linux eBPF çekirdek *proprioception* kancası veya BitNet b1.58 yerel kod sentezleme konseyi içermez.
+
+#### C. Helsing — `Altra` & `Cirra` (Avrupa: Almanya / İngiltere / Fransa)
+- **Odak Alanı ve Platformlar:** `Altra` (kara/hava savunma keşif-vuruş C2 ağı ve *HX-2* vurucu İHA'ları) ve `Cirra` (*Eurofighter Typhoon EK* üzerinde çalışan, bilinmeyen/şekil değiştiren yazılımsal hava savunma radarlarını gerçek zamanlı sınıflandıran Bilişsel Elektronik Harp motoru).
+- **Teknik Mimari:** Derin öğrenme tabanlı RF/Radar yayıcı (*emitter*) sınıflandırma, merkeziyetsiz uç işleme ve kesintiye dayanıklı ağ.
+- **Mimari Sınır ve Zafiyet:** Spektral tehdit sınıflandırmasında güçlüdür; ancak donanım veriyolu (`UART`/`I2C`/`CAN`) koptuğunda veya NPU `92 °C` termal kaçağa girdiğinde kendi C++20 çekirdek düğümünü RAM içinde yeniden derleyip değiştirebilen bir öz-onarım (*self-healing JIT*) mimarisine sahip değildir.
+
+#### D. Palantir Technologies — `TITAN` & `Apollo for Edge AI` (ABD)
+- **Odak Alanı ve Platformlar:** ABD Ordusunun ilk "YZ tanımlı taktik yer istasyonu" (`TITAN`) ve kopuk/düşük bant genişlikli (*D/DIL: Disconnected, Intermittent, Limited*) sahalarda mikro-modelleri yöneten `Apollo` dağıtım platformu.
+- **Teknik Mimari:** Veri ontolojisi, konteyner tabanlı uzaktan yazılım/model dağıtımı (*DevSecOps*) ve uzay-hava-kara sensör füzyonu.
+- **Mimari Sınır ve Zafiyet:** Yazılım güncellemelerini merkezden uç noktalara konteyner imajı olarak iter (*push-based orchestration*). `1 GB – 2 GB RAM` ve `5W TDP` sınırındaki tamamen izole (*air-gapped*) bir mikro-İHA'nın uçuş ortasında kendi C++20 kodunu sentezleyip `41.2 ms` içinde canlı belleğe yamaması için tasarlanmamıştır.
+
+#### E. VERSES AI — `Genius™` & `AXIOM` (ABD / Kanada — Baş Bilim İnsanı: Prof. Karl Friston)
+- **Odak Alanı ve Platformlar:** Serbest Enerji Prensibinin kurucusu Prof. Karl Friston liderliğinde geliştirilen, geleneksel kaba kuvvet (*brute-force*) LLM'lere alternatif biyolojik ilhamlı **Aktif Çıkarım (Active Inference)** ve **Renormalize Edici Generatif Modeller (RGMs)** platformu.
+- **Teknik Mimari:** Varyasyonel ve Beklenen Serbest Enerji ($F$ ve $G(\pi)$) minimizasyonu, nesne merkezli aktif çıkarım (`AXIOM`), düşük veri ve hesaplama maliyetiyle çevrimiçi (*online*) adaptasyon.
+- **Mimari Sınır ve Zafiyet:** Teorik aktif çıkarım ve simülasyon kıyaslamalarında (*Atari Gameworld 10k*, *Mastermind*, *Habitat*) öncüdür; ancak **Linux eBPF çekirdek kancaları (`< 12 μs`)**, **C++20 In-Memory JIT derleyici**, **Kontrol-Lyapunov ($V(\mathbf{e}, F)$) asimptotik kararlılık garantisi**, **CAN-Bus/SDR donanım sürücüleri** ve **açık ağırlıklı yerel GGUF/BitNet b1.58 kod sentezleme konseyi** bulunmamaktadır.
+
+#### F. Liquid AI — `Liquid Foundation Models` (`LFM-1B` / `LFM2.5` / `LFM3`) (ABD — MIT CSAIL / Ramin Hasani)
+- **Odak Alanı ve Platformlar:** MIT CSAIL'den çıkan, sürekli zamanlı sıvı sinir ağları (*Liquid Time-Constant Networks — LTC*) ve üçlü hibrit (*tri-hybrid*: kapılı kısa konvolüsyon + kayan pencereli dikkat + seyrek MoE) mimarisiyle uç cihazlarda (`~1 GB RAM` @ 4-bit) yüksek hızlı çıkarım sağlayan temel modeller.
+- **Teknik Mimari:** $O(N)$ doğrusal karmaşıklık, dinamik zaman sabiti $\tau(t)$, niceleme duyarlı damıtma (`GGUF`, `ExecuTorch`, `NVFP4`).
+- **Mimari Sınır ve Zafiyet:** Yalnızca bir **dil/görsel çıkarım modelidir**; işletim sistemi çekirdeğine tutunan bir eBPF sinir sistemi, 6-DOF Mahalanobis EKF seyrüsefer filtresi, Altın Oran FHSS elektronik harp telsizi veya çalışma zamanı C++20 JIT öz-onarım mekanizması yoktur.
+
+#### G. DARPA `ANSR` & `NASA JPL cFS / F´` & `PX4 / ROS2`
+- **Odak Alanı ve Platformlar:** `DARPA ANSR` (*Assured Neuro-Symbolic Learning and Reasoning*) nöral ağları sembolik kurallarla denetlemeyi hedeflerken; `NASA cFS / F´`, `PX4` ve `ROS2` uzay araçları ile İHA'lar için endüstri standardı uçuş/robotik çatılarıdır.
+- **Mimari Sınır ve Zafiyet:** `PX4` ve `NASA cFS` tamamen statik C/C++ durum makineleridir; öngörülmemiş bir donanım/sürücü anomalisinde *Failsafe* moduna geçerler, kendi C++ kurtarma düğümlerini çalışma zamanında sentezleyip derleyemezler.
+
+---
+
+### 2. Küresel Rakip Karşılaştırma Matrisi (Deep-Tech Benchmark)
+
+| Mühendislik ve Bilişsel Kriter | **Shield AI (`Hivemind`)** | **Anduril (`Lattice OS`)** | **Helsing (`Altra/Cirra`)** | **VERSES AI (`Genius™`)** | **Liquid AI (`LFM-3`)** | **PX4 / ROS2 / NASA cFS** | **🐺 KAM Bilişsel Çekirdeği** |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Birincil Mimari Rol** | Uçuş Otonomisi (AI Pilot) | Filo C2 ve Sensör Füzyonu | Bilişsel EW ve C2 Ağı | Aktif Çıkarım Simülasyonu | Uç LLM / VLM Çıkarımı | Statik Otopilot / Robotik | **Öz-Onarımlı Bilişsel Çekirdek + C2 + Pilot** |
+| **Bağlantı Bağımsızlığı (Air-Gap)** | %100 Yerel | Hibrit (Mesh / Bulut) | Hibrit (Uç / C2) | Bulut / Sunucu Odaklı | %100 Yerel | %100 Yerel | **%100 Tam İzolasyon (Zero-Cloud)** |
+| **Çalışma Zamanı C++20 JIT Öz-Onarım** | ❌ Yok (Statik Binary) | ❌ Yok (Konteyner İtme) | ❌ Yok (Statik Binary) | ❌ Yok | ❌ Yok | ❌ Yok (Failsafe Lockup) | **✅ Var (`memfd_create` + Clang `-O3`, `41.2 ms`)** |
+| **Linux eBPF Çekirdek Kancası (`<12 μs`)** | ❌ Yok | Kısmi (Ağ İzleme) | ❌ Yok | ❌ Yok | ❌ Yok | ❌ Yok (User-Space Polling) | **✅ Var (`kprobe`, `tracepoint`, SPSC RingBuffer)** |
+| **Karl Friston Aktif Çıkarım (VFE & EFE)** | ❌ Yok (Deep RL / Kural) | ❌ Yok | ❌ Yok (Derin Öğrenme) | **✅ Var (`RGMs` / `AXIOM`)** | ❌ Yok | ❌ Yok (PID / EKF) | **✅ Var (VFE $F$ & Çok Ufuklu EFE $G(\pi)$)** |
+| **Lyapunov Asimptotik Kararlılık ($V, \dot{V}$)** | Kısmi (Klasik Kontrol) | ❌ Yok | ❌ Yok | ❌ Yok | ❌ Yok | Kısmi (PID) | **✅ Var (Sontag CLF + 2. Derece Taylor TTA)** |
+| **Sürekli Zaman RK4 Sıvı-SSM + MoE** | ❌ Yok | ❌ Yok | ❌ Yok | ❌ Yok | **✅ Var (LTC / Tri-Hybrid)** | ❌ Yok | **✅ Var (RK4 LTC ODE + Paylaşımlı Uzman MoE)** |
+| **BitNet b1.58 (`{-1,0,+1}`) & `imatrix`** | ❌ Yok (FP16 / INT8) | ❌ Yok | ❌ Yok | ❌ Yok | Kısmi (4-bit GGUF) | ❌ Yok | **✅ Var (`10.13x` Sıkıştırma + Hessian `imatrix`)** |
+| **Öz-Spekülatif Çözümleme Hızlandırma** | ❌ Yok | ❌ Yok | ❌ Yok | ❌ Yok | ❌ Yok | ❌ Yok | **✅ Var (`kam:1.5b -> kam:7b`, `3.53x` Hızlanma)** |
+| **3B Radar Sönümleme ($1/R^4$) & EKF** | **✅ Var** | **✅ Var** | **✅ Var (`Cirra`)** | ❌ Yok | ❌ Yok | Kısmi (Standart EKF) | **✅ Var (Mahalanobis $\chi^2$ + 3B EFE Stealth Rota)** |
+| **İki Aşamalı AST Güvenlik Sandboxing** | ❌ Yok | ❌ Yok | ❌ Yok | ❌ Yok | ❌ Yok | ❌ Yok | **✅ Var (Sıfır İhlal + Canary Rollback Guard)** |
+| **Açık Ağırlık & Egemen Türkçe Kurul** | ❌ Kapalı (ITAR) | ❌ Kapalı (ITAR) | ❌ Kapalı | ❌ Kapalı | Kısmi (İngilizce Odaklı) | Açık (Bilişsel Zihin Yok) | **✅ 5 Açık GGUF Modeli (`kam:7b/r1/coder/r1-nano/1.5b`)** |
+
+---
+
+### 3. KAM'ın Dünyada Tek Olan "5-Katmanlı Yakınsama" (5-Pillar Convergence) Üstünlüğü
+
+Küresel savunma ve yapay zeka ekosisteminde **Anduril/Palantir** komuta ağını, **Shield AI/PX4** uçuş kontrolünü, **VERSES AI** Karl Friston matematiğini ve **Liquid AI** sıvı sinir ağlarını birbirinden kopuk adalar halinde geliştirirken; **KAM bu 5 disiplini tek bir deterministik C++20 ve Python çekirdeğinde birleştiren dünyadaki ilk açık mimaridir:**
+
+1. **Çekirdekten Zihne Sıfır Kopyalamalı Sinir Sistemi (`eBPF -> VFE/EFE -> C++20 JIT`):**
+   Ne `VERSES AI` ne de `Liquid AI` Linux çekirdeğindeki bir `vfs_read` veya `CAN-Bus` kesintisini `< 12 μs` içinde yakalayıp `41.2 ms`'de yeni bir C++20 paylaşımlı kütüphanesi (`*.so`/`*.dll`) derleyerek çalışan sürece enjekte edebilir. Ne de `Shield AI` veya `PX4` çalışma zamanında kendi kaynak kodunu sentezleyip AST Sandbox denetiminden geçirerek kendini onarabilir.
+2. **Matematiksel Kararlılık Garantisi (`Friston VFE/EFE + Lyapunov CLF + Taylor TTA`):**
+   Saf derin öğrenme (*Deep RL*) modelleri eğitim dağılımı dışındaki (*out-of-distribution*) bir elektronik harp veya sensör aldatmasıyla karşılaştığında öngörülemez şekilde çöker. KAM, her eylemi hem **Karl Friston'un Beklenen Serbest Enerji ($G(\pi)$)** denklemiyle seçer hem de **Aleksandr Lyapunov'un Kontrol-Lyapunov Fonksiyonu ($\dot{V} + \lambda V \le 0$)** ile asimptotik kararlılık süzgecinden geçirir.
+3. **5-Modelli Egemen Bilişsel Kurul (`CognitiveCouncilRouter`):**
+   Tek bir monolitik model yerine; **Ulu Kam (`kam:7b`)**, **Baş Bilge (`kam:r1`)**, **Demirci (`kam:coder`)**, **Taktik Bilge (`kam:r1-nano`)** ve **Uç Gözcü (`kam:1.5b`)** modellerinden oluşan uzmanlar kurulu görev tipine ve NPU sıcaklığına göre otonom orkestre edilir.
 
 ---
 
