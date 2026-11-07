@@ -26,6 +26,9 @@ from kam.edge_optimizer import (
 from kam.tactical_planner import TacticalRoutePlanner3D
 from kam.lyapunov_controller import LyapunovCognitiveController
 from kam.cognitive_council import CognitiveCouncilRouter
+from kam.ew_cognitive_radar import PulseDescriptorWord, CognitiveEwEmitterClassifier
+from kam.intent_c2_orchestrator import IntentToTaskOrchestrator
+from kam.neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyShield
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -354,6 +357,53 @@ class TestKam(unittest.TestCase):
         verdict = council.synthesize_council_verdict(crisis_hint="THERMAL")
         self.assertEqual(verdict["council_status"], "UNANIMOUS_SOVEREIGN_INTERVENTION")
         self.assertTrue(verdict["demirci_jit_synthesis"]["ast_verified"])
+
+    def test_competitor_surpassing_modules_ew_c2_ansr_rgm(self):
+        # 1. Helsing Cirra üstü Bilişsel EW Radar PDW Sınıflandırıcı & Şekil Değiştiren LPI Öğrenimi
+        ew = CognitiveEwEmitterClassifier()
+        known_s400 = ew.classify_pdw_burst(
+            PulseDescriptorWord(rf_ghz=9.2, pri_us=420.0, pw_us=1.8, aoa_deg=32.0, chirp_bw_mhz=45.0, agility_score=0.1)
+        )
+        self.assertEqual(known_s400["classified_emitter"], "S400_92N6E_GRAVE_STONE")
+        self.assertFalse(known_s400["is_novel_shapeshifting_emitter"])
+
+        novel_agile = ew.classify_pdw_burst(
+            PulseDescriptorWord(rf_ghz=17.4, pri_us=610.0, pw_us=0.25, aoa_deg=118.0, chirp_bw_mhz=240.0, agility_score=0.92)
+        )
+        self.assertTrue(novel_agile["is_novel_shapeshifting_emitter"])
+        self.assertIn("AGILE_SDR_THREAT", novel_agile["classified_emitter"])
+        self.assertEqual(novel_agile["online_learned_emitter_count"], 1)
+
+        # 2. Anduril Lattice & A-GRA üstü Intent-to-Task EFE Filo Orkestratörü
+        orch = IntentToTaskOrchestrator()
+        plan = orch.decompose_and_allocate("Sektör-4 S-400 bataryasını körelt ve vadi taarruzu icra et")
+        self.assertEqual(plan["total_tasks_generated"], 4)
+        self.assertEqual(plan["unique_assets_mobilized"], 4)
+        assigned_ids = [t["assigned_asset"] for t in plan["task_dag_allocations"]]
+        self.assertIn("Sungur-EW-1", assigned_ids)
+        self.assertIn("Kizilelma-Strike-2", assigned_ids)
+
+        # 3. DARPA ANSR & Kontrol Bariyer Fonksiyonu (CBF) Nöro-Sembolik Kalkan
+        unsafe_cmd = FlightControlCommand(
+            target_altitude_agl_m=8.0,   # < 30m ihlali
+            airspeed_mps=14.0,           # < 22 m/s stall ihlali
+            bank_angle_deg=72.0,         # > 55 deg yatış ihlali
+            battery_pct=12.0,            # < 18% RTL batarya ihlali
+        )
+        shield_res = NeuroSymbolicSafetyShield.verify_and_project(unsafe_cmd)
+        self.assertTrue(shield_res["intervention_occurred"])
+        self.assertTrue(shield_res["rtl_override_active"])
+        self.assertEqual(len(shield_res["symbolic_violations_prevented"]), 4)
+        self.assertGreaterEqual(shield_res["safe_command"]["target_altitude_agl_m"], 30.0)
+        self.assertGreaterEqual(shield_res["safe_command"]["airspeed_mps"], 22.0)
+
+        # 4. VERSES AI AXIOM / RGM üstü Hiyerarşik Serbest Enerji ve Çevrimiçi Dirichlet Öğrenimi
+        engine = ActiveInferenceEngine()
+        updated_prior = engine.adapt_dirichlet_likelihood([3.0, 0.5, 0.2, 0.1])
+        self.assertAlmostEqual(sum(updated_prior), 1.0, places=5)
+        rgm = engine.compute_hierarchical_rgm_free_energy([0.92, 0.05, 0.02, 0.01], [0.90, 0.06, 0.03, 0.01])
+        self.assertIn("f_hierarchical_rgm", rgm)
+        self.assertGreaterEqual(rgm["f_hierarchical_rgm"], 0.0)
 
 if __name__ == "__main__":
     unittest.main()

@@ -73,6 +73,8 @@ class ActiveInferenceEngine:
         self.prior_beliefs = [0.95, 0.03, 0.015, 0.005]
         self.posterior_beliefs = [0.94, 0.04, 0.015, 0.005]
         self.observations = [0.94, 0.04, 0.015, 0.005]
+        # Çevrimiçi (Online) Dirichlet Olabilirlik Konsantrasyon Parametreleri alpha_i (Felaket Unutmayı Önler)
+        self.dirichlet_alpha = [10.0, 2.0, 1.5, 1.0]
         self.entropy = 0.03
         self.precision_gamma = precision_gamma
 
@@ -227,4 +229,38 @@ class ActiveInferenceEngine:
     def reset_equilibrium(self, stabilized_entropy: float = 0.15):
         self.entropy = stabilized_entropy
         self.update_beliefs_bayes([0.88, 0.08, 0.03, 0.01], learning_rate=0.90)
+
+    def adapt_dirichlet_likelihood(self, observation_counts: List[float], forgetting_factor: float = 0.98) -> List[float]:
+        """
+        VERSES AI AXIOM / RGM tarzı çevrimiçi (online) Dirichlet konsantrasyon güncellemesi:
+        alpha_{t} = lambda * alpha_{t-1} + o_t * q(s)
+        Felaket unutma (catastrophic forgetting) olmadan generatif dünya modelini günceller.
+        """
+        for i in range(min(len(self.dirichlet_alpha), len(observation_counts))):
+            self.dirichlet_alpha[i] = (
+                forgetting_factor * self.dirichlet_alpha[i]
+                + observation_counts[i] * self.posterior_beliefs[i]
+            )
+        return self._normalize(self.dirichlet_alpha)
+
+    def compute_hierarchical_rgm_free_energy(
+        self,
+        fast_reflex_obs: List[float],
+        slow_strategic_obs: List[float],
+    ) -> Dict[str, float]:
+        """
+        2-Katmanlı Renormalize Edici Generatif Model (Hierarchical RGM):
+          - Katman 1 (Hızlı Refleks / eBPF Milisaniye Döngüsü): F_fast
+          - Katman 2 (Yavaş Stratejik / Görev Ufku Döngüsü): F_slow
+        """
+        f_fast = self.compute_free_energy(fast_reflex_obs)
+        coarse_prior = self._normalize(self.dirichlet_alpha)
+        s_norm = self._normalize(slow_strategic_obs)
+        f_slow = self.kl_divergence(s_norm, coarse_prior)
+        f_total_rgm = 0.65 * f_fast + 0.35 * f_slow
+        return {
+            "f_fast_reflex": round(f_fast, 4),
+            "f_slow_strategic": round(f_slow, 4),
+            "f_hierarchical_rgm": round(f_total_rgm, 4),
+        }
 

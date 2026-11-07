@@ -4,6 +4,9 @@ from .code_mutator import CodeMutator
 from .edge_optimizer import EdgeHardwareBudget, EdgeModelOptimizer
 from .tactical_planner import TacticalRoutePlanner3D
 from .cognitive_council import CognitiveCouncilRouter
+from .ew_cognitive_radar import PulseDescriptorWord, CognitiveEwEmitterClassifier
+from .intent_c2_orchestrator import IntentToTaskOrchestrator
+from .neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyShield
 
 
 class McpServer:
@@ -105,6 +108,48 @@ class McpServer:
                         },
                     },
                 },
+                {
+                    "name": "classify_ew_radar_pdw",
+                    "description": "Bilişsel Elektronik Harp (Cirra üstü): Ham radar darbe kelimesini (PDW) sınıflandır, bilinmeyen şekil değiştiren LPI radarları öğren ve DRFM karşı-tedbiri üret.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "rf_ghz": {"type": "number"},
+                            "pri_us": {"type": "number"},
+                            "pw_us": {"type": "number"},
+                            "aoa_deg": {"type": "number"},
+                            "chirp_bw_mhz": {"type": "number"},
+                            "agility_score": {"type": "number"},
+                        },
+                        "required": ["rf_ghz", "pri_us", "pw_us"],
+                    },
+                },
+                {
+                    "name": "orchestrate_intent_c2",
+                    "description": "Komutanın yüksek seviyeli Türkçe niyetini (Intent-to-Task DAG) çoklu alan İHA/SİHA/EW filosuna Beklenen Serbest Enerji G(pi) ile tahsis et.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "commander_intent": {"type": "string"},
+                            "target_x_km": {"type": "number"},
+                            "target_y_km": {"type": "number"},
+                        },
+                        "required": ["commander_intent"],
+                    },
+                },
+                {
+                    "name": "verify_cbf_safety_shield",
+                    "description": "DARPA ANSR & Kontrol Bariyer Fonksiyonu (CBF) Nöro-Sembolik Kalkanı ile uçuş kontrol komutlarını doğrula ve güvenli zarfa izdüşür.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "target_altitude_agl_m": {"type": "number"},
+                            "airspeed_mps": {"type": "number"},
+                            "bank_angle_deg": {"type": "number"},
+                            "battery_pct": {"type": "number"},
+                        },
+                    },
+                },
             ]
         }
 
@@ -185,6 +230,31 @@ class McpServer:
             hint = str(args.get("crisis_hint", "THERMAL"))
             council = CognitiveCouncilRouter()
             return council.synthesize_council_verdict(crisis_hint=hint)
+        elif name == "classify_ew_radar_pdw":
+            pdw = PulseDescriptorWord(
+                rf_ghz=float(args.get("rf_ghz", 9.2)),
+                pri_us=float(args.get("pri_us", 420.0)),
+                pw_us=float(args.get("pw_us", 1.8)),
+                aoa_deg=float(args.get("aoa_deg", 45.0)),
+                chirp_bw_mhz=float(args.get("chirp_bw_mhz", 45.0)),
+                agility_score=float(args.get("agility_score", 0.1)),
+            )
+            ew = CognitiveEwEmitterClassifier()
+            return ew.classify_pdw_burst(pdw)
+        elif name == "orchestrate_intent_c2":
+            intent = str(args.get("commander_intent", "Sektör-4 hava savunma radarlarını körelt ve taarruz icra et"))
+            tx = float(args.get("target_x_km", 28.0))
+            ty = float(args.get("target_y_km", 4.0))
+            orch = IntentToTaskOrchestrator()
+            return orch.decompose_and_allocate(intent, target_x_km=tx, target_y_km=ty)
+        elif name == "verify_cbf_safety_shield":
+            cmd = FlightControlCommand(
+                target_altitude_agl_m=float(args.get("target_altitude_agl_m", 120.0)),
+                airspeed_mps=float(args.get("airspeed_mps", 65.0)),
+                bank_angle_deg=float(args.get("bank_angle_deg", 25.0)),
+                battery_pct=float(args.get("battery_pct", 80.0)),
+            )
+            return NeuroSymbolicSafetyShield.verify_and_project(cmd)
         return {"error": f"Bilinmeyen araç: {name}"}
 
     def handle_jsonrpc(self, request: Dict[str, Any]) -> Dict[str, Any]:

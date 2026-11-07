@@ -104,6 +104,48 @@ class KamLiquidFoundationModel:
         effective_decay = (1.0 / max(tau, 1e-4)) + abs(f_gate) * 0.35
         return -effective_decay * h_val + bias_a * f_gate
 
+    @staticmethod
+    def gated_short_conv1d(x: List[float], kernel_size: int = 3) -> List[float]:
+        """
+        Tri-Hybrid Katman-1: Kapılı Kısa Konvolüsyon (Gated Short Conv1D).
+        Sensör akışındaki yerel frekans ve darbe örüntülerini O(N) karmaşıklıkla çıkarır.
+        """
+        n = len(x)
+        if n == 0:
+            return []
+        out: List[float] = []
+        weights = [0.25, 0.50, 0.25]
+        for i in range(n):
+            left = x[i - 1] if i > 0 else x[i]
+            center = x[i]
+            right = x[i + 1] if i + 1 < n else x[i]
+            conv_val = weights[0] * left + weights[1] * center + weights[2] * right
+            gate = 1.0 / (1.0 + math.exp(-center))
+            out.append(conv_val * gate)
+        return out
+
+    @staticmethod
+    def sliding_window_attention(x: List[float], window_size: int = 4) -> List[float]:
+        """
+        Tri-Hybrid Katman-2: Kayan Pencereli Lokal Dikkat (Sliding-Window Attention).
+        Karesel O(N^2) bellek darboğazı olmadan komşu duyusal kanallar arası korelasyonu yakalar.
+        """
+        n = len(x)
+        if n == 0:
+            return []
+        out: List[float] = []
+        for i in range(n):
+            start = max(0, i - window_size // 2)
+            end = min(n, i + window_size // 2 + 1)
+            win = x[start:end]
+            scores = [x[i] * w_j for w_j in win]
+            max_s = max(scores)
+            exps = [math.exp(s - max_s) for s in scores]
+            denom = sum(exps) + 1e-12
+            attn_val = sum((exps[k] / denom) * win[k] for k in range(len(win)))
+            out.append(0.75 * x[i] + 0.25 * attn_val)
+        return out
+
     def continuous_ode_step(self, x: List[float], dt: float = 0.05) -> List[float]:
         # Girdi enerjisine göre dinamik zaman sabiti bükülmesi (LTC tau bükümü)
         input_energy = math.sqrt(sum(v * v for v in x) + 1e-8)
@@ -128,12 +170,16 @@ class KamLiquidFoundationModel:
         return self.hidden_state
 
     def forward(self, sensory_stream: List[float], dt: float = 0.05) -> Dict[str, Any]:
+        # 0. Tri-Hybrid Ön-İşleme: Gated Short Conv1D + Sliding-Window Local Attention
+        conv_features = self.gated_short_conv1d(sensory_stream)
+        tri_features = self.sliding_window_attention(conv_features)
+
         # 1. İnce Taneli Seyrek MoE Yönlendirme (Top-2 + Shared Expert)
-        active_experts = self.router.route(sensory_stream)
-        aux_loss = self.router.compute_load_balance_loss(sensory_stream)
+        active_experts = self.router.route(tri_features)
+        aux_loss = self.router.compute_load_balance_loss(tri_features)
 
         # 2. Liquid Continuous Recurrent Integration (RK4 Neural ODE)
-        h_updated = self.continuous_ode_step(sensory_stream, dt)
+        h_updated = self.continuous_ode_step(tri_features, dt)
 
         # 3. Active Inference Variational Free Energy
         h_norm = sum(v * v for v in h_updated) / float(len(h_updated))

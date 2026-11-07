@@ -3,25 +3,25 @@
   "epochs_trained": 20,
   "final_metrics": {
     "epoch": 20,
-    "mean_free_energy": 0.03015,
-    "total_loss": 0.21,
+    "mean_free_energy": 0.0301,
+    "total_loss": 0.21499,
     "policy_accuracy_pct": 100.0,
     "convergence_status": "MINIMIZED_EQUILIBRIUM",
-    "tau_adaptive": 0.339
+    "tau_adaptive": 0.5318
   },
   "bitnet_quantization": {
     "num_parameters_quantized": 192,
-    "scale_gamma": 0.562232,
-    "sparsity_ratio": 0.4479,
-    "rmse": 0.320808,
+    "scale_gamma": 0.564942,
+    "sparsity_ratio": 0.4375,
+    "rmse": 0.320626,
     "compression_ratio_vs_fp16": 10.13,
     "energy_saving_factor": 4.6
   },
   "action_bias": [
-    0.212376,
-    -0.155117,
-    -0.208955,
-    0.151696
+    0.219297,
+    -0.157847,
+    -0.2092,
+    0.147751
   ],
   "binary_file": "G:\\Diğer bilgisayarlar\\Dizüstü Bilgisayarım\\github repolarım\\kam\\models\\kam_edge_apex_b158.bin"
 }

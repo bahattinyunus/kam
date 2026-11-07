@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Architecture-Air--Gapped_%7C_Zero--Cloud-00F2FE.svg?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Kernel_Latency-%3C_12_%CE%BCs_eBPF-4FACFE.svg?style=for-the-badge&logo=linux&logoColor=white" />
   <img src="https://img.shields.io/badge/JIT_Hot--Patch-41.2_ms-00C9FF.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tests-22%2F22_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tests-23%2F23_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
   <img src="https://img.shields.io/badge/NVIDIA-CUDA_12.x_%7C_RTX_5060-76B900.svg?style=for-the-badge&logo=nvidia&logoColor=white" />
   <img src="https://img.shields.io/badge/License-Apache_2.0-0D1117.svg?style=for-the-badge" />
 </p>
@@ -164,15 +164,21 @@ KAM; **taktik savunma otonomisi**, **Karl Friston aktif çıkarım bilişi**, **
 
 ---
 
-### 3. KAM'ın Dünyada Tek Olan "5-Katmanlı Yakınsama" (5-Pillar Convergence) Üstünlüğü
+### 3. KAM'ın Dünyada Tek Olan "8-Katmanlı Yakınsama" (8-Pillar Convergence) Üstünlüğü
 
-Küresel savunma ve yapay zeka ekosisteminde **Anduril/Palantir** komuta ağını, **Shield AI/PX4** uçuş kontrolünü, **VERSES AI** Karl Friston matematiğini ve **Liquid AI** sıvı sinir ağlarını birbirinden kopuk adalar halinde geliştirirken; **KAM bu 5 disiplini tek bir deterministik C++20 ve Python çekirdeğinde birleştiren dünyadaki ilk açık mimaridir:**
+Küresel savunma ve yapay zeka ekosisteminde **Anduril/Palantir** komuta ağını, **Shield AI/PX4** uçuş kontrolünü, **Helsing** elektronik harbi, **DARPA ANSR** nöro-sembolik güvenliği, **VERSES AI** Karl Friston matematiğini ve **Liquid AI** sıvı sinir ağlarını birbirinden kopuk adalar halinde geliştirirken; **KAM bu disiplinlerin tamamını tek bir deterministik C++20 ve Python çekirdeğinde birleştiren dünyadaki ilk açık mimaridir:**
 
 1. **Çekirdekten Zihne Sıfır Kopyalamalı Sinir Sistemi (`eBPF -> VFE/EFE -> C++20 JIT`):**
    Ne `VERSES AI` ne de `Liquid AI` Linux çekirdeğindeki bir `vfs_read` veya `CAN-Bus` kesintisini `< 12 μs` içinde yakalayıp `41.2 ms`'de yeni bir C++20 paylaşımlı kütüphanesi (`*.so`/`*.dll`) derleyerek çalışan sürece enjekte edebilir. Ne de `Shield AI` veya `PX4` çalışma zamanında kendi kaynak kodunu sentezleyip AST Sandbox denetiminden geçirerek kendini onarabilir.
-2. **Matematiksel Kararlılık Garantisi (`Friston VFE/EFE + Lyapunov CLF + Taylor TTA`):**
-   Saf derin öğrenme (*Deep RL*) modelleri eğitim dağılımı dışındaki (*out-of-distribution*) bir elektronik harp veya sensör aldatmasıyla karşılaştığında öngörülemez şekilde çöker. KAM, her eylemi hem **Karl Friston'un Beklenen Serbest Enerji ($G(\pi)$)** denklemiyle seçer hem de **Aleksandr Lyapunov'un Kontrol-Lyapunov Fonksiyonu ($\dot{V} + \lambda V \le 0$)** ile asimptotik kararlılık süzgecinden geçirir.
-3. **5-Modelli Egemen Bilişsel Kurul (`CognitiveCouncilRouter`):**
+2. **Matematiksel Kararlılık ve Nöro-Sembolik Güvenlik Kalkanı (`Friston VFE/EFE + Lyapunov CLF + DARPA ANSR CBF`):**
+   Saf derin öğrenme (*Deep RL*) modelleri eğitim dağılımı dışındaki (*out-of-distribution*) bir elektronik harp veya sensör aldatmasıyla karşılaştığında öngörülemez şekilde çöker. KAM, her eylemi hem **Karl Friston'un Beklenen Serbest Enerji ($G(\pi)$)** denklemiyle seçer, hem **Aleksandr Lyapunov'un Kontrol-Lyapunov Fonksiyonu ($\dot{V} + \lambda V \le 0$)** ile asimptotik kararlılık süzgecinden geçirir, hem de `NeuroSymbolicSafetyShield` (`python/kam/neuro_symbolic_shield.py`) içindeki **Kontrol Bariyer Fonksiyonları ($h(\mathbf{x}) \ge 0$, $\dot{h}(\mathbf{x}, \mathbf{u}) + \alpha_{\text{CBF}}\, h(\mathbf{x}) \ge 0$)** ile irtifa tabanı, perdövites (*stall*) hızı ve batarya geri dönüş rezervini matematiksel olarak garanti altına alır.
+3. **Bilişsel Elektronik Harp ve Sıfır-Örneklem Radar Sınıflandırma (`CognitiveEwEmitterClassifier` — Helsing `Cirra` Ötesi):**
+   `python/kam/ew_cognitive_radar.py`, gelen **Darbe Tanımlama Kelimesi (PDW — Pulse Descriptor Word: RF, PRI, PW, AOA, LFM Chirp)** akışlarını işler; bilinen tehdit radarlarını (`S400_92N6E_GRAVE_STONE`, `PANTSIR_S1_1RS2_HOT_SHOT`, `X_BAND_AESA_FIRE_CONTROL`) anında tanır, kütüphanede bulunmayan şekil değiştiren (*shapeshifting* / *frequency-agile*) bilinmeyen radarları ise **Dirichlet Süreci Çevrimiçi Kümeleme** ile uçuş esnasında öğrenerek otonom **DRFM RGPO/VGPO** aldatma ve Altın Oran çentik (*notch*) frekans planı sentezler.
+4. **Komutan Niyetinden Otonom Filo Görev Grafına (`IntentToTaskOrchestrator` — Anduril `Lattice` & A-GRA Ötesi):**
+   `python/kam/intent_c2_orchestrator.py`, üst düzey Türkçe komutan niyetini (*Commander's Intent*) 4 aşamalı yönlü çevrimsiz görev grafına (**Task DAG**: `TASK-101-EW-SEAD -> TASK-102-MESH-RELAY -> TASK-103-STEALTH-STRIKE -> TASK-104-ISR-BDA`) ayrıştırır ve heterojen İHA/SİHA filosuna (`Sungur-EW-1`, `Kizilelma-Strike-2`, `Bozkurt-Relay-3`, `Alpagu-ISR-4`) **Beklenen Serbest Enerji $G(\pi)$** minimizasyonuyla otonom tahsis eder.
+5. **Hiyerarşik Renormalize Üretken Modeller ve Tri-Hybrid Sıvı-SSM (`VERSES AXIOM` & `Liquid LFM-3` Ötesi):**
+   `ActiveInferenceEngine` içinde yıkıcı unutma (*catastrophic forgetting*) olmadan çevrimiçi öğrenen **Dirichlet Olabilirlik Konsantrasyonu ($\boldsymbol{\alpha}$)** ve çok ölçekli **Hiyerarşik RGM Serbest Enerjisi ($F_{\text{RGM}}$)** çalışırken; `KamLiquidFoundationModel` içinde **Kapılı Kısa Evrişim (`Conv1D`) + Kayan Pencere Dikkat (`SWA`) + RK4 Sıvı-SSM (`LTC`)** üçlü hibrit omurgası görev yapar.
+6. **5-Modelli Egemen Bilişsel Kurul (`CognitiveCouncilRouter`):**
    Tek bir monolitik model yerine; **Ulu Kam (`kam:7b`)**, **Baş Bilge (`kam:r1`)**, **Demirci (`kam:coder`)**, **Taktik Bilge (`kam:r1-nano`)** ve **Uç Gözcü (`kam:1.5b`)** modellerinden oluşan uzmanlar kurulu görev tipine ve NPU sıcaklığına göre otonom orkestre edilir.
 
 ---
@@ -377,7 +383,7 @@ Tarayıcı veya web sunucusuna ihtiyaç duymadan doğrudan işletim sistemi üze
 Uzaktan yer kontrol istasyonları için `http://127.0.0.1:8080` üzerinde çalışan gerçek zamanlı Web Kokpiti ve düşük bant genişlikli SSH bağlantıları için konsol tabanlı canlı TUI gösterge paneli mevcuttur.
 
 ### 3. Model Context Protocol (MCP) JSON-RPC 2.0 Sunucusu (`cli.py --mcp`)
-Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`) üzerinden KAM çekirdeğiyle konuşabilmesi için yerleşik 7 araçlı MCP sunucusu (`python/kam/mcp_server.py`) içerir:
+Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`) üzerinden KAM çekirdeğiyle konuşabilmesi için yerleşik 12 araçlı MCP sunucusu (`python/kam/mcp_server.py`) içerir:
 
 | MCP Aracı | Girdi Parametreleri | İşlev ve Yetki Tanımı |
 | :--- | :--- | :--- |
@@ -390,6 +396,9 @@ Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`)
 | `optimize_edge_deployment` | `ram_mb`, `tdp_watts`, `npu_temp_c` | Donanım RAM/TDP/Sıcaklık zarfına göre en uygun KAM model, `imatrix` kuantizasyon ve spekülatif çözümleme planını çıkarır. |
 | `plan_tactical_3d_route` | `target_x_km`, `target_y_km`, `num_segments` | 3-Boyutlu SİHA arazi maskeleme (*Nap-of-the-Earth*) ve $1/R^4$ radar sönümleme denklemiyle en güvenli stealth uçuş koridorunu hesaplar. |
 | `evaluate_lyapunov_council` | `crisis_hint` | 5-Modelli Bilişsel Kurul (**Bilge** EFE + **Gözcü** Lyapunov CLF/TTA + **Demirci** C++20 JIT) ortak kriz kararını sentezler. |
+| `classify_ew_radar_pdw` | `rf_mhz`, `pri_us`, `pw_us`, `aoa_deg`, `power_dbm`, `chirp_bw_mhz` | Bilişsel EW PDW radar darbe analizi yapar, bilinmeyen emiterleri çevrimiçi öğrenir ve DRFM aldatma + çentik (*notch*) frekans planı üretir. |
+| `orchestrate_intent_c2` | `commander_intent_tr`, `target_x_km`, `target_y_km` | Üst düzey Türkçe Komutan Niyetini 4 aşamalı Görev Grafına (Task DAG) ayrıştırır ve heterojen İHA/SİHA filosuna EFE $G(\pi)$ ile tahsis eder. |
+| `verify_cbf_safety_shield` | `target_altitude_m`, `target_velocity_ms`, `target_bank_angle_deg`, `battery_pct` | Nöro-Sembolik Kontrol Bariyer Fonksiyonu ($h(\mathbf{x}) \ge 0$) ile uçuş komutlarını denetler ve ihlalleri güvenli zarfa izdüşürür. |
 
 ---
 
@@ -481,20 +490,25 @@ kam/
 ├── sensor_fusion/           # 6-DOF Genişletilmiş Kalman Filtresi (EKF) ve Mahalanobis spoofing tespiti
 ├── ew_mesh/                 # Elektronik harp spektral sıçrama (FHSS) ve Raft sürü mutabakatı
 ├── python/kam/              # PyQt6 masaüstü arayüzü, RK4 Liquid-MoE, EFE, BitNet/imatrix ve RAG motoru
-│   ├── active_inference.py  # Varyasyonel (VFE) ve Çok Ufuklu Beklenen Serbest Enerji (EFE) motoru
+│   ├── active_inference.py  # Varyasyonel (VFE), Çok Ufuklu EFE, Dirichlet Çevrimiçi Öğrenme ve Hiyerarşik RGM motoru
 │   ├── code_mutator.py      # C++20 kurtarma modülü sentezleyici ve İki Aşamalı AST Sandbox doğrulayıcı
+│   ├── cognitive_council.py # 5-Modelli Egemen Bilişsel Kurul (kam:7b, kam:r1, kam:coder, kam:r1-nano, kam:1.5b)
 │   ├── desktop_app.py       # %100 Yerel PyQt6 60 FPS osiloskoplu masaüstü komuta merkezi
 │   ├── edge_optimizer.py    # Edge-Apex dağıtım planlayıcısı, BitNet b1.58, imatrix, Spekülatif Çözümleme ve GRPO
+│   ├── ew_cognitive_radar.py# Bilişsel EW PDW radar sınıflandırıcı, çevrimiçi emiter öğrenme ve DRFM sentezi
+│   ├── intent_c2_orchestrator.py # Komutan niyetini 4 aşamalı Task DAG'a ayrıştıran otonom filo C2 orkestratörü
 │   ├── knowledge_engine.py  # Halüsinasyon önleyici doğrulanmış Türkçe bilgi ve hikmet motoru
-│   ├── mcp_server.py        # 7 araçlı JSON-RPC 2.0 Model Context Protocol (MCP) sunucusu
+│   ├── lyapunov_controller.py# Sontag Kontrol-Lyapunov Fonksiyonu (CLF) ve 2. derece Taylor TTA kriz öngörücüsü
+│   ├── mcp_server.py        # 12 araçlı JSON-RPC 2.0 Model Context Protocol (MCP) sunucusu
+│   ├── neuro_symbolic_shield.py # DARPA ANSR-ötesi Kontrol Bariyer Fonksiyonu (CBF h(x)>=0) güvenlik kalkanı
 │   ├── sensor_fusion.py     # Kovaryans yayılımlı 6-DOF EKF, Mahalanobis kapısı ve Optik Akış ölü-hesaplama
 │   ├── swarm_mesh.py        # Dağıtık Markov Battaniyesi sürü konsensüsü ve Altın Oran FHSS üreteci
 │   ├── tactical_planner.py  # 3B SİHA Radar Sönümleme (1/R^4) ve Arazi Maskeleme (EFE) rota planlayıcısı
-│   └── models/              # RK4 çözücülü ve Paylaşımlı Uzmanlı (Shared-Expert) Liquid-SSM MoE mimarisi
-├── models/                  # kam:7b ve kam:r1 Ollama Modelfile tanımları ve yerel ağırlık ikilileri
+│   └── models/              # Tri-Hybrid (Conv1D + SWA + RK4 Liquid-SSM) ve Paylaşımlı Uzmanlı MoE mimarisi
+├── models/                  # kam:7b, kam:r1, kam:coder, kam:r1-nano, kam:1.5b Modelfile ve BitNet b1.58 ağırlıkları
 ├── data/                    # Doğrulanmış Türkçe mühendislik, sibernetik ve Dede Korkut hikmet külliyatı
 ├── docs/                    # Felsefi manifesto, matematiksel mimari, MCP ve Edge-Apex yol haritası belgeleri
-├── tests/                   # Birim ve entegrasyon test takımı (21/21 Başarılı)
+├── tests/                   # Birim ve entegrasyon test takımı (23/23 Başarılı)
 ├── desktop_ui.py            # %100 Yerel PyQt6 Masaüstü Komuta Merkezi başlatıcısı
 ├── web_ui.py                # Tarayıcı tabanlı Web Kokpiti başlatıcısı
 ├── cli.py                   # Komut satırı, TUI gösterge paneli, Edge-Plan ve MCP sunucu başlatıcısı
@@ -557,7 +571,7 @@ ollama create kam:r1 -f models/Modelfile.kam-r1
 
 ### 4. Otomatik Test Takımını ve C++20 Çekirdeğini Derleyin
 ```bash
-# 22/22 Birim ve Entegrasyon Testi:
+# 23/23 Birim ve Entegrasyon Testi:
 python -m pytest -v
 
 # C++20 Motoru Derlemesi:
