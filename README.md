@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Architecture-Air--Gapped_%7C_Zero--Cloud-00F2FE.svg?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Kernel_Latency-%3C_12_%CE%BCs_eBPF-4FACFE.svg?style=for-the-badge&logo=linux&logoColor=white" />
   <img src="https://img.shields.io/badge/JIT_Hot--Patch-41.2_ms-00C9FF.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tests-23%2F23_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tests-29%2F29_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
   <img src="https://img.shields.io/badge/NVIDIA-CUDA_12.x_%7C_RTX_5060-76B900.svg?style=for-the-badge&logo=nvidia&logoColor=white" />
   <img src="https://img.shields.io/badge/License-Apache_2.0-0D1117.svg?style=for-the-badge" />
 </p>
@@ -545,6 +545,21 @@ python cli.py --tactical-route
 
 # 5-Modelli Bilissel Kurul (Bilge EFE + Gozcu Lyapunov CLF/TTA + Demirci JIT) ortak kriz karari:
 python cli.py --council
+
+# Bilisel Elektronik Harp (EW) Radar PDW siniflandiricisi ve DRFM aldatma analizi:
+python cli.py --ew
+
+# Komutan Niyeti (Intent-to-Task C2 DAG) coklu alan filo gorev tahsisi:
+python cli.py --c2 "Sektor-4 S-400 bataryasini korelt ve vadi taarruzu icra et"
+
+# DARPA ANSR & CBF Noro-Sembolik Ucus Guvenlik Kalkani ucus zarfi dogrulamasi:
+python cli.py --shield
+
+# Lyapunov CLF asimptotik kararlilik ve 2. Dereceden Taylor TTA kriz ongorusu:
+python cli.py --lyapunov
+
+# KAM 8-Modelli Egemen Savunma Filosu (Hugging Face Sovereign Fleet) manifestosu:
+python cli.py --fleet
 
 # KAM-Edge-MoE RK4 & BitNet b1.58 uclu agirlik egitimi ve ikili (.bin) kontrol noktasi uretimi:
 python scripts/train_edge_apex_bitnet.py

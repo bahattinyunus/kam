@@ -419,7 +419,7 @@ class KamDesktopWindow(QMainWindow):
 
         self.combo_model = QComboBox()
         models = [m["name"] for m in self.llm_client.list_available_models()]
-        for m in ["kam:7b", "kam:r1", "kam:coder", "kam:r1-nano", "kam:1.5b", "qwen2.5:7b", "deepseek-r1:7b", "kam-1-liquid-moe"]:
+        for m in ["kam:apex", "kam:7b", "kam:r1", "kam:coder", "kam:coder-nano", "kam:r1-nano", "kam:1.5b", "qwen2.5:7b", "deepseek-r1:7b", "kam-1-liquid-moe"]:
             if m not in models:
                 models.append(m)
         self.combo_model.addItems(models)
@@ -601,6 +601,9 @@ class KamDesktopWindow(QMainWindow):
             ("can_spoof", "[IV] CAN-0 Spoofing (0x1BA)\neBPF Paket Karantinası"),
             ("gnss_spoof", "[V] GNSS Spoofing (d_M > 16)\nOptik Akış + EKF Geçişi"),
             ("swarm_loss", "[VI] Sürü Lideri Kaybı (Alpha-1)\nMarkov Raft Lider Seçimi"),
+            ("ew_radar_threat", "[VII] Bilişsel Radar PDW\nLPI Tehdit & DRFM Cevabı"),
+            ("cbf_envelope_breach", "[VIII] CBF Güvenlik İhlali\nNöro-Sembolik İzdüşüm"),
+            ("intent_c2_mission", "[IX] Komutan Niyeti (C2)\nDAG Filo Dağıtımı"),
         ]):
             c_btn = QPushButton(c_label)
             c_btn.setObjectName("CrisisBtn")
@@ -807,6 +810,36 @@ class KamDesktopWindow(QMainWindow):
             )
             self._log_kernel("[NERV-SYS]   [WARN]  Sürü lideri (Alpha-1) kaybı!")
             self._log_kernel("[JIT-COMP]   [BUILD] swarm_raft_leader_handover.cpp -> Bravo-2 lider.")
+        elif crisis_type == "ew_radar_threat":
+            self.engine.inference.trigger_anomaly()
+            self.engine.active_telemetry = "DRFM-Active-Jammer (17.4GHz)"
+            code = CodeMutator.generate_ew_drfm_fallback()
+            msg = (
+                "17.4 GHz LPI çevik radar darbe dizisi algılandı. Bilişsel PDW sınıflandırıcısı tehdidi öğrendi; "
+                "ew_drfm_responder.cpp bellek-içi derlenerek 8 sahte hedef ve Doppler kaymasıyla düşman radarı aldatıldı."
+            )
+            self._log_kernel("[EW-RADAR]   [ALERT] LPI Radar Tehdidi (17.4 GHz) saptandı!")
+            self._log_kernel("[JIT-COMP]   [BUILD] ew_drfm_responder.cpp (DRFM Karıştırıcı) aktif.")
+        elif crisis_type == "cbf_envelope_breach":
+            self.engine.inference.trigger_anomaly()
+            self.engine.active_telemetry = "CBF-Shield-Override (RTL)"
+            code = CodeMutator.generate_cbf_safety_shield_fallback()
+            msg = (
+                "DARPA ANSR & CBF Nöro-Sembolik Güvenlik Kalkanı h(x) < 0 ihlali saptadı! "
+                "İrtifa < 30m, stall < 22 m/s ve batarya <%18 ihlalleri engellendi; "
+                "cbf_safety_shield.cpp komutayı güvenli zarfa izdüşürdü ve RTL otonomisini devraldı."
+            )
+            self._log_kernel("[CBF-SHIELD] [CRIT]  Uçuş güvenlik zarfı ihlali önlendi!")
+            self._log_kernel("[JIT-COMP]   [BUILD] cbf_safety_shield.cpp kuadratik izdüşüm bağlandı.")
+        elif crisis_type == "intent_c2_mission":
+            self.engine.active_telemetry = "C2-Multi-Domain-Mesh"
+            code = CodeMutator.generate_c2_dag_fallback()
+            msg = (
+                "Yüksek seviyeli komutan niyeti DAG görevlerine bölündü: Sungur-EW-1 (SEAD), Kizilelma-Strike-2 (Vadi Taarruzu), "
+                "Bayraktar-TB3 (Keşif) ve Bozkurt (Röle) unsurlarına Beklenen Serbest Enerji minimizasyonuyla tahsis yapıldı."
+            )
+            self._log_kernel("[C2-DAG]     [ORDER] Komutan niyeti 4 düğümlü DAG'a tahsis edildi.")
+            self._log_kernel("[JIT-COMP]   [BUILD] c2_task_executor.cpp filo kuyruğuna enjekte edildi.")
         else:
             self.engine.inference.reset_equilibrium(0.18)
             code = CodeMutator.generate_can_firewall_fallback()

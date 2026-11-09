@@ -168,3 +168,99 @@ int kam_entrypoint() {
 }
 }
 '''
+
+    @staticmethod
+    def generate_cbf_safety_shield_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] cbf_safety_shield.cpp
+// Tetikleyici: DARPA ANSR & CBF Nöro-Sembolik Uçuş Güvenlik İhlali
+#include <cstdint>
+#include <iostream>
+#include <algorithm>
+
+namespace kam::safety {
+struct ControlBarrierFunction {
+    double min_altitude_agl_m{30.0};
+    double stall_airspeed_mps{22.0};
+    double max_bank_angle_deg{55.0};
+    double rtl_battery_thresh_pct{18.0};
+
+    constexpr double project_altitude(double cmd_alt) const noexcept {
+        return (cmd_alt < min_altitude_agl_m) ? min_altitude_agl_m : cmd_alt;
+    }
+
+    constexpr double project_airspeed(double cmd_spd) const noexcept {
+        return (cmd_spd < stall_airspeed_mps) ? stall_airspeed_mps : cmd_spd;
+    }
+
+    constexpr double project_bank(double cmd_bank) const noexcept {
+        if (cmd_bank > max_bank_angle_deg) return max_bank_angle_deg;
+        if (cmd_bank < -max_bank_angle_deg) return -max_bank_angle_deg;
+        return cmd_bank;
+    }
+};
+} // namespace kam::safety
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::safety::ControlBarrierFunction cbf{};
+    std::cout << "[CBF-SHIELD] Uçuş güvenlik kalkanı devrede: h(x) >= 0. "
+              << "İrtifa >= " << cbf.min_altitude_agl_m << "m, Sürat >= "
+              << cbf.stall_airspeed_mps << "m/s, Yatış <= " << cbf.max_bank_angle_deg << " deg.\\n";
+    return 0;
+}
+}
+'''
+
+    @staticmethod
+    def generate_ew_drfm_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] ew_drfm_responder.cpp
+// Tetikleyici: Bilişsel Radar PDW Tehdidi -> DRFM Aldatıcı Karıştırma & FHSS Sıçrama
+#include <cstdint>
+#include <iostream>
+
+namespace kam::ew {
+struct DrfmResponderConfig {
+    double   target_rf_ghz{17.4};
+    uint32_t doppler_shift_hz{125000};
+    uint16_t false_target_count{8};
+    bool     coherent_repeater_enabled{true};
+};
+} // namespace kam::ew
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::ew::DrfmResponderConfig drfm{};
+    std::cout << "[EW-DRFM] DRFM aldatıcı karıştırma devrede: RF=" << drfm.target_rf_ghz
+              << "GHz, Doppler=" << drfm.doppler_shift_hz << "Hz, "
+              << drfm.false_target_count << " sahte hedef üretildi.\\n";
+    return 0;
+}
+}
+'''
+
+    @staticmethod
+    def generate_c2_dag_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] c2_task_executor.cpp
+// Tetikleyici: Yüksek Seviyeli Komutan Niyeti -> C2 Intent-to-Task DAG Orkestrasyonu
+#include <cstdint>
+#include <iostream>
+
+namespace kam::c2 {
+struct FleetTaskAllocation {
+    const char* strike_asset{"Kizilelma-Strike-2"};
+    const char* ew_asset{"Sungur-EW-1"};
+    const char* recon_asset{"Bayraktar-TB3-Recon"};
+    uint32_t    dag_nodes_total{4};
+};
+} // namespace kam::c2
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::c2::FleetTaskAllocation c2{};
+    std::cout << "[C2-DAG-ORCHESTRATOR] Görev DAG grafiği (" << c2.dag_nodes_total
+              << " düğüm) tahsis edildi: Taarruz=" << c2.strike_asset
+              << ", Karıştırma=" << c2.ew_asset << ", Keşif=" << c2.recon_asset << ".\\n";
+    return 0;
+}
+}
+'''

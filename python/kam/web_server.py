@@ -14,6 +14,10 @@ from .knowledge_engine import LocalKnowledgeEngine
 from .real_llm import UniversalLLMClient
 from .edge_optimizer import EdgeHardwareBudget, EdgeModelOptimizer, TernaryBitNetQuantizer, SpeculativeDecoder
 from .tactical_planner import TacticalRoutePlanner3D
+from .ew_cognitive_radar import PulseDescriptorWord, CognitiveEwEmitterClassifier
+from .intent_c2_orchestrator import IntentToTaskOrchestrator
+from .neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyShield
+from .lyapunov_controller import LyapunovCognitiveController
 
 class KamWebHandler(SimpleHTTPRequestHandler):
     engine = None
@@ -85,6 +89,112 @@ class KamWebHandler(SimpleHTTPRequestHandler):
                 ),
             }
             self.wfile.write(json.dumps(plan_data, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/fleet_manifest":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            fleet_data = {
+                "fleet_name": "KAM Sovereign Defense AI Fleet (Hugging Face Hub)",
+                "total_models": 8,
+                "fleet_size_gb": "20.83 GB GGUF + 848-Param BitNet b1.58",
+                "huggingface_author": "bahattinyunus",
+                "models": [
+                    {
+                        "key": "kam:apex",
+                        "repo_id": "bahattinyunus/kam-apex-8b-gguf",
+                        "url": "https://huggingface.co/bahattinyunus/kam-apex-8b-gguf",
+                        "base_model": "Qwen3-8B",
+                        "size": "5.20 GB",
+                        "role": "Başbuğ Kam — Hibrit Düşünen Komuta Zihni, C2 & EW Orkestrasyonu",
+                        "offline_gguf": "kam_apex_qwen3_8b.gguf"
+                    },
+                    {
+                        "key": "kam:7b",
+                        "repo_id": "bahattinyunus/kam-7b-gguf",
+                        "url": "https://huggingface.co/bahattinyunus/kam-7b-gguf",
+                        "base_model": "Qwen2.5-7B",
+                        "size": "4.68 GB",
+                        "role": "Ulu Kam — 16K Bağlam Duru Türkçe & Karl Friston Aktif Çıkarım",
+                        "offline_gguf": "kam_7b_qwen_foundation.gguf"
+                    },
+                    {
+                        "key": "kam:r1",
+                        "repo_id": "bahattinyunus/kam-r1-gguf",
+                        "url": "https://huggingface.co/bahattinyunus/kam-r1-gguf",
+                        "base_model": "DeepSeek-R1-7B",
+                        "size": "4.68 GB",
+                        "role": "Baş Bilge — <think> CoT Akıl Yürütme, CLF/CBF Sibernetik İspat",
+                        "offline_gguf": "kam_r1_deepseek_7b.gguf"
+                    },
+                    {
+                        "key": "kam:coder",
+                        "repo_id": "bahattinyunus/kam-coder-7b-gguf",
+                        "url": "https://huggingface.co/bahattinyunus/kam-coder-7b-gguf",
+                        "base_model": "Qwen2.5-Coder-7B",
+                        "size": "4.68 GB",
+                        "role": "Ulu Demirci — C++20 JIT, Linux eBPF & CUDA Başmimarı",
+                        "offline_gguf": "kam_coder_7b_qwen.gguf"
+                    },
+                    {
+                        "key": "kam:coder-nano",
+                        "repo_id": "bahattinyunus/kam-coder-nano-1.5b-gguf",
+                        "url": "https://huggingface.co/bahattinyunus/kam-coder-nano-1.5b-gguf",
+                        "base_model": "Qwen2.5-Coder-1.5B",
+                        "size": "986 MB",
+                        "role": "Taktik Demirci — Uç C++20 JIT & AST Güvenli Kurtarma Kod Üreteci",
+                        "offline_gguf": "qwen2.5-coder-1.5b-q4_k_m.gguf"
+                    },
+                    {
+                        "key": "kam:r1-nano",
+                        "repo_id": "bahattinyunus/kam-r1-nano-1.5b-gguf",
+                        "url": "https://huggingface.co/bahattinyunus/kam-r1-nano-1.5b-gguf",
+                        "base_model": "DeepSeek-R1-1.5B",
+                        "size": "1.10 GB",
+                        "role": "Taktik Bilge — Kısıtlı Donanım (>85°C, 1.5GB RAM) CoT Zihni",
+                        "offline_gguf": "deepseek-r1-1.5b-q4_k_m.gguf"
+                    },
+                    {
+                        "key": "kam:1.5b",
+                        "repo_id": "bahattinyunus/kam-1.5b-edge-gguf",
+                        "url": "https://huggingface.co/bahattinyunus/kam-1.5b-edge-gguf",
+                        "base_model": "Qwen2.5-1.5B",
+                        "size": "986 MB",
+                        "role": "Uç Gözcü — Mikro-Uç Zihin & 3.53x Öz-Spekülatif Taslak Motoru",
+                        "offline_gguf": "qwen_1.5b_lightweight_fallback.gguf"
+                    },
+                    {
+                        "key": "kam:edge-moe-b158",
+                        "repo_id": "bahattinyunus/kam-edge-moe-b158",
+                        "url": "https://huggingface.co/bahattinyunus/kam-edge-moe-b158",
+                        "base_model": "Tri-Hybrid RK4 Liquid-SSM MoE",
+                        "size": "848 Ternary Params",
+                        "role": "BitNet b1.58 {-1,0,+1} Kriz Politikası + EW Sınıflandırma + CBF Marjı",
+                        "offline_gguf": "kam_edge_apex_checkpoint.json"
+                    }
+                ]
+            }
+            self.wfile.write(json.dumps(fleet_data, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/lyapunov_status":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            clf = LyapunovCognitiveController()
+            e = KamWebHandler.engine.inference.entropy
+            state_vec = [e, e * 0.5, 0.01, 0.01, 0.0, 0.0]
+            fe = 0.08 if e < 0.2 else (1.84 if e > 0.8 else 0.28)
+            res = clf.evaluate_stability_step(state_vec, free_energy=fe)
+            temp = 48.2 if e < 0.2 else (76.4 if e > 0.8 else 52.0)
+            tta = clf.forecast_time_to_anomaly([temp - 6.0, temp - 3.0, temp - 1.0, temp], critical_threshold=85.0, sample_dt_sec=1.0)
+            out = {
+                "entropy": e,
+                "stability": res.__dict__,
+                "time_to_anomaly": tta,
+            }
+            self.wfile.write(json.dumps(out, ensure_ascii=False).encode("utf-8"))
             return
 
         super().do_GET()
@@ -186,6 +296,66 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(route, ensure_ascii=False).encode("utf-8"))
             return
 
+        elif self.path == "/api/ew_radar":
+            pdw = PulseDescriptorWord(
+                rf_ghz=float(body.get("rf_ghz", 9.2)),
+                pri_us=float(body.get("pri_us", 420.0)),
+                pw_us=float(body.get("pw_us", 1.8)),
+                aoa_deg=float(body.get("aoa_deg", 32.0)),
+                chirp_bw_mhz=float(body.get("chirp_bw_mhz", 45.0)),
+                agility_score=float(body.get("agility_score", 0.1)),
+            )
+            classifier = CognitiveEwEmitterClassifier()
+            res = classifier.classify_pdw_burst(pdw)
+            code = CodeMutator.generate_ew_drfm_fallback()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"classification": res, "countermeasure_code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/c2_intent":
+            intent = body.get("commander_intent", "Sektör-4 S-400 bataryasını körelt ve vadi taarruzu icra et")
+            tx = float(body.get("target_x_km", 50.0))
+            ty = float(body.get("target_y_km", 0.0))
+            orchestrator = IntentToTaskOrchestrator()
+            plan = orchestrator.decompose_and_allocate(intent, target_x_km=tx, target_y_km=ty)
+            code = CodeMutator.generate_c2_dag_fallback()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"c2_plan": plan, "executor_code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/safety_shield":
+            cmd = FlightControlCommand(
+                target_altitude_agl_m=float(body.get("target_altitude_agl_m", 12.0)),
+                airspeed_mps=float(body.get("airspeed_mps", 15.0)),
+                bank_angle_deg=float(body.get("bank_angle_deg", 68.0)),
+                battery_pct=float(body.get("battery_pct", 14.0)),
+            )
+            shield_res = NeuroSymbolicSafetyShield.verify_and_project(cmd)
+            code = CodeMutator.generate_cbf_safety_shield_fallback()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"shield_result": shield_res, "cbf_code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/lyapunov_status":
+            clf = LyapunovCognitiveController()
+            e = KamWebHandler.engine.inference.entropy
+            state_vec = body.get("state_vector", [e, e * 0.5, 0.01, 0.01, 0.0, 0.0])
+            fe = float(body.get("free_energy", 0.08 if e < 0.2 else (1.84 if e > 0.8 else 0.28)))
+            res = clf.evaluate_stability_step(state_vec, free_energy=fe)
+            temp = float(body.get("temperature", 48.2 if e < 0.2 else (76.4 if e > 0.8 else 52.0)))
+            tta = clf.forecast_time_to_anomaly([temp - 6.0, temp - 3.0, temp - 1.0, temp], critical_threshold=85.0, sample_dt_sec=1.0)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"entropy": e, "stability": res.__dict__, "time_to_anomaly": tta}, ensure_ascii=False).encode("utf-8"))
+            return
+
         elif self.path == "/api/reset":
             KamWebHandler.engine.active_telemetry = "UART-2 (Primary)"
             KamWebHandler.engine.inference.reset_equilibrium(0.03)
@@ -256,6 +426,29 @@ class KamWebHandler(SimpleHTTPRequestHandler):
                 "Sürü Lideri Kaybı: Alpha-1 düğümüyle bağlantı koptu. Dağıtık Markov Battaniyesi serbest enerji konsensüsü "
                 "en düşük F=0.14 nats değerine sahip Bravo-2 birimini yeni lider seçti; swarm_raft_leader_handover.cpp sıcak-yama olarak bağlandı.",
                 CodeMutator.generate_swarm_handover_fallback()
+            )
+        elif c_type == "ew_radar_threat":
+            KamWebHandler.engine.inference.trigger_anomaly()
+            KamWebHandler.engine.active_telemetry = "DRFM Aldatıcı Karıştırıcı (17.4GHz)"
+            return (
+                "Bilişsel Radar Tehdidi Tespit Edildi: 17.4 GHz LPI çevik darbe dizisi algılandı. "
+                "Çevrimiçi darbe kelimesi (PDW) sınıflandırıcısı tehdidi öğrendi; ew_drfm_responder.cpp JIT derlenerek 8 adet tutarlı sahte hedef üretildi ve spektruma basıldı.",
+                CodeMutator.generate_ew_drfm_fallback()
+            )
+        elif c_type == "cbf_envelope_breach":
+            KamWebHandler.engine.inference.trigger_anomaly()
+            KamWebHandler.engine.active_telemetry = "CBF Kalkanı (RTL Devrede)"
+            return (
+                "Uçuş Güvenlik Zarfı İhlali: DARPA ANSR & CBF Nöro-Sembolik Kalkanı h(x) < 0 bariyer ihlali saptadı. "
+                "İrtifa < 30m, stall sürati < 22 m/s ve batarya <%18 ihlalleri engellenerek cbf_safety_shield.cpp ile komuta güvenli sınıra izdüşürüldü ve Eve Dönüş (RTL) devreye alındı.",
+                CodeMutator.generate_cbf_safety_shield_fallback()
+            )
+        elif c_type == "intent_c2_mission":
+            KamWebHandler.engine.active_telemetry = "C2 Çoklu Alan Ağı (DAG Aktif)"
+            return (
+                "Komutan Niyeti Göreve Bölündü: 'S-400 radarını körelt ve vadi taarruzu icra et' emri DAG grafiğine çevrildi. "
+                "c2_task_executor.cpp üzerinden Sungur-EW-1, Kizilelma-Strike-2, Bayraktar-TB3 ve ANKA unsurlarına bağımlılık sırasıyla otonom tahsis yapıldı.",
+                CodeMutator.generate_c2_dag_fallback()
             )
         return "Bilinmeyen kriz tipi", None
 

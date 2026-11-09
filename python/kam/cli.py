@@ -17,6 +17,10 @@ from .edge_optimizer import (
 )
 from .tactical_planner import TacticalRoutePlanner3D
 from .cognitive_council import CognitiveCouncilRouter
+from .ew_cognitive_radar import PulseDescriptorWord, CognitiveEwEmitterClassifier
+from .intent_c2_orchestrator import IntentToTaskOrchestrator
+from .neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyShield
+from .lyapunov_controller import LyapunovCognitiveController
 
 def main():
     parser = argparse.ArgumentParser(
@@ -74,6 +78,33 @@ def main():
         help="5-Modelli Bilişsel Kurul (Bilge + Gözcü Lyapunov CLF + Demirci JIT) ortak kriz kararı"
     )
     parser.add_argument(
+        "--ew", "--radar",
+        action="store_true",
+        help="Bilişsel EW Radar PDW sınıflandırıcısı, LPI çevrimiçi tehdit öğrenimi ve DRFM aldatma analizi"
+    )
+    parser.add_argument(
+        "--c2", "--orchestrate",
+        type=str,
+        nargs="?",
+        const="Sektör-4 S-400 bataryasını körelt ve vadi taarruzu icra et",
+        help="Komutan niyetini (Intent-to-Task DAG) çoklu alan İHA/SİHA/EW filosuna tahsis et"
+    )
+    parser.add_argument(
+        "--shield", "--cbf",
+        action="store_true",
+        help="DARPA ANSR & CBF Nöro-Sembolik Uçuş Güvenlik Kalkanı uçuş zarfı doğrulaması"
+    )
+    parser.add_argument(
+        "--lyapunov", "--clf",
+        action="store_true",
+        help="Lyapunov CLF asimptotik kararlılık denetimi ve 2. Dereceden Taylor TTA kriz öngörüsü"
+    )
+    parser.add_argument(
+        "--fleet", "--sovereign-fleet",
+        action="store_true",
+        help="KAM 8-Modelli Egemen Savunma Filosu (Hugging Face Sovereign Fleet) manifestosu"
+    )
+    parser.add_argument(
         "--export-metrics",
         action="store_true",
         help="Prometheus formatında telemetri metriklerini yazdır"
@@ -126,6 +157,118 @@ def main():
         council = CognitiveCouncilRouter()
         verdict = council.synthesize_council_verdict(crisis_hint="THERMAL")
         print(json.dumps(verdict, indent=2, ensure_ascii=False))
+        return
+
+    if args.ew:
+        ew = CognitiveEwEmitterClassifier()
+        pdw_known = PulseDescriptorWord(rf_ghz=9.2, pri_us=420.0, pw_us=1.8, aoa_deg=32.0, chirp_bw_mhz=45.0, agility_score=0.1)
+        res_known = ew.classify_pdw_burst(pdw_known)
+        pdw_novel = PulseDescriptorWord(rf_ghz=17.4, pri_us=610.0, pw_us=0.25, aoa_deg=118.0, chirp_bw_mhz=240.0, agility_score=0.92)
+        res_novel = ew.classify_pdw_burst(pdw_novel)
+        out = {
+            "module": "KAM Bilişsel Elektronik Harp & Radar PDW Sınıflandırıcı (Cirra-Üstü)",
+            "known_emitter_sample": res_known,
+            "novel_agile_emitter_sample": res_novel,
+        }
+        print(json.dumps(out, indent=2, ensure_ascii=False))
+        return
+
+    if args.c2:
+        orch = IntentToTaskOrchestrator()
+        plan = orch.decompose_and_allocate(args.c2)
+        print(json.dumps(plan, indent=2, ensure_ascii=False))
+        return
+
+    if args.shield:
+        unsafe_cmd = FlightControlCommand(
+            target_altitude_agl_m=12.0,
+            airspeed_mps=15.0,
+            bank_angle_deg=68.0,
+            battery_pct=14.0,
+        )
+        shield_res = NeuroSymbolicSafetyShield.verify_and_project(unsafe_cmd)
+        print(json.dumps(shield_res, indent=2, ensure_ascii=False))
+        return
+
+    if args.lyapunov:
+        clf = LyapunovCognitiveController()
+        stable_eval = clf.evaluate_stability_step([0.05, 0.02, 0.01, 0.01, 0.0, 0.0], free_energy=0.04)
+        chaos_eval = clf.evaluate_stability_step([1.8, -1.5, 2.1, 0.9, -0.8, 1.2], free_energy=1.65)
+        tta = clf.forecast_time_to_anomaly([62.0, 68.0, 75.0, 83.0], critical_threshold=85.0, sample_dt_sec=1.0)
+        out = {
+            "controller": "KAM-Lyapunov-CLF-Sontag-Damping",
+            "nominal_stability": stable_eval.__dict__,
+            "chaotic_disturbance": chaos_eval.__dict__,
+            "taylor_phase_space_tta": tta,
+        }
+        print(json.dumps(out, indent=2, ensure_ascii=False))
+        return
+
+    if args.fleet:
+        fleet_data = {
+            "fleet_name": "KAM Sovereign Defense AI Fleet (Hugging Face Hub)",
+            "total_models": 8,
+            "fleet_size_gb": "20.83 GB GGUF + 848-Param BitNet b1.58",
+            "models": [
+                {
+                    "key": "kam:apex",
+                    "repo": "https://huggingface.co/bahattinyunus/kam-apex-8b-gguf",
+                    "base": "Qwen3-8B",
+                    "size": "5.20 GB",
+                    "role": "Başbuğ Kam - Hibrit Düşünen Komuta Zihni, C2 & EW Orkestrasyonu",
+                },
+                {
+                    "key": "kam:7b",
+                    "repo": "https://huggingface.co/bahattinyunus/kam-7b-gguf",
+                    "base": "Qwen2.5-7B",
+                    "size": "4.68 GB",
+                    "role": "Ulu Kam - 16K Bağlam Duru Türkçe & Karl Friston Aktif Çıkarım",
+                },
+                {
+                    "key": "kam:r1",
+                    "repo": "https://huggingface.co/bahattinyunus/kam-r1-gguf",
+                    "base": "DeepSeek-R1-7B",
+                    "size": "4.68 GB",
+                    "role": "Baş Bilge - <think> CoT Akıl Yürütme, CLF/CBF Sibernetik İspat",
+                },
+                {
+                    "key": "kam:coder",
+                    "repo": "https://huggingface.co/bahattinyunus/kam-coder-7b-gguf",
+                    "base": "Qwen2.5-Coder-7B",
+                    "size": "4.68 GB",
+                    "role": "Ulu Demirci - C++20 JIT, Linux eBPF & CUDA Başmimarı",
+                },
+                {
+                    "key": "kam:coder-nano",
+                    "repo": "https://huggingface.co/bahattinyunus/kam-coder-nano-1.5b-gguf",
+                    "base": "Qwen2.5-Coder-1.5B",
+                    "size": "986 MB",
+                    "role": "Taktik Demirci - Uç C++20 JIT & AST Güvenli Kurtarma Kod Üreteci",
+                },
+                {
+                    "key": "kam:r1-nano",
+                    "repo": "https://huggingface.co/bahattinyunus/kam-r1-nano-1.5b-gguf",
+                    "base": "DeepSeek-R1-1.5B",
+                    "size": "1.10 GB",
+                    "role": "Taktik Bilge - Kısıtlı Donanım (>85°C, 1.5GB RAM) CoT Zihni",
+                },
+                {
+                    "key": "kam:1.5b",
+                    "repo": "https://huggingface.co/bahattinyunus/kam-1.5b-edge-gguf",
+                    "base": "Qwen2.5-1.5B",
+                    "size": "986 MB",
+                    "role": "Uç Gözcü - Mikro-Uç Zihin & 3.53x Öz-Spekülatif Taslak Motoru",
+                },
+                {
+                    "key": "kam:edge-moe-b158",
+                    "repo": "https://huggingface.co/bahattinyunus/kam-edge-moe-b158",
+                    "base": "Tri-Hybrid RK4 Liquid-SSM MoE",
+                    "size": "848 Ternary Params",
+                    "role": "BitNet b1.58 {-1,0,+1} Kriz Politikası + EW Sınıflandırma + CBF Marjı",
+                },
+            ],
+        }
+        print(json.dumps(fleet_data, indent=2, ensure_ascii=False))
         return
 
     if args.infer:

@@ -261,11 +261,62 @@
             <span class="crisis-title">CAN Spoofing</span>
             <span class="crisis-desc">eBPF paket karantinası</span>
           </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('gnss_spoof'); toggleTelemetryDrawer();">
+            <span class="crisis-title">GNSS Spoofing</span>
+            <span class="crisis-desc">Optik Akış + EKF</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('swarm_loss'); toggleTelemetryDrawer();">
+            <span class="crisis-title">Sürü Lideri Kaybı</span>
+            <span class="crisis-desc">Markov Raft Lideri</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('ew_radar_threat'); toggleTelemetryDrawer();">
+            <span class="crisis-title">LPI Radar Tehdidi</span>
+            <span class="crisis-desc">DRFM Aldatıcı Karıştırma</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('cbf_envelope_breach'); toggleTelemetryDrawer();">
+            <span class="crisis-title">CBF Zarf İhlali</span>
+            <span class="crisis-desc">Nöro-Sembolik RTL İzdüşüm</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('intent_c2_mission'); toggleTelemetryDrawer();">
+            <span class="crisis-title">Komutan Niyeti (C2)</span>
+            <span class="crisis-desc">DAG Filo Dağıtımı</span>
+          </button>
         </div>
 
         <button class="btn-reset-balance" onclick="resetSystem()">
           Dirlik ve Dengeyi Sıfırla (Entropi %3)
         </button>
+      </div>
+
+      <!-- Bilişsel Savunma & İleri Uç Yetenekleri -->
+      <div class="hud-section">
+        <h3 class="hud-section-title">IV. Bilişsel Savunma ve Görev Konsolu</h3>
+        <div class="crisis-grid">
+          <button class="crisis-card-btn" onclick="testEwRadar()">
+            <span class="crisis-title">Bilişsel EW Radar</span>
+            <span class="crisis-desc">17.4 GHz LPI PDW analizi</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="testC2Intent()">
+            <span class="crisis-title">Intent-to-Task C2</span>
+            <span class="crisis-desc">S-400 vadi taarruz DAG</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="testSafetyShield()">
+            <span class="crisis-title">CBF Uçuş Kalkanı</span>
+            <span class="crisis-desc">Bariyer fonksiyon kontrolü</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="showFleetManifest()">
+            <span class="crisis-title">Egemen Model Filosu</span>
+            <span class="crisis-desc">8 Model (20.8GB) HF Hub</span>
+          </button>
+        </div>
       </div>
     </div>
   </aside>
@@ -287,8 +338,14 @@
         <div class="form-group">
           <label class="form-label">Aktif Model Seçimi:</label>
           <select id="modal-model-select" class="form-select">
-            <option value="kam:7b">kam:7b (Qwen 2.5 7B Duru Türkçe Bilişsel Zihin - Yerel GPU)</option>
-            <option value="kam:r1">kam:r1 (DeepSeek-R1 Derin Akıl Yürütme - Yerel GPU)</option>
+            <option value="kam:apex">kam:apex (Qwen3 8B Başbuğ — Hibrit Düşünen Komuta Zihni - 5.20 GB)</option>
+            <option value="kam:7b">kam:7b (Qwen 2.5 7B Ulu Kam — Duru Türkçe Bilişsel Zihin - 4.68 GB)</option>
+            <option value="kam:r1">kam:r1 (DeepSeek-R1 7B Baş Bilge — Derin CoT Akıl Yürütme - 4.68 GB)</option>
+            <option value="kam:coder">kam:coder (Qwen 2.5 Coder 7B Ulu Demirci — C++20 JIT & eBPF - 4.68 GB)</option>
+            <option value="kam:coder-nano">kam:coder-nano (Qwen 2.5 Coder 1.5B Taktik Demirci - 986 MB)</option>
+            <option value="kam:r1-nano">kam:r1-nano (DeepSeek-R1 1.5B Taktik Bilge CoT - 1.10 GB)</option>
+            <option value="kam:1.5b">kam:1.5b (Qwen 2.5 1.5B Uç Gözcü & Spekülatif Taslak - 986 MB)</option>
+            <option value="kam:edge-moe-b158">kam:edge-moe-b158 (Tri-Hybrid RK4 Liquid-SSM BitNet b1.58)</option>
             <option value="deepseek-r1:7b">deepseek-r1:7b (Ollama Yerel)</option>
             <option value="qwen2.5:7b">qwen2.5:7b (Ollama Standart 7B)</option>
             <option value="gemini-1.5-flash">gemini-1.5-flash (Google Gemini Bulut)</option>

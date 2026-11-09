@@ -1,6 +1,7 @@
 import unittest
 import sys
 import os
+import json
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
@@ -80,6 +81,18 @@ class TestKam(unittest.TestCase):
         swarm_code = CodeMutator.generate_swarm_handover_fallback()
         self.assertIn("swarm_raft_leader_handover.cpp", swarm_code)
         self.assertTrue(CodeMutator.validate_ast(swarm_code)["valid"])
+
+        cbf_code = CodeMutator.generate_cbf_safety_shield_fallback()
+        self.assertIn("cbf_safety_shield.cpp", cbf_code)
+        self.assertTrue(CodeMutator.validate_ast(cbf_code)["valid"])
+
+        ew_drfm_code = CodeMutator.generate_ew_drfm_fallback()
+        self.assertIn("ew_drfm_responder.cpp", ew_drfm_code)
+        self.assertTrue(CodeMutator.validate_ast(ew_drfm_code)["valid"])
+
+        c2_dag_code = CodeMutator.generate_c2_dag_fallback()
+        self.assertIn("c2_task_executor.cpp", c2_dag_code)
+        self.assertTrue(CodeMutator.validate_ast(c2_dag_code)["valid"])
 
     def test_code_mutator_ast_sandbox(self):
         unsafe_code = 'extern "C" int kam_entrypoint() { system("rm -rf /"); return 0; }'
@@ -404,6 +417,31 @@ class TestKam(unittest.TestCase):
         rgm = engine.compute_hierarchical_rgm_free_energy([0.92, 0.05, 0.02, 0.01], [0.90, 0.06, 0.03, 0.01])
         self.assertIn("f_hierarchical_rgm", rgm)
         self.assertGreaterEqual(rgm["f_hierarchical_rgm"], 0.0)
+
+    def test_cli_advanced_flags_and_fleet(self):
+        import subprocess
+        # Test cli.py with --fleet
+        res = subprocess.run([sys.executable, "cli.py", "--fleet"], capture_output=True, text=True, check=True)
+        fleet = json.loads(res.stdout)
+        self.assertEqual(fleet["total_models"], 8)
+        self.assertTrue(any(m["key"] == "kam:apex" for m in fleet["models"]))
+
+        # Test cli.py with --ew
+        res_ew = subprocess.run([sys.executable, "cli.py", "--ew"], capture_output=True, text=True, check=True)
+        ew_data = json.loads(res_ew.stdout)
+        self.assertIn("known_emitter_sample", ew_data)
+        self.assertIn("novel_agile_emitter_sample", ew_data)
+
+        # Test cli.py with --shield
+        res_shield = subprocess.run([sys.executable, "cli.py", "--shield"], capture_output=True, text=True, check=True)
+        shield_data = json.loads(res_shield.stdout)
+        self.assertTrue(shield_data["intervention_occurred"])
+
+        # Test cli.py with --lyapunov
+        res_clf = subprocess.run([sys.executable, "cli.py", "--lyapunov"], capture_output=True, text=True, check=True)
+        clf_data = json.loads(res_clf.stdout)
+        self.assertIn("nominal_stability", clf_data)
+        self.assertIn("taylor_phase_space_tta", clf_data)
 
 if __name__ == "__main__":
     unittest.main()

@@ -419,6 +419,136 @@ async function resetSystem() {
   }
 }
 
+// Bilişsel EW Radar PDW Testi
+async function testEwRadar() {
+  toggleTelemetryDrawer();
+  appendMessage("user", "📡 17.4 GHz LPI Radar Tehdit PDW darbe dizisini analiz et ve DRFM karşı tedbiri üret.");
+  try {
+    const res = await fetch("/api/ew_radar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        rf_ghz: 17.4,
+        pri_us: 610.0,
+        pw_us: 0.25,
+        aoa_deg: 118.0,
+        chirp_bw_mhz: 240.0,
+        agility_score: 0.92
+      })
+    });
+    const data = await res.json();
+    const c = data.classification;
+    const msg = `⚡ <strong>[BİLİŞSEL ELEKTRONİK HARP - CIRRA ÜSTÜ]</strong><br>` +
+      `• Sınıflandırılan Verici: <code>${c.classified_emitter}</code><br>` +
+      `• Güven: <code>${(c.confidence * 100).toFixed(1)}%</code> | Tehdit Şiddeti: <code>${(c.threat_severity * 100).toFixed(0)}%</code><br>` +
+      `• Şekil Değiştiren LPI Radarı: <code>${c.is_novel_shapeshifting_emitter ? "EVET (Çevrimiçi Öğrenildi)" : "HAYIR"}</code><br>` +
+      `• Sentezlenen Karşı-Tedbir: <strong>${c.synthesized_countermeasure}</strong> (Notch: ${c.notch_center_ghz} GHz)<br>` +
+      `• Çentik ve DRFM Kod Modülü JIT hazırlandı.`;
+    appendMessage("kam", msg, data.countermeasure_code);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ EW Radar analizi sırasında bağlantı hatası oluştu.");
+  }
+}
+
+// Intent-to-Task C2 Filo Orkestrasyonu Testi
+async function testC2Intent() {
+  toggleTelemetryDrawer();
+  const intentStr = "Sektör-4 S-400 bataryasını körelt ve vadi taarruzu icra et";
+  appendMessage("user", `🎯 Komutan Niyeti: "${intentStr}"`);
+  try {
+    const res = await fetch("/api/c2_intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ commander_intent: intentStr, target_x_km: 50.0, target_y_km: 0.0 })
+    });
+    const data = await res.json();
+    const plan = data.c2_plan;
+    let taskListHtml = `<ol style="margin: 6px 0 0 16px; padding: 0;">`;
+    for (const t of plan.task_dag_allocations) {
+      taskListHtml += `<li><strong>${t.assigned_asset}</strong> [Faz ${t.phase}]: ${t.description} (G=${t.expected_free_energy_g.toFixed(3)})</li>`;
+    }
+    taskListHtml += `</ol>`;
+
+    const msg = `🦅 <strong>[KAM LATTICE // INTENT-TO-TASK DAG ORKESTRASYONU]</strong><br>` +
+      `• Standart: <code>${plan.architecture_standard}</code><br>` +
+      `• Üretilen Görev Sayısı: <strong>${plan.total_tasks_generated}</strong> | Seferber Edilen Varlık: <strong>${plan.unique_assets_mobilized}</strong><br>` +
+      `• DAG Görev Dağılımı:<br>${taskListHtml}`;
+    appendMessage("kam", msg, data.executor_code);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ C2 Görev orkestrasyonu sırasında bağlantı hatası oluştu.");
+  }
+}
+
+// DARPA ANSR & CBF Uçuş Kalkanı Testi
+async function testSafetyShield() {
+  toggleTelemetryDrawer();
+  appendMessage("user", "🛡️ Güvenlik sınırını aşan uçuş komutasını doğrula: İrtifa=12m, Sürat=15m/s, Yatış=68°, Batarya=%14.");
+  try {
+    const res = await fetch("/api/safety_shield", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        target_altitude_agl_m: 12.0,
+        airspeed_mps: 15.0,
+        bank_angle_deg: 68.0,
+        battery_pct: 14.0
+      })
+    });
+    const data = await res.json();
+    const s = data.shield_result;
+    let violHtml = s.symbolic_violations_prevented.map(v => `<code>${v}</code>`).join(", ");
+    const msg = `🛡️ <strong>[DARPA ANSR & CBF NÖRO-SEMBOLİK KALKAN]</strong><br>` +
+      `• Müdahale Gerçekleşti mi: <strong>${s.intervention_occurred ? "EVET (Güvenlik İzdüşümü Yapıldı)" : "HAYIR"}</strong><br>` +
+      `• Eve Dönüş (RTL) Durumu: <strong>${s.rtl_override_active ? "AKTİF" : "PASİF"}</strong><br>` +
+      `• Engellenen Sembolik İhlaller: ${violHtml}<br>` +
+      `• Güvenli İzdüşürülen Komuta: İrtifa <strong>${s.safe_command.target_altitude_agl_m}m</strong>, Sürat <strong>${s.safe_command.airspeed_mps} m/s</strong>, Yatış <strong>${s.safe_command.bank_angle_deg}°</strong>`;
+    appendMessage("kam", msg, data.cbf_code);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ Güvenlik kalkanı testi sırasında bağlantı hatası oluştu.");
+  }
+}
+
+// Hugging Face Egemen Model Filosu Manifestosu
+async function showFleetManifest() {
+  toggleTelemetryDrawer();
+  appendMessage("user", "🌐 KAM 8-Modelli Egemen Savunma Filosu (Hugging Face Hub) durumunu getir.");
+  try {
+    const res = await fetch("/api/fleet_manifest");
+    const data = await res.json();
+    let fleetRows = `<table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--cyan-glow);">
+          <th style="text-align: left; padding: 4px;">Model</th>
+          <th style="text-align: left; padding: 4px;">Boyut</th>
+          <th style="text-align: left; padding: 4px;">Görev Özeti</th>
+          <th style="text-align: left; padding: 4px;">Hugging Face</th>
+        </tr>
+      </thead>
+      <tbody>`;
+    for (const m of data.models) {
+      fleetRows += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px; font-weight: bold; color: var(--text-heading);">${m.key}</td>
+        <td style="padding: 4px; font-family: var(--font-mono);">${m.size}</td>
+        <td style="padding: 4px;">${m.role}</td>
+        <td style="padding: 4px;"><a href="${m.url}" target="_blank" style="color: var(--cyan-glow); text-decoration: underline;">Depo</a></td>
+      </tr>`;
+    }
+    fleetRows += `</tbody></table>`;
+
+    const msg = `👑 <strong>[KAM EGEMEN MODEL FİLOSU // 8 RESMİ HUGGING FACE DEPOSU]</strong><br>` +
+      `• Toplam Filo Hacmi: <strong>${data.fleet_size_gb}</strong><br>` +
+      `• Geliştirici / Yazar: <strong>${data.huggingface_author}</strong><br>` +
+      fleetRows;
+    appendMessage("kam", msg);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ Filo manifestosu çekilirken hata oluştu.");
+  }
+}
+
 // Modal Kontrolleri
 function openSettingsModal() {
   document.getElementById("settings-modal").style.display = "flex";
