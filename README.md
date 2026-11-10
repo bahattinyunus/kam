@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Architecture-Air--Gapped_%7C_Zero--Cloud-00F2FE.svg?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Kernel_Latency-%3C_12_%CE%BCs_eBPF-4FACFE.svg?style=for-the-badge&logo=linux&logoColor=white" />
   <img src="https://img.shields.io/badge/JIT_Hot--Patch-41.2_ms-00C9FF.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tests-29%2F29_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tests-35%2F35_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
   <img src="https://img.shields.io/badge/NVIDIA-CUDA_12.x_%7C_RTX_5060-76B900.svg?style=for-the-badge&logo=nvidia&logoColor=white" />
   <img src="https://img.shields.io/badge/License-Apache_2.0-0D1117.svg?style=for-the-badge" />
 </p>
@@ -379,13 +379,13 @@ Tarayıcı veya web sunucusuna ihtiyaç duymadan doğrudan işletim sistemi üze
 - **60 FPS Canlı Serbest Enerji Osiloskobu:** Varyasyonel serbest enerji $F(t)$ ve entropi $S(t)$ dalga formlarını gerçek zamanlı çizer.
 - **Vektörel Monolitik KAM Mühür Kadranı:** Sistemin dirlik/kaos durumuna göre renk ve açısal hız değiştiren özel çizim radar kadranı.
 - **Çoklu İş Parçacıklı (`QThread`) Zihin Akışı:** Arayüzü dondurmadan `kam:7b` ve `kam:r1` modelleriyle gerçek zamanlı token akışı (*streaming*) ve `<think>` CoT görselleştirmesi sunar.
-- **Canlı C++20 JIT Kod Müfettişi ve Kriz Simülatörü:** 4 kriz senaryosunu tetikler, üretilen C++20 kodunu AST doğrulamasıyla birlikte anında görüntüler.
+- **Canlı C++20 JIT Kod Müfettişi ve Kriz Simülatörü:** 12 taktik kriz senaryosunu tetikler, üretilen C++20 kodunu AST doğrulamasıyla birlikte anında görüntüler.
 
 ### 2. Web Kokpiti (`web_ui.py`) ve Terminal TUI (`cli.py --dashboard`)
 Uzaktan yer kontrol istasyonları için `http://127.0.0.1:8080` üzerinde çalışan gerçek zamanlı Web Kokpiti ve düşük bant genişlikli SSH bağlantıları için konsol tabanlı canlı TUI gösterge paneli mevcuttur.
 
 ### 3. Model Context Protocol (MCP) JSON-RPC 2.0 Sunucusu (`cli.py --mcp`)
-Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`) üzerinden KAM çekirdeğiyle konuşabilmesi için yerleşik 12 araçlı MCP sunucusu (`python/kam/mcp_server.py`) içerir:
+Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`) üzerinden KAM çekirdeğiyle konuşabilmesi için yerleşik 15 araçlı MCP sunucusu (`python/kam/mcp_server.py`) içerir:
 
 | MCP Aracı | Girdi Parametreleri | İşlev ve Yetki Tanımı |
 | :--- | :--- | :--- |
@@ -398,9 +398,12 @@ Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`)
 | `optimize_edge_deployment` | `ram_mb`, `tdp_watts`, `npu_temp_c` | Donanım RAM/TDP/Sıcaklık zarfına göre en uygun KAM model, `imatrix` kuantizasyon ve spekülatif çözümleme planını çıkarır. |
 | `plan_tactical_3d_route` | `target_x_km`, `target_y_km`, `num_segments` | 3-Boyutlu SİHA arazi maskeleme (*Nap-of-the-Earth*) ve $1/R^4$ radar sönümleme denklemiyle en güvenli stealth uçuş koridorunu hesaplar. |
 | `evaluate_lyapunov_council` | `crisis_hint` | 5-Modelli Bilişsel Kurul (**Bilge** EFE + **Gözcü** Lyapunov CLF/TTA + **Demirci** C++20 JIT) ortak kriz kararını sentezler. |
-| `classify_ew_radar_pdw` | `rf_mhz`, `pri_us`, `pw_us`, `aoa_deg`, `power_dbm`, `chirp_bw_mhz` | Bilişsel EW PDW radar darbe analizi yapar, bilinmeyen emiterleri çevrimiçi öğrenir ve DRFM aldatma + çentik (*notch*) frekans planı üretir. |
-| `orchestrate_intent_c2` | `commander_intent_tr`, `target_x_km`, `target_y_km` | Üst düzey Türkçe Komutan Niyetini 4 aşamalı Görev Grafına (Task DAG) ayrıştırır ve heterojen İHA/SİHA filosuna EFE $G(\pi)$ ile tahsis eder. |
-| `verify_cbf_safety_shield` | `target_altitude_m`, `target_velocity_ms`, `target_bank_angle_deg`, `battery_pct` | Nöro-Sembolik Kontrol Bariyer Fonksiyonu ($h(\mathbf{x}) \ge 0$) ile uçuş komutlarını denetler ve ihlalleri güvenli zarfa izdüşürür. |
+| `classify_ew_radar_pdw` | `rf_ghz`, `pri_us`, `pw_us`, `aoa_deg`, `chirp_bw_mhz`, `agility_score` | Bilişsel EW PDW radar darbe analizi yapar, bilinmeyen emiterleri çevrimiçi öğrenir ve DRFM aldatma + çentik (*notch*) frekans planı üretir. |
+| `orchestrate_intent_c2` | `commander_intent`, `target_x_km`, `target_y_km` | Üst düzey Türkçe Komutan Niyetini 4 aşamalı Görev Grafına (Task DAG) ayrıştırır ve heterojen İHA/SİHA filosuna EFE $G(\pi)$ ile tahsis eder. |
+| `verify_cbf_safety_shield` | `target_altitude_agl_m`, `airspeed_mps`, `bank_angle_deg`, `battery_pct` | Nöro-Sembolik Kontrol Bariyer Fonksiyonu ($h(\mathbf{x}) \ge 0$) ile uçuş komutlarını denetler ve ihlalleri güvenli zarfa izdüşürür. |
+| `verify_byzantine_pqc_swarm` | `inject_byzantine_traitor` | Bizans Hata Toleranslı (BFT) Jensen-Shannon diverjans kapısı ($D_{\text{JS}} > 0.18$) ve ML-KEM-768 (Kyber $q=3329$) kuantum-sonrası kriptografi ile sürüdeki hain düğümleri karantinaya alır. |
+| `localize_terrain_trn` | `true_x_km`, `true_y_km`, `drifted_ins_x_km`, `drifted_ins_y_km` | GPS/GNSS-Kör ortamda %100 pasif (0W RF) TERCOM/SITAN Sayısal Yükselti Modeli (DEM) korelasyonu ile INS kaymasını %99.4+ sönümler. |
+| `reconfigure_damaged_actuators` | `jammed_actuator_index`, `jammed_angle_rad` | Kinetik kanatçık sıkışması veya motor kaybında Ağırlıklı Sözde-Ters (*Weighted Moore-Penrose Pseudo-Inverse*) matrisiyle kontrol otoritesini sağlam yüzeylere yeniden dağıtır. |
 
 ---
 
@@ -560,6 +563,18 @@ python cli.py --lyapunov
 
 # KAM 8-Modelli Egemen Savunma Filosu (Hugging Face Sovereign Fleet) manifestosu:
 python cli.py --fleet
+
+# Bizans Hata Toleransli (BFT) Markov Battaniyesi ve ML-KEM-768 Kuantum-Direncli Suru Dogrulamasi:
+python cli.py --bft-swarm
+
+# GPS-Kor Ortamda %100 Pasif Arazi Referansli Seyrusefer (TRN / TERCOM DEM Korelasyonu):
+python cli.py --trn
+
+# Kinetik Hasar ve Eyleyici Sikismasi Altinda Agirlikli Sozde-Ters (Pseudo-Inverse) Kontrol Dagitimi:
+python cli.py --actuator
+
+# KAM 15-Aracli Butunsel Otonom Beka ve Siber-Fiziksel Oz-Onarim Tam Sistem Denetimi:
+python cli.py --full-audit
 
 # KAM-Edge-MoE RK4 & BitNet b1.58 uclu agirlik egitimi ve ikili (.bin) kontrol noktasi uretimi:
 python scripts/train_edge_apex_bitnet.py

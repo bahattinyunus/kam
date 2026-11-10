@@ -56,6 +56,9 @@ class TestWebServer(unittest.TestCase):
             ("ew_radar_threat", "17.4 GHz"),
             ("cbf_envelope_breach", "DARPA ANSR"),
             ("intent_c2_mission", "S-400"),
+            ("byzantine_swarm_attack", "Charlie-3"),
+            ("trn_terrain_lock", "901.4"),
+            ("kinetic_actuator_jam", "LEFT_ELEVON"),
         ]:
             payload = json.dumps({"crisis_type": c_type}).encode("utf-8")
             req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
@@ -150,6 +153,39 @@ class TestWebServer(unittest.TestCase):
             self.assertIn("shield_result", data)
             self.assertTrue(data["shield_result"]["intervention_occurred"])
             self.assertIn("cbf_safety_shield.cpp", data["cbf_code"])
+
+    def test_bft_swarm_api(self):
+        url = f"http://127.0.0.1:{self.port}/api/bft_swarm"
+        payload = json.dumps({"inject_byzantine_traitor": True}).encode("utf-8")
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            self.assertEqual(resp.status, 200)
+            data = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("bft_result", data)
+            self.assertEqual(data["bft_result"]["quarantined_byzantine_nodes"], ["Charlie-3"])
+            self.assertIn("byzantine_pqc_guard.cpp", data["pqc_code"])
+
+    def test_trn_localize_api(self):
+        url = f"http://127.0.0.1:{self.port}/api/trn_localize"
+        payload = json.dumps({"true_x_km": 24.5, "true_y_km": -3.2}).encode("utf-8")
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            self.assertEqual(resp.status, 200)
+            data = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("trn_result", data)
+            self.assertGreater(data["trn_result"]["drift_reduction_pct"], 95.0)
+            self.assertIn("trn_tercom_navigator.cpp", data["trn_code"])
+
+    def test_actuator_reconfig_api(self):
+        url = f"http://127.0.0.1:{self.port}/api/actuator_reconfig"
+        payload = json.dumps({"jammed_actuator_index": 0, "jammed_angle_rad": 0.22}).encode("utf-8")
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            self.assertEqual(resp.status, 200)
+            data = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("actuator_result", data)
+            self.assertTrue(data["actuator_result"]["control_authority_preserved"])
+            self.assertIn("actuator_mixer_reconfig.cpp", data["mixer_code"])
 
 if __name__ == "__main__":
     unittest.main()

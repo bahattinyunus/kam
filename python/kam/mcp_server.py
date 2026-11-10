@@ -7,6 +7,9 @@ from .cognitive_council import CognitiveCouncilRouter
 from .ew_cognitive_radar import PulseDescriptorWord, CognitiveEwEmitterClassifier
 from .intent_c2_orchestrator import IntentToTaskOrchestrator
 from .neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyShield
+from .byzantine_pqc_swarm import SwarmNodeBelief, ByzantinePqcSwarmGuard
+from .terrain_matching_trn import TerrainRelativeNavigator
+from .actuator_reconfigurator import ActuatorFaultReconfigurator
 
 
 class McpServer:
@@ -150,6 +153,40 @@ class McpServer:
                         },
                     },
                 },
+                {
+                    "name": "verify_byzantine_pqc_swarm",
+                    "description": "Bizans Hata Toleranslı (BFT) Jensen-Shannon diverjans kapısı ve ML-KEM-768 (Kyber q=3329) kuantum-sonrası kriptografi ile sürüdeki hain/sahte düğümleri karantinaya al.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "inject_byzantine_traitor": {"type": "boolean"},
+                        },
+                    },
+                },
+                {
+                    "name": "localize_terrain_trn",
+                    "description": "GPS/GNSS-Kör ortamda %100 pasif (0W RF) TERCOM/SITAN Sayısal Yükselti Modeli (DEM) korelasyonu ile INS kaymasını <1.5m CEP hassasiyete kilitle.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "true_x_km": {"type": "number"},
+                            "true_y_km": {"type": "number"},
+                            "drifted_ins_x_km": {"type": "number"},
+                            "drifted_ins_y_km": {"type": "number"},
+                        },
+                    },
+                },
+                {
+                    "name": "reconfigure_damaged_actuators",
+                    "description": "Kinetik kanatçık/servo sıkışması veya motor kaybında Ağırlıklı Sözde-Ters (Weighted Moore-Penrose Pseudo-Inverse) matrisiyle kontrol otoritesini sağlam yüzeylere yeniden dağıt.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "jammed_actuator_index": {"type": "integer"},
+                            "jammed_angle_rad": {"type": "number"},
+                        },
+                    },
+                },
             ]
         }
 
@@ -255,6 +292,33 @@ class McpServer:
                 battery_pct=float(args.get("battery_pct", 80.0)),
             )
             return NeuroSymbolicSafetyShield.verify_and_project(cmd)
+        elif name == "verify_byzantine_pqc_swarm":
+            inject_traitor = bool(args.get("inject_byzantine_traitor", True))
+            beliefs = [
+                SwarmNodeBelief("Alpha-1", [0.82, 0.10, 0.05, 0.03], pqc_nonce=101),
+                SwarmNodeBelief("Bravo-2", [0.80, 0.11, 0.06, 0.03], pqc_nonce=102),
+                SwarmNodeBelief(
+                    "Charlie-3",
+                    [0.02, 0.04, 0.12, 0.82] if inject_traitor else [0.81, 0.10, 0.06, 0.03],
+                    pqc_nonce=103,
+                ),
+                SwarmNodeBelief("Delta-4", [0.81, 0.09, 0.06, 0.04], pqc_nonce=104),
+            ]
+            return ByzantinePqcSwarmGuard.filter_byzantine_and_fuse(beliefs)
+        elif name == "localize_terrain_trn":
+            tx = float(args.get("true_x_km", 24.5))
+            ty = float(args.get("true_y_km", -3.2))
+            dx = float(args.get("drifted_ins_x_km", 25.25))
+            dy = float(args.get("drifted_ins_y_km", -2.70))
+            return TerrainRelativeNavigator.match_terrain_profile(
+                true_x_km=tx, true_y_km=ty, drifted_ins_x_km=dx, drifted_ins_y_km=dy
+            )
+        elif name == "reconfigure_damaged_actuators":
+            jam_idx = int(args.get("jammed_actuator_index", 0))
+            jam_ang = float(args.get("jammed_angle_rad", 0.22))
+            return ActuatorFaultReconfigurator.reconfigure_control_allocation(
+                stuck_deflections_rad={jam_idx: jam_ang}
+            )
         return {"error": f"Bilinmeyen araç: {name}"}
 
     def handle_jsonrpc(self, request: Dict[str, Any]) -> Dict[str, Any]:

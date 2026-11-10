@@ -549,6 +549,75 @@ async function showFleetManifest() {
   }
 }
 
+// Bizans Hata Toleranslı (BFT) & ML-KEM-768 PQC Sürü Testi
+async function testBftSwarm() {
+  toggleTelemetryDrawer();
+  appendMessage("user", "🔐 Sürü Markov Battaniyesinde Bizans haini (Charlie-3) denetimi ve ML-KEM-768 PQC anahtar doğrulaması yap.");
+  try {
+    const res = await fetch("/api/bft_swarm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ inject_byzantine_traitor: true })
+    });
+    const data = await res.json();
+    const b = data.bft_result;
+    const msg = `🔐 <strong>[BFT &amp; ML-KEM-768 KUANTUM-DİRENÇLİ SÜRÜ KONSENSÜSÜ]</strong><br>` +
+      `• Şifreleme Paketi: <code>${b.pqc_cipher_suite}</code><br>` +
+      `• Güvenilir Düğümler: <strong>${b.trusted_nodes.join(", ")}</strong><br>` +
+      `• Karantinaya Alınan Bizans Haini: <code style="color: var(--crimson-glow);">${b.quarantined_byzantine_nodes.join(", ")}</code> (f &lt; N/3: ${b.bft_resilience_bound_ok ? "DOĞRULANDI" : "İHLAL"})<br>` +
+      `• Füzyonlanmış Kolektif İnanç: <code>[${b.fused_collective_belief.join(", ")}]</code>`;
+    appendMessage("kam", msg, data.pqc_code);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ BFT & PQC sürü testi sırasında hata oluştu.");
+  }
+}
+
+// Pasif TRN / TERCOM Arazi Korelasyonu Testi
+async function testTrnLocalize() {
+  toggleTelemetryDrawer();
+  appendMessage("user", "🏔️ GPS-Kör ortamda 901m INS kaymasını 0W pasif TRN / TERCOM arazi yükselti profili ile düzelt.");
+  try {
+    const res = await fetch("/api/trn_localize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ true_x_km: 24.5, true_y_km: -3.2, drifted_ins_x_km: 25.25, drifted_ins_y_km: -2.70 })
+    });
+    const data = await res.json();
+    const t = data.trn_result;
+    const msg = `🏔️ <strong>[PASİF TRN / TERCOM BAYESÇİ ARAZİ KORELASYONU]</strong><br>` +
+      `• RF Yayımı: <code>${t.rf_emission_watts} W (100% Stealth)</code> | GNSS Bağımlılığı: <code>${t.gnss_dependency}</code><br>` +
+      `• Başlangıç INS Kayması: <code>${t.initial_ins_drift_m} m</code> &rarr; Kalan CEP Hatası: <strong>${t.residual_cep_error_m} m</strong><br>` +
+      `• Kayma Sönümleme Oranı: <strong>%${t.drift_reduction_pct}</strong> | Profil NCC: <code>${t.profile_ncc_score}</code>`;
+    appendMessage("kam", msg, data.trn_code);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ TRN arazi eşleştirme testi sırasında hata oluştu.");
+  }
+}
+
+// Ağırlıklı Sözde-Ters Eyleyici Yeniden Yapılandırma Testi
+async function testActuatorReconfig() {
+  toggleTelemetryDrawer();
+  appendMessage("user", "⚙️ Sol Elevon (+0.22 rad) sıkışması altında Sözde-Ters (Pseudo-Inverse) kontrol dağıtımını hesapla.");
+  try {
+    const res = await fetch("/api/actuator_reconfig", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jammed_actuator_index: 0, jammed_angle_rad: 0.22 })
+    });
+    const data = await res.json();
+    const a = data.actuator_result;
+    const msg = `⚙️ <strong>[AĞIRLIKLI SÖZDE-TERS (PSEUDO-INVERSE) KONTROL DAĞITIMI]</strong><br>` +
+      `• İstenen Moment (L,M,N): <code>[${a.desired_moments_lmn.join(", ")}]</code> | Elde Edilen: <code>[${a.achieved_moments_lmn.join(", ")}]</code><br>` +
+      `• Moment Takip Hatası (L2): <strong>${a.moment_tracking_error_l2}</strong> | Kontrol Otoritesi: <strong>${a.control_authority_preserved ? "KORUNDU (%100)" : "KISITLI"}</strong>`;
+    appendMessage("kam", msg, data.mixer_code);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ Eyleyici yeniden yapılandırma testi sırasında hata oluştu.");
+  }
+}
+
 // Modal Kontrolleri
 function openSettingsModal() {
   document.getElementById("settings-modal").style.display = "flex";

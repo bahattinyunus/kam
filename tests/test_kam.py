@@ -30,6 +30,9 @@ from kam.cognitive_council import CognitiveCouncilRouter
 from kam.ew_cognitive_radar import PulseDescriptorWord, CognitiveEwEmitterClassifier
 from kam.intent_c2_orchestrator import IntentToTaskOrchestrator
 from kam.neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyShield
+from kam.byzantine_pqc_swarm import SwarmNodeBelief, ByzantinePqcSwarmGuard
+from kam.terrain_matching_trn import TerrainRelativeNavigator
+from kam.actuator_reconfigurator import ActuatorFaultReconfigurator
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -93,6 +96,18 @@ class TestKam(unittest.TestCase):
         c2_dag_code = CodeMutator.generate_c2_dag_fallback()
         self.assertIn("c2_task_executor.cpp", c2_dag_code)
         self.assertTrue(CodeMutator.validate_ast(c2_dag_code)["valid"])
+
+        bft_pqc_code = CodeMutator.generate_byzantine_pqc_fallback()
+        self.assertIn("byzantine_pqc_guard.cpp", bft_pqc_code)
+        self.assertTrue(CodeMutator.validate_ast(bft_pqc_code)["valid"])
+
+        trn_code = CodeMutator.generate_trn_terrain_lock_fallback()
+        self.assertIn("trn_tercom_navigator.cpp", trn_code)
+        self.assertTrue(CodeMutator.validate_ast(trn_code)["valid"])
+
+        act_code = CodeMutator.generate_actuator_reconfig_fallback()
+        self.assertIn("actuator_mixer_reconfig.cpp", act_code)
+        self.assertTrue(CodeMutator.validate_ast(act_code)["valid"])
 
     def test_code_mutator_ast_sandbox(self):
         unsafe_code = 'extern "C" int kam_entrypoint() { system("rm -rf /"); return 0; }'
@@ -442,6 +457,49 @@ class TestKam(unittest.TestCase):
         clf_data = json.loads(res_clf.stdout)
         self.assertIn("nominal_stability", clf_data)
         self.assertIn("taylor_phase_space_tta", clf_data)
+
+        # Test cli.py with --full-audit
+        res_audit = subprocess.run([sys.executable, "cli.py", "--full-audit"], capture_output=True, text=True, check=True)
+        audit_data = json.loads(res_audit.stdout)
+        self.assertEqual(audit_data["total_mcp_tools"], 15)
+        self.assertIn("byzantine_pqc_swarm", audit_data)
+        self.assertIn("terrain_relative_nav", audit_data)
+        self.assertIn("actuator_reconfiguration", audit_data)
+
+    def test_byzantine_pqc_swarm_guard(self):
+        beliefs = [
+            SwarmNodeBelief("Alpha-1", [0.82, 0.10, 0.05, 0.03], pqc_nonce=101),
+            SwarmNodeBelief("Bravo-2", [0.80, 0.11, 0.06, 0.03], pqc_nonce=102),
+            SwarmNodeBelief("Charlie-3", [0.02, 0.04, 0.12, 0.82], pqc_nonce=103),  # Hain düğüm
+            SwarmNodeBelief("Delta-4", [0.81, 0.09, 0.06, 0.04], pqc_nonce=104),
+        ]
+        res = ByzantinePqcSwarmGuard.filter_byzantine_and_fuse(beliefs)
+        self.assertEqual(res["quarantined_byzantine_nodes"], ["Charlie-3"])
+        self.assertEqual(len(res["trusted_nodes"]), 3)
+        self.assertTrue(res["bft_resilience_bound_ok"])
+        self.assertAlmostEqual(sum(res["fused_collective_belief"]), 1.0, places=3)
+
+    def test_terrain_relative_navigation_trn(self):
+        trn = TerrainRelativeNavigator.match_terrain_profile(
+            true_x_km=24.5,
+            true_y_km=-3.2,
+            drifted_ins_x_km=25.25,
+            drifted_ins_y_km=-2.70,
+        )
+        self.assertEqual(trn["rf_emission_watts"], 0.0)
+        self.assertGreater(trn["drift_reduction_pct"], 95.0)
+        self.assertGreater(trn["profile_ncc_score"], 0.99)
+        self.assertLess(trn["residual_cep_error_m"], 10.0)
+
+    def test_actuator_fault_reconfigurator(self):
+        reconf = ActuatorFaultReconfigurator.reconfigure_control_allocation(
+            desired_moments_lmn=[0.45, 0.60, -0.25],
+            stuck_deflections_rad={0: 0.22},
+        )
+        self.assertTrue(reconf["control_authority_preserved"])
+        self.assertLess(reconf["moment_tracking_error_l2"], 0.001)
+        self.assertEqual(reconf["actuator_allocations"][0]["status"], "JAMMED_ISOLATED")
+        self.assertEqual(reconf["actuator_allocations"][1]["status"], "ACTIVE_COMPENSATING")
 
 if __name__ == "__main__":
     unittest.main()

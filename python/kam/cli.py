@@ -21,6 +21,9 @@ from .ew_cognitive_radar import PulseDescriptorWord, CognitiveEwEmitterClassifie
 from .intent_c2_orchestrator import IntentToTaskOrchestrator
 from .neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyShield
 from .lyapunov_controller import LyapunovCognitiveController
+from .byzantine_pqc_swarm import SwarmNodeBelief, ByzantinePqcSwarmGuard
+from .terrain_matching_trn import TerrainRelativeNavigator
+from .actuator_reconfigurator import ActuatorFaultReconfigurator
 
 def main():
     parser = argparse.ArgumentParser(
@@ -103,6 +106,26 @@ def main():
         "--fleet", "--sovereign-fleet",
         action="store_true",
         help="KAM 8-Modelli Egemen Savunma Filosu (Hugging Face Sovereign Fleet) manifestosu"
+    )
+    parser.add_argument(
+        "--bft-swarm", "--pqc",
+        action="store_true",
+        help="Bizans Hata Toleranslı (BFT) Markov Battaniyesi ve ML-KEM-768 Kuantum-Dirençli Sürü Doğrulaması"
+    )
+    parser.add_argument(
+        "--trn", "--tercom",
+        action="store_true",
+        help="GPS-Kör Ortamda %100 Pasif Arazi Referanslı Seyrüsefer (TRN / TERCOM DEM Korelasyonu)"
+    )
+    parser.add_argument(
+        "--actuator", "--reconfig",
+        action="store_true",
+        help="Kinetik Hasar ve Eyleyici Sıkışması Altında Ağırlıklı Sözde-Ters (Pseudo-Inverse) Kontrol Dağıtımı"
+    )
+    parser.add_argument(
+        "--full-audit",
+        action="store_true",
+        help="KAM 15-Modüllü Bütünsel Otonom Bekâ ve Siber-Fiziksel Öz-Onarım Tam Denetim Raporu"
     )
     parser.add_argument(
         "--export-metrics",
@@ -269,6 +292,53 @@ def main():
             ],
         }
         print(json.dumps(fleet_data, indent=2, ensure_ascii=False))
+        return
+
+    if args.bft_swarm:
+        beliefs = [
+            SwarmNodeBelief("Alpha-1", [0.82, 0.10, 0.05, 0.03], pqc_nonce=101),
+            SwarmNodeBelief("Bravo-2", [0.80, 0.11, 0.06, 0.03], pqc_nonce=102),
+            SwarmNodeBelief("Charlie-3", [0.02, 0.04, 0.12, 0.82], pqc_nonce=103),  # Bizans haini
+            SwarmNodeBelief("Delta-4", [0.81, 0.09, 0.06, 0.04], pqc_nonce=104),
+        ]
+        res = ByzantinePqcSwarmGuard.filter_byzantine_and_fuse(beliefs)
+        print(json.dumps(res, indent=2, ensure_ascii=False))
+        return
+
+    if args.trn:
+        trn_res = TerrainRelativeNavigator.match_terrain_profile()
+        print(json.dumps(trn_res, indent=2, ensure_ascii=False))
+        return
+
+    if args.actuator:
+        act_res = ActuatorFaultReconfigurator.reconfigure_control_allocation()
+        print(json.dumps(act_res, indent=2, ensure_ascii=False))
+        return
+
+    if args.full_audit:
+        mcp = McpServer()
+        audit = {
+            "audit_title": "KAM Egemen Bilişsel Savunma Çekirdeği — 15-Araçlı Tam Sistem Denetimi",
+            "total_mcp_tools": len(mcp.list_tools()["tools"]),
+            "ebpf_kernel_status": mcp.call_tool("inspect_kernel", {}),
+            "active_inference_efe": mcp.call_tool("evaluate_efe_policies", {"crisis_hint": "SDR"}),
+            "ew_cognitive_radar": mcp.call_tool(
+                "classify_ew_radar_pdw",
+                {"rf_ghz": 17.4, "pri_us": 610.0, "pw_us": 0.25, "aoa_deg": 118.0, "chirp_bw_mhz": 240.0, "agility_score": 0.92},
+            ),
+            "c2_intent_dag": mcp.call_tool(
+                "orchestrate_intent_c2",
+                {"commander_intent": "Sektör-4 S-400 bataryasını körelt ve vadi taarruzu icra et"},
+            ),
+            "cbf_safety_shield": mcp.call_tool(
+                "verify_cbf_safety_shield",
+                {"target_altitude_agl_m": 12.0, "airspeed_mps": 15.0, "bank_angle_deg": 68.0, "battery_pct": 14.0},
+            ),
+            "byzantine_pqc_swarm": mcp.call_tool("verify_byzantine_pqc_swarm", {"inject_byzantine_traitor": True}),
+            "terrain_relative_nav": mcp.call_tool("localize_terrain_trn", {}),
+            "actuator_reconfiguration": mcp.call_tool("reconfigure_damaged_actuators", {}),
+        }
+        print(json.dumps(audit, indent=2, ensure_ascii=False))
         return
 
     if args.infer:

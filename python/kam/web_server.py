@@ -18,6 +18,9 @@ from .ew_cognitive_radar import PulseDescriptorWord, CognitiveEwEmitterClassifie
 from .intent_c2_orchestrator import IntentToTaskOrchestrator
 from .neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyShield
 from .lyapunov_controller import LyapunovCognitiveController
+from .byzantine_pqc_swarm import SwarmNodeBelief, ByzantinePqcSwarmGuard
+from .terrain_matching_trn import TerrainRelativeNavigator
+from .actuator_reconfigurator import ActuatorFaultReconfigurator
 
 class KamWebHandler(SimpleHTTPRequestHandler):
     engine = None
@@ -356,6 +359,54 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"entropy": e, "stability": res.__dict__, "time_to_anomaly": tta}, ensure_ascii=False).encode("utf-8"))
             return
 
+        elif self.path == "/api/bft_swarm":
+            inject_traitor = bool(body.get("inject_byzantine_traitor", True))
+            beliefs = [
+                SwarmNodeBelief("Alpha-1", [0.82, 0.10, 0.05, 0.03], pqc_nonce=101),
+                SwarmNodeBelief("Bravo-2", [0.80, 0.11, 0.06, 0.03], pqc_nonce=102),
+                SwarmNodeBelief(
+                    "Charlie-3",
+                    [0.02, 0.04, 0.12, 0.82] if inject_traitor else [0.81, 0.10, 0.06, 0.03],
+                    pqc_nonce=103,
+                ),
+                SwarmNodeBelief("Delta-4", [0.81, 0.09, 0.06, 0.04], pqc_nonce=104),
+            ]
+            bft_res = ByzantinePqcSwarmGuard.filter_byzantine_and_fuse(beliefs)
+            code = CodeMutator.generate_byzantine_pqc_fallback()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"bft_result": bft_res, "pqc_code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/trn_localize":
+            tx = float(body.get("true_x_km", 24.5))
+            ty = float(body.get("true_y_km", -3.2))
+            dx = float(body.get("drifted_ins_x_km", 25.25))
+            dy = float(body.get("drifted_ins_y_km", -2.70))
+            trn_res = TerrainRelativeNavigator.match_terrain_profile(
+                true_x_km=tx, true_y_km=ty, drifted_ins_x_km=dx, drifted_ins_y_km=dy
+            )
+            code = CodeMutator.generate_trn_terrain_lock_fallback()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"trn_result": trn_res, "trn_code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/actuator_reconfig":
+            jam_idx = int(body.get("jammed_actuator_index", 0))
+            jam_ang = float(body.get("jammed_angle_rad", 0.22))
+            act_res = ActuatorFaultReconfigurator.reconfigure_control_allocation(
+                stuck_deflections_rad={jam_idx: jam_ang}
+            )
+            code = CodeMutator.generate_actuator_reconfig_fallback()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"actuator_result": act_res, "mixer_code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
         elif self.path == "/api/reset":
             KamWebHandler.engine.active_telemetry = "UART-2 (Primary)"
             KamWebHandler.engine.inference.reset_equilibrium(0.03)
@@ -449,6 +500,29 @@ class KamWebHandler(SimpleHTTPRequestHandler):
                 "Komutan Niyeti Göreve Bölündü: 'S-400 radarını körelt ve vadi taarruzu icra et' emri DAG grafiğine çevrildi. "
                 "c2_task_executor.cpp üzerinden Sungur-EW-1, Kizilelma-Strike-2, Bayraktar-TB3 ve ANKA unsurlarına bağımlılık sırasıyla otonom tahsis yapıldı.",
                 CodeMutator.generate_c2_dag_fallback()
+            )
+        elif c_type == "byzantine_swarm_attack":
+            KamWebHandler.engine.inference.trigger_anomaly()
+            KamWebHandler.engine.active_telemetry = "BFT-PQC-Mesh (ML-KEM-768)"
+            return (
+                "Bizans Sürü İhaneti Tespit Edildi: Charlie-3 düğümünden sahte Markov Battaniyesi inancı (D_JS = 0.474 > 0.18) yayıldı. "
+                "byzantine_pqc_guard.cpp bellekte JIT derlendi; hain düğüm oylamadan izole edildi ve ML-KEM-768 (Kyber q=3329) kuantum-dirençli oturum anahtarları yenilendi.",
+                CodeMutator.generate_byzantine_pqc_fallback()
+            )
+        elif c_type == "trn_terrain_lock":
+            KamWebHandler.engine.active_telemetry = "TRN-TERCOM (0W Pasif Kilit)"
+            return (
+                "Uzun Menzil INS Kayması Düzeltildi: 901.4 metrelik ölü-hesaplama (dead-reckoning) kayması, "
+                "trn_tercom_navigator.cpp ile 0W RF yayımıyla (stealth) Sayısal Yükselti Modeli (DEM) üzerinde eşleştirilerek %99.47 oranında sönümlendi.",
+                CodeMutator.generate_trn_terrain_lock_fallback()
+            )
+        elif c_type == "kinetic_actuator_jam":
+            KamWebHandler.engine.inference.trigger_anomaly()
+            KamWebHandler.engine.active_telemetry = "PseudoInverse-Mixer (Yedekli)"
+            return (
+                "Kinetik Kanatçık Hasarı: Sol Elevon (LEFT_ELEVON) +0.22 rad açıda mekanik olarak sıkıştı. "
+                "actuator_mixer_reconfig.cpp bellekte JIT derlenerek Ağırlıklı Sözde-Ters (Weighted Moore-Penrose Pseudo-Inverse) matrisiyle momentler sağlam V-kuyruk ve itki vektörlemesine dağıtıldı.",
+                CodeMutator.generate_actuator_reconfig_fallback()
             )
         return "Bilinmeyen kriz tipi", None
 

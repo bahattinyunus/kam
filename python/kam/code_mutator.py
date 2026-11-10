@@ -264,3 +264,81 @@ int kam_entrypoint() {
 }
 }
 '''
+
+    @staticmethod
+    def generate_byzantine_pqc_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] byzantine_pqc_guard.cpp
+// Tetikleyici: Bizans Sürü İhaneti (D_JS > 0.18) -> BFT Karantina & ML-KEM-768 PQC Anahtar Rotasyonu
+#include <cstdint>
+#include <iostream>
+
+namespace kam::swarm::pqc {
+struct BftKyberGuard {
+    const char* quarantined_node{"Charlie-3"};
+    uint16_t    kyber_modulus_q{3329};
+    double      js_divergence_gate{0.18};
+};
+} // namespace kam::swarm::pqc
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::swarm::pqc::BftKyberGuard guard{};
+    std::cout << "[BFT-PQC-GUARD] Bizans düğümü (" << guard.quarantined_node
+              << ") Markov Battaniyesinden izole edildi (D_JS > " << guard.js_divergence_gate
+              << "). ML-KEM-768 (q=" << guard.kyber_modulus_q << ") anahtarları yenilendi.\\n";
+    return 0;
+}
+}
+'''
+
+    @staticmethod
+    def generate_trn_terrain_lock_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] trn_tercom_navigator.cpp
+// Tetikleyici: Uzun Menzil INS Kayması -> Pasif TRN / TERCOM DEM Arazi Profili Kilidi
+#include <cstdint>
+#include <iostream>
+
+namespace kam::navigation::trn {
+struct TercomProfileLock {
+    double residual_cep_m{0.85};
+    double ncc_correlation{0.998};
+    double rf_emission_watts{0.0};
+};
+} // namespace kam::navigation::trn
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::navigation::trn::TercomProfileLock trn{};
+    std::cout << "[TRN-TERCOM] Pasif arazi korelasyonu kilitlendi: CEP=" << trn.residual_cep_m
+              << "m, NCC=" << trn.ncc_correlation << ", RF=" << trn.rf_emission_watts << "W.\\n";
+    return 0;
+}
+}
+'''
+
+    @staticmethod
+    def generate_actuator_reconfig_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] actuator_mixer_reconfig.cpp
+// Tetikleyici: Sol Elevon Sıkışması (+0.22 rad) -> Ağırlıklı Sözde-Ters (Pseudo-Inverse) Kontrol Dağıtımı
+#include <cstdint>
+#include <array>
+#include <iostream>
+
+namespace kam::control {
+struct ReconfiguredMixer {
+    const char* isolated_surface{"LEFT_ELEVON"};
+    double      stuck_angle_rad{0.22};
+    double      tracking_error_l2{0.0001};
+};
+} // namespace kam::control
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::control::ReconfiguredMixer mix{};
+    std::cout << "[ACTUATOR-RECONFIG] " << mix.isolated_surface << " (" << mix.stuck_angle_rad
+              << " rad) izole edildi. Yedekli V-kuyruk ve itki vektörlemesi devrede (Hata="
+              << mix.tracking_error_l2 << ").\\n";
+    return 0;
+}
+}
+'''

@@ -604,6 +604,9 @@ class KamDesktopWindow(QMainWindow):
             ("ew_radar_threat", "[VII] Bilişsel Radar PDW\nLPI Tehdit & DRFM Cevabı"),
             ("cbf_envelope_breach", "[VIII] CBF Güvenlik İhlali\nNöro-Sembolik İzdüşüm"),
             ("intent_c2_mission", "[IX] Komutan Niyeti (C2)\nDAG Filo Dağıtımı"),
+            ("byzantine_swarm_attack", "[X] Bizans Sürü İhaneti\nBFT Karantina & PQC Kyber"),
+            ("trn_terrain_lock", "[XI] GPS-Kör INS Kayması\nPasif TRN/TERCOM Kilidi"),
+            ("kinetic_actuator_jam", "[XII] Kanatçık Sıkışması\nSözde-Ters Kontrol Dağıtımı"),
         ]):
             c_btn = QPushButton(c_label)
             c_btn.setObjectName("CrisisBtn")
@@ -840,6 +843,36 @@ class KamDesktopWindow(QMainWindow):
             )
             self._log_kernel("[C2-DAG]     [ORDER] Komutan niyeti 4 düğümlü DAG'a tahsis edildi.")
             self._log_kernel("[JIT-COMP]   [BUILD] c2_task_executor.cpp filo kuyruğuna enjekte edildi.")
+        elif crisis_type == "byzantine_swarm_attack":
+            self.engine.inference.trigger_anomaly()
+            self.engine.active_telemetry = "BFT-PQC-Mesh (ML-KEM-768)"
+            code = CodeMutator.generate_byzantine_pqc_fallback()
+            msg = (
+                "Bizans sürü ihaneti tespit edildi: Charlie-3 düğümünden sahte Markov Battaniyesi inancı (D_JS = 0.474 > 0.18) yayıldı! "
+                "byzantine_pqc_guard.cpp bellekte JIT derlenerek hain düğüm izole edildi ve ML-KEM-768 (Kyber q=3329) kuantum-dirençli oturum anahtarları yenilendi."
+            )
+            self._log_kernel("[BFT-PQC]    [CRIT]  Charlie-3 Bizans ihaneti (D_JS=0.474) karantinada!")
+            self._log_kernel("[JIT-COMP]   [BUILD] byzantine_pqc_guard.cpp + ML-KEM-768 rotasyonu aktif.")
+        elif crisis_type == "trn_terrain_lock":
+            self.engine.active_telemetry = "TRN-TERCOM (0W Pasif Kilit)"
+            code = CodeMutator.generate_trn_terrain_lock_fallback()
+            msg = (
+                "Uzun menzil INS ölü-hesaplama kayması (901.4 m) pasif Arazi Referanslı Seyrüsefer (TRN / TERCOM) ile "
+                "Sayısal Yükselti Modeli (DEM) üzerinde eşleştirildi; trn_tercom_navigator.cpp ile 0W RF yayımıyla %99.47 doğrulukla kilitlendi."
+            )
+            self._log_kernel("[TRN-NAV]    [LOCK]  Pasif TERCOM DEM korelasyonu (NCC=0.9999) kilitlendi.")
+            self._log_kernel("[JIT-COMP]   [BUILD] trn_tercom_navigator.cpp seyrüsefer hattında.")
+        elif crisis_type == "kinetic_actuator_jam":
+            self.engine.inference.trigger_anomaly()
+            self.engine.active_telemetry = "PseudoInverse-Mixer (Yedekli)"
+            code = CodeMutator.generate_actuator_reconfig_fallback()
+            msg = (
+                "Kinetik kanatçık hasarı: Sol Elevon (LEFT_ELEVON) +0.22 rad açıda mekanik olarak sıkıştı! "
+                "actuator_mixer_reconfig.cpp bellekte JIT derlenerek Ağırlıklı Sözde-Ters (Weighted Moore-Penrose Pseudo-Inverse) "
+                "matrisiyle momentler sağlam V-kuyruk ve itki vektörlemesine dağıtıldı (Hata L2 = 0.00016)."
+            )
+            self._log_kernel("[ACTUATOR]   [CRIT]  LEFT_ELEVON (+0.22 rad) sıkıştı! Sözde-Ters mikser devrede.")
+            self._log_kernel("[JIT-COMP]   [BUILD] actuator_mixer_reconfig.cpp sıcak-yama uygulandı.")
         else:
             self.engine.inference.reset_equilibrium(0.18)
             code = CodeMutator.generate_can_firewall_fallback()

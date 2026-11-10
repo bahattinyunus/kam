@@ -286,6 +286,21 @@
             <span class="crisis-title">Komutan Niyeti (C2)</span>
             <span class="crisis-desc">DAG Filo Dağıtımı</span>
           </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('byzantine_swarm_attack'); toggleTelemetryDrawer();">
+            <span class="crisis-title">Bizans Sürü İhaneti</span>
+            <span class="crisis-desc">BFT Karantina &amp; ML-KEM-768</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('trn_terrain_lock'); toggleTelemetryDrawer();">
+            <span class="crisis-title">Pasif TRN/TERCOM</span>
+            <span class="crisis-desc">0W DEM Arazi Korelasyonu</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('kinetic_actuator_jam'); toggleTelemetryDrawer();">
+            <span class="crisis-title">Kanatçık Sıkışması</span>
+            <span class="crisis-desc">Sözde-Ters Kontrol Mikseri</span>
+          </button>
         </div>
 
         <button class="btn-reset-balance" onclick="resetSystem()">
@@ -310,6 +325,21 @@
           <button class="crisis-card-btn" onclick="testSafetyShield()">
             <span class="crisis-title">CBF Uçuş Kalkanı</span>
             <span class="crisis-desc">Bariyer fonksiyon kontrolü</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="testBftSwarm()">
+            <span class="crisis-title">BFT &amp; PQC Sürü</span>
+            <span class="crisis-desc">Kyber-768 &amp; Hain İzolasyonu</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="testTrnLocalize()">
+            <span class="crisis-title">TRN Arazi Kilidi</span>
+            <span class="crisis-desc">GPS-Kör DEM Eşleştirme</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="testActuatorReconfig()">
+            <span class="crisis-title">Sözde-Ters Eyleyici</span>
+            <span class="crisis-desc">Hasarlı Kanatçık Telafisi</span>
           </button>
 
           <button class="crisis-card-btn" onclick="showFleetManifest()">
