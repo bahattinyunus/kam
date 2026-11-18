@@ -1,10 +1,10 @@
-# KAM Model Context Protocol (MCP) Spesifikasyonu (v2.6 — 15 Araçlı Egemen Çekirdek)
+# KAM Model Context Protocol (MCP) Spesifikasyonu (v2.7 — 18 Araçlı Egemen Çekirdek)
 
 KAM, Model Context Protocol (MCP) açık standardını JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`) üzerinden destekleyerek yerel ve uç otonom ajanların Linux eBPF telemetrisine, Karl Friston VFE/EFE motoruna, bellek-içi C++20 JIT derleyiciye ve siber-fiziksel savunma kalkanlarına doğrudan erişmesini sağlar.
 
 ---
 
-## I. Tanımlı 15 MCP Aracı (Tools)
+## I. Tanımlı 18 MCP Aracı (Tools)
 
 | # | MCP Aracı | Girdi Şeması | İşlev ve Yetki Tanımı |
 | :--- | :--- | :--- | :--- |
@@ -23,12 +23,15 @@ KAM, Model Context Protocol (MCP) açık standardını JSON-RPC 2.0 (`initialize
 | **13** | `verify_byzantine_pqc_swarm` | `inject_byzantine_traitor` | Bizans Hata Toleranslı (BFT) Jensen-Shannon diverjans kapısı ($D_{\text{JS}} > 0.18$) ve ML-KEM-768 (Kyber $q=3329$) kuantum-sonrası kriptografi ile sürüdeki hain düğümleri karantinaya alır. |
 | **14** | `localize_terrain_trn` | `true_x_km`, `true_y_km`, `drifted_ins_x_km`, `drifted_ins_y_km` | GPS/GNSS-Kör ortamda %100 pasif (0W RF) TERCOM/SITAN Sayısal Yükselti Modeli (DEM) korelasyonu ile INS kaymasını %99.4+ sönümler. |
 | **15** | `reconfigure_damaged_actuators` | `jammed_actuator_index`, `jammed_angle_rad` | Kinetik kanatçık/servo sıkışması veya motor kaybında Ağırlıklı Sözde-Ters (*Weighted Moore-Penrose Pseudo-Inverse*) matrisiyle kontrol otoritesini sağlam yüzeylere yeniden dağıtır. |
+| **16** | `establish_fso_covert_link` | `distance_km`, `visibility_km`, `pointing_jitter_urad` | EMCON-Sıfır (0.0W RF Yayımı) ortamda 1550nm Göz-Güvenli SWIR Serbest Uzay Optik (FSO) Lazer ve MEMS FSM sürü haberleşme bütçesini ve LPI/LPD kapasitesini hesaplar. |
+| **17** | `scrub_radiation_bitflips` | `injected_seu_bit`, `inject_tmr_bank_corruption` | Kozmik ışın veya EMP/HPM kaynaklı SRAM/VRAM bit tersinmelerini (SEU/MBU) Genişletilmiş Hamming(72,64) SECDED ve 3-Bank TMR çoğunluk oylamasıyla %100 bit-kesinliğinde onarır. |
+| **18** | `solve_hji_missile_evasion` | `missile_range_m`, `closing_velocity_mps`, `evader_max_g` | Hamilton-Jacobi-Isaacs (HJI) sıfır-toplamlı diferansiyel takip-kaçma oyunu ile hipersonik SAM/AAM füze kilidine karşı optimal dikgen G-vektörü ve DRFM Cross-Eye açı aldatması sentezler. |
 
 ---
 
 ## II. Kullanım ve İstemci Entegrasyonu
 
-MCP sunucusunu başlatmak veya 15 aracın tam sistem denetimini çalıştırmak için:
+MCP sunucusunu başlatmak veya 18 aracın tam sistem denetimini çalıştırmak için:
 ```bash
 python cli.py --mcp
 python cli.py --full-audit

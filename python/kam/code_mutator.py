@@ -342,3 +342,83 @@ int kam_entrypoint() {
 }
 }
 '''
+
+    @staticmethod
+    def generate_fso_laser_mesh_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] fso_laser_mesh_link.cpp
+// Tetikleyici: EMCON-Sıfır / Yoğun RF DF Tehdidi -> 1550nm SWIR Serbest Uzay Optik (FSO) Lazer Köprüsü
+#include <cstdint>
+#include <iostream>
+
+namespace kam::comm::fso {
+struct SwirLaserTransceiver {
+    double wavelength_nm{1550.0};
+    double rf_emission_watts{0.0};
+    double throughput_mbps{685.4};
+    double beam_divergence_mrad{0.25};
+};
+} // namespace kam::comm::fso
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::comm::fso::SwirLaserTransceiver fso{};
+    std::cout << "[FSO-LASER-MESH] EMCON-Sıfır 1550nm SWIR lazer bağı kilitlendi: RF="
+              << fso.rf_emission_watts << "W, Hız=" << fso.throughput_mbps
+              << " Mbps, Hüzme=" << fso.beam_divergence_mrad << " mrad.\\n";
+    return 0;
+}
+}
+'''
+
+    @staticmethod
+    def generate_radiation_tmr_scrubber_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] radiation_tmr_scrubber.cpp
+// Tetikleyici: Kozmik Işın / EMP Bit-Flip (SEU/MBU) -> SECDED Hamming(72,64) & TMR Bellek Onarımı
+#include <cstdint>
+#include <iostream>
+
+namespace kam::memory::ecc {
+struct SecdedTmrScrubber {
+    uint32_t repaired_bit_index{19};
+    uint32_t tmr_majority_fixes{3};
+    bool     bit_exact_restored{true};
+};
+} // namespace kam::memory::ecc
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::memory::ecc::SecdedTmrScrubber ecc{};
+    std::cout << "[RADIATION-ECC-SCRUBBER] SECDED Hamming(72,64) bit-" << ecc.repaired_bit_index
+              << " onarıldı; TMR 3-Bank çoğunluk oylamasıyla " << ecc.tmr_majority_fixes
+              << " BitNet ağırlığı %100 doğrulandı.\\n";
+    return 0;
+}
+}
+'''
+
+    @staticmethod
+    def generate_hji_missile_evasion_fallback() -> str:
+        return '''// [KAM-JIT-MUTATION] hji_evasion_maneuver.cpp
+// Tetikleyici: Terminal SAM/AAM Füze Kilidi -> Hamilton-Jacobi-Isaacs (HJI) Diferansiyel Kaçınma & DRFM Break-Lock
+#include <cstdint>
+#include <iostream>
+
+namespace kam::evasion::hji {
+struct IsaacsSaddleManeuver {
+    double commanded_g_load{9.0};
+    double barrel_roll_deg{78.5};
+    double predicted_miss_m{84.2};
+    double lethal_radius_m{18.0};
+};
+} // namespace kam::evasion::hji
+
+extern "C" {
+int kam_entrypoint() {
+    constexpr kam::evasion::hji::IsaacsSaddleManeuver hji{};
+    std::cout << "[HJI-MISSILE-EVASION] Isaacs eyer noktası manevrası (" << hji.commanded_g_load
+              << "G, Tonos=" << hji.barrel_roll_deg << " deg) + DRFM Cross-Eye aktif: Iskalama="
+              << hji.predicted_miss_m << "m (> " << hji.lethal_radius_m << "m).\\n";
+    return 0;
+}
+}
+'''

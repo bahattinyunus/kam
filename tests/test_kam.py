@@ -33,6 +33,9 @@ from kam.neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyS
 from kam.byzantine_pqc_swarm import SwarmNodeBelief, ByzantinePqcSwarmGuard
 from kam.terrain_matching_trn import TerrainRelativeNavigator
 from kam.actuator_reconfigurator import ActuatorFaultReconfigurator
+from kam.covert_fso_comm import FsoLinkParameters, CovertFsoLaserTransceiver
+from kam.radiation_ecc_scrubber import RadiationHardenedMemoryScrubber
+from kam.differential_game_evasion import MissileEngagementState, DifferentialGameMissileEvasion
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -108,6 +111,18 @@ class TestKam(unittest.TestCase):
         act_code = CodeMutator.generate_actuator_reconfig_fallback()
         self.assertIn("actuator_mixer_reconfig.cpp", act_code)
         self.assertTrue(CodeMutator.validate_ast(act_code)["valid"])
+
+        fso_code = CodeMutator.generate_fso_laser_mesh_fallback()
+        self.assertIn("fso_laser_mesh_link.cpp", fso_code)
+        self.assertTrue(CodeMutator.validate_ast(fso_code)["valid"])
+
+        ecc_code = CodeMutator.generate_radiation_tmr_scrubber_fallback()
+        self.assertIn("radiation_tmr_scrubber.cpp", ecc_code)
+        self.assertTrue(CodeMutator.validate_ast(ecc_code)["valid"])
+
+        hji_code = CodeMutator.generate_hji_missile_evasion_fallback()
+        self.assertIn("hji_evasion_maneuver.cpp", hji_code)
+        self.assertTrue(CodeMutator.validate_ast(hji_code)["valid"])
 
     def test_code_mutator_ast_sandbox(self):
         unsafe_code = 'extern "C" int kam_entrypoint() { system("rm -rf /"); return 0; }'
@@ -461,10 +476,13 @@ class TestKam(unittest.TestCase):
         # Test cli.py with --full-audit
         res_audit = subprocess.run([sys.executable, "cli.py", "--full-audit"], capture_output=True, text=True, check=True)
         audit_data = json.loads(res_audit.stdout)
-        self.assertEqual(audit_data["total_mcp_tools"], 15)
+        self.assertEqual(audit_data["total_mcp_tools"], 18)
         self.assertIn("byzantine_pqc_swarm", audit_data)
         self.assertIn("terrain_relative_nav", audit_data)
         self.assertIn("actuator_reconfiguration", audit_data)
+        self.assertIn("covert_fso_laser_mesh", audit_data)
+        self.assertIn("radiation_secded_tmr_scrubber", audit_data)
+        self.assertIn("hji_differential_missile_evasion", audit_data)
 
     def test_byzantine_pqc_swarm_guard(self):
         beliefs = [
@@ -500,6 +518,47 @@ class TestKam(unittest.TestCase):
         self.assertLess(reconf["moment_tracking_error_l2"], 0.001)
         self.assertEqual(reconf["actuator_allocations"][0]["status"], "JAMMED_ISOLATED")
         self.assertEqual(reconf["actuator_allocations"][1]["status"], "ACTIVE_COMPENSATING")
+
+    def test_covert_fso_laser_transceiver(self):
+        fso = CovertFsoLaserTransceiver.evaluate_covert_fso_link(
+            FsoLinkParameters(distance_km=4.5, visibility_km=12.0, pointing_jitter_urad=35.0)
+        )
+        self.assertEqual(fso["rf_emission_watts"], 0.0)
+        self.assertEqual(fso["rf_probability_of_intercept_poi"], 0.0)
+        self.assertEqual(fso["active_optical_mode"], "FSO_1550NM_SWIR_MEMS_LASER_LOCK")
+        self.assertGreater(fso["effective_throughput_mbps"], 300.0)
+
+        fog_fso = CovertFsoLaserTransceiver.evaluate_covert_fso_link(
+            FsoLinkParameters(distance_km=4.5, visibility_km=0.4, pointing_jitter_urad=35.0)
+        )
+        self.assertEqual(fog_fso["active_optical_mode"], "HYBRID_SWIR_PULSE_ACOUSTIC_FALLBACK")
+
+    def test_radiation_hardened_memory_scrubber(self):
+        # 1. Tekil Bit Tersinmesi (SEU) ve 3-Bank TMR Ağırlık Onarımı
+        scrub = RadiationHardenedMemoryScrubber.scrub_bitnet_weights_with_tmr(
+            injected_seu_bit=19, inject_tmr_bank_corruption=True
+        )
+        self.assertTrue(scrub["secded_register_check"]["bit_exact_restored"])
+        self.assertEqual(scrub["secded_register_check"]["flipped_bit_detected"], 19)
+        self.assertEqual(scrub["tmr_bitnet_weight_scrub"]["tmr_majority_repairs"], 3)
+        self.assertTrue(scrub["tmr_bitnet_weight_scrub"]["integrity_verified_100pct"])
+
+        # 2. Çift Bit Tersinmesi (MBU) Tespiti
+        word = 0x123456789ABCDEF0
+        enc = RadiationHardenedMemoryScrubber.encode_secded_64(word)
+        mbu_word = word ^ (1 << 5) ^ (1 << 29)
+        mbu_res = RadiationHardenedMemoryScrubber.decode_and_repair_secded_64(mbu_word, enc["ecc8"])
+        self.assertTrue(mbu_res["double_bit_fault"])
+        self.assertEqual(mbu_res["status"], "MBU_DOUBLE_BIT_DETECTED_ESCALATE_TMR")
+
+    def test_differential_game_missile_evasion(self):
+        hji = DifferentialGameMissileEvasion.solve_hji_evasion_maneuver(
+            MissileEngagementState(missile_range_m=2850.0, closing_velocity_mps=980.0, evader_max_g=9.0)
+        )
+        self.assertTrue(hji["platform_survival_guaranteed"])
+        self.assertGreater(hji["hji_saddle_point_terminal_miss_m"], hji["warhead_lethal_radius_m"] * 2.5)
+        self.assertLess(hji["unmaneuvered_pn_miss_m"], hji["warhead_lethal_radius_m"])
+        self.assertEqual(len(hji["optimal_evasion_accel_mps2"]), 3)
 
 if __name__ == "__main__":
     unittest.main()

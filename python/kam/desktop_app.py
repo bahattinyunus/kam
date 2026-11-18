@@ -607,6 +607,9 @@ class KamDesktopWindow(QMainWindow):
             ("byzantine_swarm_attack", "[X] Bizans Sürü İhaneti\nBFT Karantina & PQC Kyber"),
             ("trn_terrain_lock", "[XI] GPS-Kör INS Kayması\nPasif TRN/TERCOM Kilidi"),
             ("kinetic_actuator_jam", "[XII] Kanatçık Sıkışması\nSözde-Ters Kontrol Dağıtımı"),
+            ("emcon_fso_switch", "[XIII] EMCON-Sıfır RF Kesintisi\n1550nm FSO Lazer Köprüsü"),
+            ("radiation_seu_bitflip", "[XIV] Kozmik/EMP Bit-Flip (SEU)\nSECDED & TMR Bellek Onarımı"),
+            ("sam_missile_lock", "[XV] Hipersonik SAM Füze Kilidi\nHJI 9G Diferansiyel Kaçınma"),
         ]):
             c_btn = QPushButton(c_label)
             c_btn.setObjectName("CrisisBtn")
@@ -873,6 +876,35 @@ class KamDesktopWindow(QMainWindow):
             )
             self._log_kernel("[ACTUATOR]   [CRIT]  LEFT_ELEVON (+0.22 rad) sıkıştı! Sözde-Ters mikser devrede.")
             self._log_kernel("[JIT-COMP]   [BUILD] actuator_mixer_reconfig.cpp sıcak-yama uygulandı.")
+        elif crisis_type == "emcon_fso_switch":
+            self.engine.active_telemetry = "1550nm FSO Lazer (0W RF)"
+            code = CodeMutator.generate_fso_laser_mesh_fallback()
+            msg = (
+                "EMCON-Sıfır Radyo Sessizliği: Düşman SIGINT/ELINT yön bulucu (DF) dizisi algılandı, tüm RF yayımı 0.0W seviyesine kapatıldı. "
+                "fso_laser_mesh_link.cpp bellekte JIT derlenerek 1550nm SWIR MEMS lazer köprüsü üzerinden POI=%0.000 ile 685 Mbps sürü bağı kuruldu."
+            )
+            self._log_kernel("[FSO-LASER]  [EMCON] RF vericileri kapatıldı (0.0W). 1550nm SWIR lazer kilitli.")
+            self._log_kernel("[JIT-COMP]   [BUILD] fso_laser_mesh_link.cpp optik ağ köprüsünde.")
+        elif crisis_type == "radiation_seu_bitflip":
+            self.engine.inference.trigger_anomaly()
+            self.engine.active_telemetry = "SECDED-TMR-Scrubber (ECC)"
+            code = CodeMutator.generate_radiation_tmr_scrubber_fallback()
+            msg = (
+                "Kozmik ışın / EMP kaynaklı SRAM/VRAM bit tersinmesi (Bit-19 SEU & Bank-B ağırlık bozulması) Linux eBPF EDAC kancasıyla yakalandı! "
+                "radiation_tmr_scrubber.cpp bellekte JIT derlenerek Hamming(72,64) SECDED ve 3-Bank TMR çoğunluk oylamasıyla BitNet b1.58 ağırlıkları %100 onarıldı."
+            )
+            self._log_kernel("[EDAC-ECC]   [CRIT]  Bit-19 SEU & Bank-B BitNet ağırlık bozulması yakalandı!")
+            self._log_kernel("[JIT-COMP]   [BUILD] radiation_tmr_scrubber.cpp ile %100 bit-kesin onarım.")
+        elif crisis_type == "sam_missile_lock":
+            self.engine.inference.trigger_anomaly()
+            self.engine.active_telemetry = "HJI-9G-Evasion + DRFM-CrossEye"
+            code = CodeMutator.generate_hji_missile_evasion_fallback()
+            msg = (
+                "Terminal SAM Füze Kilidi (R=2850m, V_c=980 m/s): Oransal seyrüsefer (PN) güdümlü füze yaklaşıyor! "
+                "hji_evasion_maneuver.cpp bellekte JIT derlenerek Hamilton-Jacobi-Isaacs (HJI) eyer noktası 9.0G dikgen fıçı tonosu ve DRFM Cross-Eye açı aldatmasıyla ıskalama mesafesi >75m'ye çıkarıldı."
+            )
+            self._log_kernel("[HJI-EVADE]  [ALERT] SAM Füze Kilidi! Isaacs 9.0G + DRFM Cross-Eye manevrası aktif.")
+            self._log_kernel("[JIT-COMP]   [BUILD] hji_evasion_maneuver.cpp uçuş kontrol döngüsünde.")
         else:
             self.engine.inference.reset_equilibrium(0.18)
             code = CodeMutator.generate_can_firewall_fallback()

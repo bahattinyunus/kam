@@ -24,6 +24,9 @@ from .lyapunov_controller import LyapunovCognitiveController
 from .byzantine_pqc_swarm import SwarmNodeBelief, ByzantinePqcSwarmGuard
 from .terrain_matching_trn import TerrainRelativeNavigator
 from .actuator_reconfigurator import ActuatorFaultReconfigurator
+from .covert_fso_comm import CovertFsoLaserTransceiver
+from .radiation_ecc_scrubber import RadiationHardenedMemoryScrubber
+from .differential_game_evasion import DifferentialGameMissileEvasion
 
 def main():
     parser = argparse.ArgumentParser(
@@ -123,9 +126,24 @@ def main():
         help="Kinetik Hasar ve Eyleyici Sıkışması Altında Ağırlıklı Sözde-Ters (Pseudo-Inverse) Kontrol Dağıtımı"
     )
     parser.add_argument(
+        "--fso", "--emcon",
+        action="store_true",
+        help="EMCON-Sıfır (0.0W RF) 1550nm Göz-Güvenli SWIR Serbest Uzay Optik (FSO) Lazer Sürü Haberleşmesi"
+    )
+    parser.add_argument(
+        "--ecc", "--radiation",
+        action="store_true",
+        help="Kozmik Işın / EMP Bit-Flip (SEU/MBU) SECDED Hamming(72,64) ve TMR Bellek/BitNet Onarımı"
+    )
+    parser.add_argument(
+        "--evasion", "--hji",
+        action="store_true",
+        help="Hamilton-Jacobi-Isaacs (HJI) Diferansiyel Takip-Kaçma Oyunu Hipersonik SAM Füze Kaçınma Çözücüsü"
+    )
+    parser.add_argument(
         "--full-audit",
         action="store_true",
-        help="KAM 15-Modüllü Bütünsel Otonom Bekâ ve Siber-Fiziksel Öz-Onarım Tam Denetim Raporu"
+        help="KAM 18-Araçlı Bütünsel Otonom Bekâ ve Siber-Fiziksel Öz-Onarım Tam Denetim Raporu"
     )
     parser.add_argument(
         "--export-metrics",
@@ -315,10 +333,25 @@ def main():
         print(json.dumps(act_res, indent=2, ensure_ascii=False))
         return
 
+    if args.fso:
+        fso_res = CovertFsoLaserTransceiver.evaluate_covert_fso_link()
+        print(json.dumps(fso_res, indent=2, ensure_ascii=False))
+        return
+
+    if args.ecc:
+        ecc_res = RadiationHardenedMemoryScrubber.scrub_bitnet_weights_with_tmr()
+        print(json.dumps(ecc_res, indent=2, ensure_ascii=False))
+        return
+
+    if args.evasion:
+        hji_res = DifferentialGameMissileEvasion.solve_hji_evasion_maneuver()
+        print(json.dumps(hji_res, indent=2, ensure_ascii=False))
+        return
+
     if args.full_audit:
         mcp = McpServer()
         audit = {
-            "audit_title": "KAM Egemen Bilişsel Savunma Çekirdeği — 15-Araçlı Tam Sistem Denetimi",
+            "audit_title": "KAM Egemen Bilişsel Savunma Çekirdeği — 18-Araçlı Tam Sistem Denetimi",
             "total_mcp_tools": len(mcp.list_tools()["tools"]),
             "ebpf_kernel_status": mcp.call_tool("inspect_kernel", {}),
             "active_inference_efe": mcp.call_tool("evaluate_efe_policies", {"crisis_hint": "SDR"}),
@@ -337,6 +370,9 @@ def main():
             "byzantine_pqc_swarm": mcp.call_tool("verify_byzantine_pqc_swarm", {"inject_byzantine_traitor": True}),
             "terrain_relative_nav": mcp.call_tool("localize_terrain_trn", {}),
             "actuator_reconfiguration": mcp.call_tool("reconfigure_damaged_actuators", {}),
+            "covert_fso_laser_mesh": mcp.call_tool("establish_fso_covert_link", {}),
+            "radiation_secded_tmr_scrubber": mcp.call_tool("scrub_radiation_bitflips", {}),
+            "hji_differential_missile_evasion": mcp.call_tool("solve_hji_missile_evasion", {}),
         }
         print(json.dumps(audit, indent=2, ensure_ascii=False))
         return

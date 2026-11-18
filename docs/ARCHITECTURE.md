@@ -56,3 +56,14 @@ Otonom kod mutasyonu (`code_mutator.cpp` / `code_mutator.py`) aşağıdaki deter
 2. **Bellek-İçi Derleme:** Clang/LLVM `-O3 -shared -fPIC` bayraklarıyla paylaşımlı kütüphane doğrudan RAM içinde (`memfd_create`) oluşturulur.
 3. **Canary Yürütme:** Modül canlı veriyoluna bağlanmadan önce izole bir sanal adres alanında test edilir.
 4. **Atomik Geri Alma (Safe Rollback):** Yeni modül sıfır dönüş kodu (`0`) vermezse, sistem kesintisiz olarak bir önceki doğrulanmış ikiliye (`active_binary_`) geri döner.
+
+---
+
+## IV. Siber-Fiziksel Egemen Bekâ Çekirdekleri (FSO Lazer, SECDED/TMR ECC ve HJI Diferansiyel Oyun)
+
+1. **EMCON-Sıfır 1550 nm SWIR Serbest Uzay Optik (FSO) Lazer Haberleşmesi (`covert_fso_comm.py`):**
+   - Beer-Lambert ve Kruse atmosferik saçılma kanunu $\tau_{\text{atm}}(R) = \exp(-\sigma_{\text{ext}}(V) R)$, MEMS Hızlı Yönlendirme Aynası (FSM) işaretleme kaybı $L_{\text{point}} = \exp(-2 \theta_{\text{jitter}}^2 / \theta_{\text{div}}^2)$ ve Rytov türbülans parıldama indeksi $\sigma_I^2 = 1.23 C_n^2 k^{7/6} R^{11/6}$ ile **0.0 W RF yayımı** (`POI = 0.000`) altında >600 Mbps Reed-Solomon $\text{RS}(255,223)$ kodlu sürü bağı kurar.
+2. **Radyasyon/EMP-Dirençli SECDED Hamming(72,64) ve 3-Bank TMR Bellek Temizleyici (`radiation_ecc_scrubber.py`):**
+   - Linux eBPF EDAC/MCE kancası (`ebpf_hooks/bpf/kam_edac_ecc_monitor.bpf.c`) ile yakalanan SRAM/VRAM tekil bit tersinmelerini (SEU) sendrom $\mathbf{s} = \mathbf{H}\mathbf{c}^T \pmod 2$ üzerinden $O(1)$ bit işleminde düzeltir; BitNet b1.58 üçlü ($\{-1,0,+1\}$) ağırlık bankalarını Üçlü Modüler Yedeklilik (TMR) çoğunluk kapısı $M(A,B,C)$ ve SHA3-256 özeti ile %100 bit-kesinliğinde onarır.
+3. **Hamilton-Jacobi-Isaacs (HJI) Sıfır-Toplamlı Diferansiyel Takip-Kaçma Çözücüsü (`differential_game_evasion.py`):**
+   - Oransal seyrüsefer (PN: $a_P = N' V_c \dot{\lambda}$) güdümlü hipersonik SAM/AAM füzelerine karşı Isaacs eyer noktası koşulunu ($\partial_t V + \min_{\mathbf{u}_P}\max_{\mathbf{u}_E} \nabla_{\mathbf{x}} V \cdot f(\mathbf{x}, \mathbf{u}_E, \mathbf{u}_P) = 0$) çözerek optimal 9.0G dikgen fıçı tonosu ve DRFM Cross-Eye monopuls açı aldatması sentezler.

@@ -9,6 +9,7 @@ import urllib.request
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python"))
 
 from kam.web_server import KamWebHandler, ThreadingHTTPServer, KamEngine, KamLiquidFoundationModel, LocalKnowledgeEngine
+from kam.real_llm import UniversalLLMClient
 
 class TestWebServer(unittest.TestCase):
     @classmethod
@@ -16,6 +17,7 @@ class TestWebServer(unittest.TestCase):
         KamWebHandler.engine = KamEngine()
         KamWebHandler.model = KamLiquidFoundationModel()
         KamWebHandler.knowledge = LocalKnowledgeEngine()
+        KamWebHandler.llm_client = UniversalLLMClient(ollama_url="http://127.0.0.1:9")
 
         cls.port = 8899
         cls.server = ThreadingHTTPServer(("127.0.0.1", cls.port), KamWebHandler)
@@ -59,6 +61,9 @@ class TestWebServer(unittest.TestCase):
             ("byzantine_swarm_attack", "Charlie-3"),
             ("trn_terrain_lock", "901.4"),
             ("kinetic_actuator_jam", "LEFT_ELEVON"),
+            ("emcon_fso_switch", "1550nm"),
+            ("radiation_seu_bitflip", "Hamming(72,64)"),
+            ("sam_missile_lock", "Hamilton-Jacobi-Isaacs"),
         ]:
             payload = json.dumps({"crisis_type": c_type}).encode("utf-8")
             req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
@@ -186,6 +191,39 @@ class TestWebServer(unittest.TestCase):
             self.assertIn("actuator_result", data)
             self.assertTrue(data["actuator_result"]["control_authority_preserved"])
             self.assertIn("actuator_mixer_reconfig.cpp", data["mixer_code"])
+
+    def test_fso_link_api(self):
+        url = f"http://127.0.0.1:{self.port}/api/fso_link"
+        payload = json.dumps({"distance_km": 4.5, "visibility_km": 12.0}).encode("utf-8")
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            self.assertEqual(resp.status, 200)
+            data = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("fso_result", data)
+            self.assertEqual(data["fso_result"]["rf_emission_watts"], 0.0)
+            self.assertIn("fso_laser_mesh_link.cpp", data["fso_code"])
+
+    def test_ecc_scrub_api(self):
+        url = f"http://127.0.0.1:{self.port}/api/ecc_scrub"
+        payload = json.dumps({"injected_seu_bit": 19, "inject_tmr_bank_corruption": True}).encode("utf-8")
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            self.assertEqual(resp.status, 200)
+            data = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("ecc_result", data)
+            self.assertTrue(data["ecc_result"]["tmr_bitnet_weight_scrub"]["integrity_verified_100pct"])
+            self.assertIn("radiation_tmr_scrubber.cpp", data["ecc_code"])
+
+    def test_hji_evasion_api(self):
+        url = f"http://127.0.0.1:{self.port}/api/hji_evasion"
+        payload = json.dumps({"missile_range_m": 2850.0, "closing_velocity_mps": 980.0, "evader_max_g": 9.0}).encode("utf-8")
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            self.assertEqual(resp.status, 200)
+            data = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("hji_result", data)
+            self.assertTrue(data["hji_result"]["platform_survival_guaranteed"])
+            self.assertIn("hji_evasion_maneuver.cpp", data["hji_code"])
 
 if __name__ == "__main__":
     unittest.main()

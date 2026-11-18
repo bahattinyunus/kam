@@ -49,6 +49,7 @@ set(CORE_SOURCES
     core/src/tensor_engine.cpp
     core/src/liquid_network.cpp
     core/src/safety_shield.cpp
+    core/src/resilience_kernels.cpp
 )
 
 # 2. eBPF Kancaları Kütüphanesi

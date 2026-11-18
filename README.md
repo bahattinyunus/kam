@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Architecture-Air--Gapped_%7C_Zero--Cloud-00F2FE.svg?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Kernel_Latency-%3C_12_%CE%BCs_eBPF-4FACFE.svg?style=for-the-badge&logo=linux&logoColor=white" />
   <img src="https://img.shields.io/badge/JIT_Hot--Patch-41.2_ms-00C9FF.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tests-35%2F35_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tests-41%2F41_Passing-10B981.svg?style=for-the-badge&logo=pytest&logoColor=white" />
   <img src="https://img.shields.io/badge/NVIDIA-CUDA_12.x_%7C_RTX_5060-76B900.svg?style=for-the-badge&logo=nvidia&logoColor=white" />
   <img src="https://img.shields.io/badge/License-Apache_2.0-0D1117.svg?style=for-the-badge" />
 </p>
@@ -251,6 +251,21 @@ $$V(\mathbf{e}, F) = \frac{1}{2}\mathbf{e}^T \mathbf{P} \mathbf{e} + \alpha F(o,
 
 Ayrıca 2. dereceden Taylor faz uzayı ekstrapolasyonu $x(t + \Delta\tau) = x_t + \dot{x}_t \Delta\tau + \frac{1}{2}\ddot{x}_t (\Delta\tau)^2$ ile kritik eşik aşımına kalan süre (**Time-To-Anomaly — TTA**) saniye hassasiyetinde hesaplanarak önleyici (*preemptive*) JIT yaması tetiklenir.
 
+### 6. EMCON-Sıfır 1550 nm Serbest Uzay Optik (FSO) Lazer ve Rytov Türbülans Denklemi (`CovertFsoLaserTransceiver`)
+Tam radyo sessizliği (**0.0 W RF yayımı**, SIGINT/ELINT yakalanma olasılığı $\text{POI} = 0$) altında sürü düğümleri arasında MEMS hızlı yönlendirme aynalı (FSM) 1550 nm SWIR lazer bağı (`python/kam/covert_fso_comm.py` ve `core/src/resilience_kernels.cpp`) kullanılır:
+
+$$\tau_{\text{atm}}(R, V) = \exp\!\left(-\frac{3.91}{V}\left(\frac{\lambda}{550\text{ nm}}\right)^{-q} R\right), \qquad L_{\text{point}} = \exp\!\left(-2\frac{\theta_{\text{jitter}}^2}{\theta_{\text{div}}^2}\right), \qquad \sigma_I^2 = 1.23\, C_n^2\, k^{7/6} R^{11/6}$$
+
+### 7. Genişletilmiş Hamming(72,64) SECDED ve 3-Bank TMR BitNet b1.58 Bellek Onarımı (`RadiationHardenedMemoryScrubber`)
+Yüksek irtifa kozmik ışınları veya yönlendirilmiş enerji (EMP/HPM) silahlarının SRAM/VRAM üzerinde yol açtığı Tekil/Çoklu Bit Tersinmeleri (`SEU`/`MBU`), Linux eBPF EDAC kancası (`ebpf_hooks/bpf/kam_edac_ecc_monitor.bpf.c`) ile `< 6 μs` içinde yakalanır ve sendrom $\mathbf{s} = \mathbf{H}\mathbf{c}^T \pmod 2$ ile Üçlü Modüler Yedeklilik (TMR) çoğunluk kapısı üzerinden %100 bit-kesinliğinde onarılır (`python/kam/radiation_ecc_scrubber.py`):
+
+$$M\!\left(\widetilde{\mathbf{W}}^{(A)}, \widetilde{\mathbf{W}}^{(B)}, \widetilde{\mathbf{W}}^{(C)}\right) = \left(\widetilde{\mathbf{W}}^{(A)} \land \widetilde{\mathbf{W}}^{(B)}\right) \lor \left(\widetilde{\mathbf{W}}^{(B)} \land \widetilde{\mathbf{W}}^{(C)}\right) \lor \left(\widetilde{\mathbf{W}}^{(A)} \land \widetilde{\mathbf{W}}^{(C)}\right)$$
+
+### 8. Hamilton-Jacobi-Isaacs (HJI) Sıfır-Toplamlı Diferansiyel Takip-Kaçma Çözücüsü (`DifferentialGameMissileEvasion`)
+Oransal seyrüsefer ($a_P = N' V_c \dot{\lambda}$) güdümlü hipersonik SAM/AAM füzelerine karşı Isaacs eyer noktası (*saddle-point*) kısmi diferansiyel denklemi çözülerek (`python/kam/differential_game_evasion.py`), füzenin güdüm gecikmesini ($\tau_P$) istismar eden 9.0G dikgen fıçı tonosu ve DRFM Cross-Eye monopuls açı aldatması sentezlenir:
+
+$$\frac{\partial V}{\partial t} + \min_{\mathbf{u}_P \in \mathcal{U}_P} \max_{\mathbf{u}_E \in \mathcal{U}_E} \left[\nabla_{\mathbf{x}} V \cdot f(\mathbf{x}, \mathbf{u}_E, \mathbf{u}_P)\right] = 0, \qquad R_{\text{miss}}(\mathbf{u}_E^*) > R_{\text{lethal}}$$
+
 ---
 
 ## V. Kısıtlı Donanımda Zirve Bilişsel Zihin (Edge-Apex): BitNet b1.58, `imatrix`, Spekülatif Çözümleme ve GRPO
@@ -379,13 +394,13 @@ Tarayıcı veya web sunucusuna ihtiyaç duymadan doğrudan işletim sistemi üze
 - **60 FPS Canlı Serbest Enerji Osiloskobu:** Varyasyonel serbest enerji $F(t)$ ve entropi $S(t)$ dalga formlarını gerçek zamanlı çizer.
 - **Vektörel Monolitik KAM Mühür Kadranı:** Sistemin dirlik/kaos durumuna göre renk ve açısal hız değiştiren özel çizim radar kadranı.
 - **Çoklu İş Parçacıklı (`QThread`) Zihin Akışı:** Arayüzü dondurmadan `kam:7b` ve `kam:r1` modelleriyle gerçek zamanlı token akışı (*streaming*) ve `<think>` CoT görselleştirmesi sunar.
-- **Canlı C++20 JIT Kod Müfettişi ve Kriz Simülatörü:** 12 taktik kriz senaryosunu tetikler, üretilen C++20 kodunu AST doğrulamasıyla birlikte anında görüntüler.
+- **Canlı C++20 JIT Kod Müfettişi ve Kriz Simülatörü:** 15 taktik kriz senaryosunu tetikler, üretilen C++20 kodunu AST doğrulamasıyla birlikte anında görüntüler.
 
 ### 2. Web Kokpiti (`web_ui.py`) ve Terminal TUI (`cli.py --dashboard`)
 Uzaktan yer kontrol istasyonları için `http://127.0.0.1:8080` üzerinde çalışan gerçek zamanlı Web Kokpiti ve düşük bant genişlikli SSH bağlantıları için konsol tabanlı canlı TUI gösterge paneli mevcuttur.
 
 ### 3. Model Context Protocol (MCP) JSON-RPC 2.0 Sunucusu (`cli.py --mcp`)
-Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`) üzerinden KAM çekirdeğiyle konuşabilmesi için yerleşik 15 araçlı MCP sunucusu (`python/kam/mcp_server.py`) içerir:
+Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`) üzerinden KAM çekirdeğiyle konuşabilmesi için yerleşik 18 araçlı MCP sunucusu (`python/kam/mcp_server.py`) içerir:
 
 | MCP Aracı | Girdi Parametreleri | İşlev ve Yetki Tanımı |
 | :--- | :--- | :--- |
@@ -404,6 +419,9 @@ Harici otonom ajanların JSON-RPC 2.0 (`initialize`, `tools/list`, `tools/call`)
 | `verify_byzantine_pqc_swarm` | `inject_byzantine_traitor` | Bizans Hata Toleranslı (BFT) Jensen-Shannon diverjans kapısı ($D_{\text{JS}} > 0.18$) ve ML-KEM-768 (Kyber $q=3329$) kuantum-sonrası kriptografi ile sürüdeki hain düğümleri karantinaya alır. |
 | `localize_terrain_trn` | `true_x_km`, `true_y_km`, `drifted_ins_x_km`, `drifted_ins_y_km` | GPS/GNSS-Kör ortamda %100 pasif (0W RF) TERCOM/SITAN Sayısal Yükselti Modeli (DEM) korelasyonu ile INS kaymasını %99.4+ sönümler. |
 | `reconfigure_damaged_actuators` | `jammed_actuator_index`, `jammed_angle_rad` | Kinetik kanatçık sıkışması veya motor kaybında Ağırlıklı Sözde-Ters (*Weighted Moore-Penrose Pseudo-Inverse*) matrisiyle kontrol otoritesini sağlam yüzeylere yeniden dağıtır. |
+| `establish_fso_covert_link` | `distance_km`, `visibility_km`, `pointing_jitter_urad` | EMCON-Sıfır (0.0W RF Yayımı) ortamda 1550nm Göz-Güvenli SWIR Serbest Uzay Optik (FSO) Lazer ve MEMS FSM sürü haberleşme bütçesini ve LPI/LPD kapasitesini hesaplar. |
+| `scrub_radiation_bitflips` | `injected_seu_bit`, `inject_tmr_bank_corruption` | Kozmik ışın veya EMP/HPM kaynaklı SRAM/VRAM bit tersinmelerini (SEU/MBU) Genişletilmiş Hamming(72,64) SECDED ve 3-Bank TMR çoğunluk oylamasıyla %100 bit-kesinliğinde onarır. |
+| `solve_hji_missile_evasion` | `missile_range_m`, `closing_velocity_mps`, `evader_max_g` | Hamilton-Jacobi-Isaacs (HJI) sıfır-toplamlı diferansiyel takip-kaçma oyunu ile hipersonik SAM/AAM füze kilidine karşı optimal dikgen G-vektörü ve DRFM Cross-Eye açı aldatması sentezler. |
 
 ---
 
@@ -453,6 +471,9 @@ sequenceDiagram
 | **IV. CAN-Bus Spoofing** | `CAN-0` üzerinde yetkisiz `0x1BA` çerçevesi | `CAN_EBPF_PACKET_QUARANTINE` | `can_firewall_filter.cpp` | Sahte ID'nin eBPF halkasında atomik karantinası |
 | **V. GNSS Spoofing** | Mahalanobis yenilik kapısı aşımı ($d_M > 16.0$) | `GNSS_OPTICAL_FLOW_DEAD_RECKONING` | `gnss_optical_flow_ekf.cpp` | Sahte GPS reddi + 200 Hz Optik Akış & Barometre EKF geçişi |
 | **VI. Sürü Lideri Kaybı** | `Alpha-1` sürü liderinin devre dışı kalması | `SWARM_RAFT_LEADER_HANDOVER` | `swarm_raft_leader_handover.cpp` | Markov serbest enerji konsensüsüyle `Bravo-2` lider ataması |
+| **VII. EMCON-Sıfır Lazer** | SIGINT/ELINT DF tehdidi altında RF susturma | `FSO_1550NM_EMCON_LASER_MESH` | `fso_laser_mesh_link.cpp` | `0.0 W` RF yayımıyla (`POI=0`) 1550 nm SWIR MEMS lazer sürü bağı |
+| **VIII. Kozmik/EMP Bit-Flip** | SRAM/VRAM üzerinde `SEU`/`MBU` bit tersinmesi | `RADIATION_SECDED_TMR_SCRUBBER` | `radiation_tmr_scrubber.cpp` | Hamming(72,64) SECDED + 3-Bank TMR çoğunluk oylamasıyla %100 onarım |
+| **IX. Hipersonik SAM Kilidi** | Terminal safhada ($R=2850\text{ m}$) PN füze kilidi | `HJI_DIFFERENTIAL_MISSILE_EVASION` | `hji_evasion_maneuver.cpp` | Isaacs HJI 9.0G dikgen fıçı tonosu + DRFM Cross-Eye açı aldatması |
 
 ### 4. Canlı Kriz Müdahale Çekirdek Kaydı
 ```text
@@ -573,7 +594,16 @@ python cli.py --trn
 # Kinetik Hasar ve Eyleyici Sikismasi Altinda Agirlikli Sozde-Ters (Pseudo-Inverse) Kontrol Dagitimi:
 python cli.py --actuator
 
-# KAM 15-Aracli Butunsel Otonom Beka ve Siber-Fiziksel Oz-Onarim Tam Sistem Denetimi:
+# EMCON-Sifir (0.0W RF) 1550nm SWIR Serbest Uzay Optik (FSO) Lazer Suru Haberlesmesi:
+python cli.py --fso
+
+# Kozmik Isin / EMP Bit-Flip (SEU/MBU) SECDED Hamming(72,64) ve 3-Bank TMR Bellek Onarimi:
+python cli.py --ecc
+
+# Hamilton-Jacobi-Isaacs (HJI) Diferansiyel Takip-Kacma Oyunu Hipersonik SAM Fuze Kacinma Cozucusu:
+python cli.py --evasion
+
+# KAM 18-Aracli Butunsel Otonom Beka ve Siber-Fiziksel Oz-Onarim Tam Sistem Denetimi:
 python cli.py --full-audit
 
 # KAM-Edge-MoE RK4 & BitNet b1.58 uclu agirlik egitimi ve ikili (.bin) kontrol noktasi uretimi:

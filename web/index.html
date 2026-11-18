@@ -301,6 +301,21 @@
             <span class="crisis-title">Kanatçık Sıkışması</span>
             <span class="crisis-desc">Sözde-Ters Kontrol Mikseri</span>
           </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('emcon_fso_switch'); toggleTelemetryDrawer();">
+            <span class="crisis-title">EMCON-Sıfır Lazer</span>
+            <span class="crisis-desc">1550nm FSO 0W RF Köprüsü</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('radiation_seu_bitflip'); toggleTelemetryDrawer();">
+            <span class="crisis-title">Kozmik/EMP Bit-Flip</span>
+            <span class="crisis-desc">SECDED &amp; TMR Bellek Onarımı</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="triggerCrisis('sam_missile_lock'); toggleTelemetryDrawer();">
+            <span class="crisis-title">SAM Füze Kilidi</span>
+            <span class="crisis-desc">HJI 9G Kaçınma &amp; Cross-Eye</span>
+          </button>
         </div>
 
         <button class="btn-reset-balance" onclick="resetSystem()">
@@ -340,6 +355,21 @@
           <button class="crisis-card-btn" onclick="testActuatorReconfig()">
             <span class="crisis-title">Sözde-Ters Eyleyici</span>
             <span class="crisis-desc">Hasarlı Kanatçık Telafisi</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="testFsoLaserLink()">
+            <span class="crisis-title">1550nm FSO Lazer</span>
+            <span class="crisis-desc">EMCON-Sıfır 0W Optik Ağ</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="testRadiationScrubber()">
+            <span class="crisis-title">SECDED &amp; TMR ECC</span>
+            <span class="crisis-desc">Hamming(72,64) Bit-Flip Onarımı</span>
+          </button>
+
+          <button class="crisis-card-btn" onclick="testHjiMissileEvasion()">
+            <span class="crisis-title">HJI Füze Kaçınma</span>
+            <span class="crisis-desc">Isaacs Diferansiyel Oyun 9G</span>
           </button>
 
           <button class="crisis-card-btn" onclick="showFleetManifest()">

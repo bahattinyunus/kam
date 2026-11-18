@@ -66,6 +66,24 @@ class ActiveInferenceEngine:
             "cost": 0.13,
             "cpp_module": "swarm_raft_leader_handover.cpp",
         },
+        "FSO_1550NM_EMCON_LASER_MESH": {
+            "predicted_obs": [0.92, 0.05, 0.02, 0.01],
+            "info_gain_base": 0.87,
+            "cost": 0.11,
+            "cpp_module": "fso_laser_mesh_link.cpp",
+        },
+        "RADIATION_SECDED_TMR_SCRUBBER": {
+            "predicted_obs": [0.93, 0.04, 0.02, 0.01],
+            "info_gain_base": 0.89,
+            "cost": 0.09,
+            "cpp_module": "radiation_tmr_scrubber.cpp",
+        },
+        "HJI_DIFFERENTIAL_MISSILE_EVASION": {
+            "predicted_obs": [0.91, 0.05, 0.03, 0.01],
+            "info_gain_base": 0.90,
+            "cost": 0.14,
+            "cpp_module": "hji_evasion_maneuver.cpp",
+        },
     }
 
     def __init__(self, precision_gamma: float = 4.0):

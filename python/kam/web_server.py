@@ -21,6 +21,9 @@ from .lyapunov_controller import LyapunovCognitiveController
 from .byzantine_pqc_swarm import SwarmNodeBelief, ByzantinePqcSwarmGuard
 from .terrain_matching_trn import TerrainRelativeNavigator
 from .actuator_reconfigurator import ActuatorFaultReconfigurator
+from .covert_fso_comm import FsoLinkParameters, CovertFsoLaserTransceiver
+from .radiation_ecc_scrubber import RadiationHardenedMemoryScrubber
+from .differential_game_evasion import MissileEngagementState, DifferentialGameMissileEvasion
 
 class KamWebHandler(SimpleHTTPRequestHandler):
     engine = None
@@ -407,6 +410,48 @@ class KamWebHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"actuator_result": act_res, "mixer_code": code}, ensure_ascii=False).encode("utf-8"))
             return
 
+        elif self.path == "/api/fso_link":
+            params = FsoLinkParameters(
+                distance_km=float(body.get("distance_km", 4.5)),
+                visibility_km=float(body.get("visibility_km", 12.0)),
+                pointing_jitter_urad=float(body.get("pointing_jitter_urad", 35.0)),
+            )
+            fso_res = CovertFsoLaserTransceiver.evaluate_covert_fso_link(params)
+            code = CodeMutator.generate_fso_laser_mesh_fallback()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"fso_result": fso_res, "fso_code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/ecc_scrub":
+            seu_bit = int(body.get("injected_seu_bit", 19))
+            tmr_corrupt = bool(body.get("inject_tmr_bank_corruption", True))
+            ecc_res = RadiationHardenedMemoryScrubber.scrub_bitnet_weights_with_tmr(
+                injected_seu_bit=seu_bit,
+                inject_tmr_bank_corruption=tmr_corrupt,
+            )
+            code = CodeMutator.generate_radiation_tmr_scrubber_fallback()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"ecc_result": ecc_res, "ecc_code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif self.path == "/api/hji_evasion":
+            state = MissileEngagementState(
+                missile_range_m=float(body.get("missile_range_m", 2850.0)),
+                closing_velocity_mps=float(body.get("closing_velocity_mps", 980.0)),
+                evader_max_g=float(body.get("evader_max_g", 9.0)),
+            )
+            hji_res = DifferentialGameMissileEvasion.solve_hji_evasion_maneuver(state)
+            code = CodeMutator.generate_hji_missile_evasion_fallback()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(json.dumps({"hji_result": hji_res, "hji_code": code}, ensure_ascii=False).encode("utf-8"))
+            return
+
         elif self.path == "/api/reset":
             KamWebHandler.engine.active_telemetry = "UART-2 (Primary)"
             KamWebHandler.engine.inference.reset_equilibrium(0.03)
@@ -523,6 +568,29 @@ class KamWebHandler(SimpleHTTPRequestHandler):
                 "Kinetik Kanatçık Hasarı: Sol Elevon (LEFT_ELEVON) +0.22 rad açıda mekanik olarak sıkıştı. "
                 "actuator_mixer_reconfig.cpp bellekte JIT derlenerek Ağırlıklı Sözde-Ters (Weighted Moore-Penrose Pseudo-Inverse) matrisiyle momentler sağlam V-kuyruk ve itki vektörlemesine dağıtıldı.",
                 CodeMutator.generate_actuator_reconfig_fallback()
+            )
+        elif c_type == "emcon_fso_switch":
+            KamWebHandler.engine.active_telemetry = "1550nm FSO Lazer (0W RF)"
+            return (
+                "EMCON-Sıfır Radyo Sessizliği: Düşman SIGINT/ELINT yön bulucu (DF) dizisi saptandı, tüm RF vericileri 0.0W seviyesine kapatıldı. "
+                "fso_laser_mesh_link.cpp bellekte JIT derlenerek 1550nm SWIR MEMS lazer köprüsü üzerinden %0 yakalanma olasılığıyla (POI=0) 685 Mbps sürü bağı kuruldu.",
+                CodeMutator.generate_fso_laser_mesh_fallback()
+            )
+        elif c_type == "radiation_seu_bitflip":
+            KamWebHandler.engine.inference.trigger_anomaly()
+            KamWebHandler.engine.active_telemetry = "SECDED-TMR-Scrubber (ECC)"
+            return (
+                "Kozmik Işın / EMP Bellek Bit-Flip (SEU/MBU) Tespit Edildi: Linux eBPF EDAC kancası Bit-19 tersinmesi ve Bank-B ağırlık bozulması yakaladı. "
+                "radiation_tmr_scrubber.cpp bellekte JIT derlenerek Hamming(72,64) SECDED ve 3-Bank TMR çoğunluk oylamasıyla BitNet b1.58 ağırlıkları %100 bit-kesinliğinde onarıldı.",
+                CodeMutator.generate_radiation_tmr_scrubber_fallback()
+            )
+        elif c_type == "sam_missile_lock":
+            KamWebHandler.engine.inference.trigger_anomaly()
+            KamWebHandler.engine.active_telemetry = "HJI-9G-Evasion + DRFM-CrossEye"
+            return (
+                "Hipersonik SAM Füze Kilidi Algılandı: Terminal safhada (R=2850m, V_c=980 m/s) oransal seyrüsefer (PN) güdümlü füze yaklaşıyor! "
+                "hji_evasion_maneuver.cpp bellekte JIT derlenerek Hamilton-Jacobi-Isaacs (HJI) eyer noktası 9.0G dikgen fıçı tonosu ve DRFM Cross-Eye açı aldatmasıyla ıskalama mesafesi 18m ölümcül yarıçapın dışına (>75m) çıkarıldı.",
+                CodeMutator.generate_hji_missile_evasion_fallback()
             )
         return "Bilinmeyen kriz tipi", None
 

@@ -10,6 +10,9 @@ from .neuro_symbolic_shield import FlightControlCommand, NeuroSymbolicSafetyShie
 from .byzantine_pqc_swarm import SwarmNodeBelief, ByzantinePqcSwarmGuard
 from .terrain_matching_trn import TerrainRelativeNavigator
 from .actuator_reconfigurator import ActuatorFaultReconfigurator
+from .covert_fso_comm import FsoLinkParameters, CovertFsoLaserTransceiver
+from .radiation_ecc_scrubber import RadiationHardenedMemoryScrubber
+from .differential_game_evasion import MissileEngagementState, DifferentialGameMissileEvasion
 
 
 class McpServer:
@@ -187,6 +190,41 @@ class McpServer:
                         },
                     },
                 },
+                {
+                    "name": "establish_fso_covert_link",
+                    "description": "EMCON-Sıfır (0.0W RF Yayımı) ortamda 1550nm Göz-Güvenli SWIR Serbest Uzay Optik (FSO) Lazer ve MEMS FSM sürü haberleşme bütçesini ve LPI/LPD kapasitesini hesapla.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "distance_km": {"type": "number"},
+                            "visibility_km": {"type": "number"},
+                            "pointing_jitter_urad": {"type": "number"},
+                        },
+                    },
+                },
+                {
+                    "name": "scrub_radiation_bitflips",
+                    "description": "Kozmik ışın veya EMP/HPM kaynaklı SRAM/VRAM bit tersinmelerini (SEU/MBU) Genişletilmiş Hamming(72,64) SECDED ve Üçlü Modüler Yedeklilik (TMR) çoğunluk oylamasıyla %100 bit-kesinliğinde onar.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "injected_seu_bit": {"type": "integer"},
+                            "inject_tmr_bank_corruption": {"type": "boolean"},
+                        },
+                    },
+                },
+                {
+                    "name": "solve_hji_missile_evasion",
+                    "description": "Hamilton-Jacobi-Isaacs (HJI) sıfır-toplamlı diferansiyel takip-kaçma oyunu ile hipersonik SAM/AAM füze kilidine karşı optimal dikgen G-vektörü ve DRFM Cross-Eye açı aldatması sentezle.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "missile_range_m": {"type": "number"},
+                            "closing_velocity_mps": {"type": "number"},
+                            "evader_max_g": {"type": "number"},
+                        },
+                    },
+                },
             ]
         }
 
@@ -319,6 +357,27 @@ class McpServer:
             return ActuatorFaultReconfigurator.reconfigure_control_allocation(
                 stuck_deflections_rad={jam_idx: jam_ang}
             )
+        elif name == "establish_fso_covert_link":
+            fso_params = FsoLinkParameters(
+                distance_km=float(args.get("distance_km", 4.5)),
+                visibility_km=float(args.get("visibility_km", 12.0)),
+                pointing_jitter_urad=float(args.get("pointing_jitter_urad", 35.0)),
+            )
+            return CovertFsoLaserTransceiver.evaluate_covert_fso_link(fso_params)
+        elif name == "scrub_radiation_bitflips":
+            seu_bit = int(args.get("injected_seu_bit", 19))
+            tmr_corrupt = bool(args.get("inject_tmr_bank_corruption", True))
+            return RadiationHardenedMemoryScrubber.scrub_bitnet_weights_with_tmr(
+                injected_seu_bit=seu_bit,
+                inject_tmr_bank_corruption=tmr_corrupt,
+            )
+        elif name == "solve_hji_missile_evasion":
+            m_state = MissileEngagementState(
+                missile_range_m=float(args.get("missile_range_m", 2850.0)),
+                closing_velocity_mps=float(args.get("closing_velocity_mps", 980.0)),
+                evader_max_g=float(args.get("evader_max_g", 9.0)),
+            )
+            return DifferentialGameMissileEvasion.solve_hji_evasion_maneuver(m_state)
         return {"error": f"Bilinmeyen araç: {name}"}
 
     def handle_jsonrpc(self, request: Dict[str, Any]) -> Dict[str, Any]:

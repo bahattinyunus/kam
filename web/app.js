@@ -618,6 +618,77 @@ async function testActuatorReconfig() {
   }
 }
 
+// EMCON-Sıfır 1550nm FSO Lazer Haberleşme Testi
+async function testFsoLaserLink() {
+  toggleTelemetryDrawer();
+  appendMessage("user", "🔦 EMCON-Sıfır (0.0W RF) modunda 1550nm SWIR Serbest Uzay Optik (FSO) Lazer sürü bağlantısını analiz et.");
+  try {
+    const res = await fetch("/api/fso_link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ distance_km: 4.5, visibility_km: 12.0, pointing_jitter_urad: 35.0 })
+    });
+    const data = await res.json();
+    const f = data.fso_result;
+    const msg = `🔦 <strong>[EMCON-SIFIR 1550nm SWIR FSO LAZER SÜRÜ HABERLEŞMESİ]</strong><br>` +
+      `• Optik Mod: <code>${f.active_optical_mode}</code> | RF Yayımı: <strong>${f.rf_emission_watts} W (POI = %0.000)</strong><br>` +
+      `• Optik SNR: <code>${f.optical_snr_db} dB</code> | Rytov Parıldama: <code>${f.rytov_scintillation_index}</code><br>` +
+      `• Efektif Kapasite: <strong>${f.effective_throughput_mbps} Mbps</strong> (${f.fec_scheme})`;
+    appendMessage("kam", msg, data.fso_code);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ FSO Lazer bağlantı testi sırasında hata oluştu.");
+  }
+}
+
+// SECDED Hamming(72,64) & TMR Radyasyon Bit-Flip Onarım Testi
+async function testRadiationScrubber() {
+  toggleTelemetryDrawer();
+  appendMessage("user", "☢️ Kozmik ışın / EMP kaynaklı Bit-19 tersinmesi (SEU) ve BitNet b1.58 ağırlık bozulmasını SECDED & TMR ile onar.");
+  try {
+    const res = await fetch("/api/ecc_scrub", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ injected_seu_bit: 19, inject_tmr_bank_corruption: true })
+    });
+    const data = await res.json();
+    const e = data.ecc_result;
+    const reg = e.secded_register_check;
+    const tmr = e.tmr_bitnet_weight_scrub;
+    const msg = `☢️ <strong>[SECDED HAMMING(72,64) &amp; 3-BANK TMR BELLEK ONARIMI]</strong><br>` +
+      `• SECDED Yazmaç Durumu: <code>${reg.status}</code> (Bozulan Bit: <strong>#${reg.flipped_bit_detected}</strong>, Sendrom: <code>${reg.syndrome_code}</code>)<br>` +
+      `• Onarılan Kelime: <code>${reg.corrupted_hex}</code> &rarr; <strong>${reg.repaired_hex}</strong><br>` +
+      `• TMR Çoğunluk Oylaması: <strong>${tmr.tmr_majority_repairs} ağırlık onarıldı</strong> | SHA3-256 Bütünlük: <strong>${tmr.integrity_verified_100pct ? "%100 DOĞRULANDI" : "İHLAL"}</strong>`;
+    appendMessage("kam", msg, data.ecc_code);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ SECDED & TMR bellek onarım testi sırasında hata oluştu.");
+  }
+}
+
+// Hamilton-Jacobi-Isaacs (HJI) Diferansiyel Oyun Füze Kaçınma Testi
+async function testHjiMissileEvasion() {
+  toggleTelemetryDrawer();
+  appendMessage("user", "🚀 Terminal safhada (R=2850m, V_c=980 m/s) yaklaşan SAM füzesine karşı HJI diferansiyel oyun kaçınma çözümünü üret.");
+  try {
+    const res = await fetch("/api/hji_evasion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ missile_range_m: 2850.0, closing_velocity_mps: 980.0, evader_max_g: 9.0 })
+    });
+    const data = await res.json();
+    const h = data.hji_result;
+    const msg = `🚀 <strong>[HAMILTON-JACOBI-ISAACS (HJI) DİFERANSİYEL TAKİP-KAÇMA ÇÖZÜCÜSÜ]</strong><br>` +
+      `• Kalan Süre (t_go): <code>${h.time_to_go_sec} sn</code> | Optimal Manevra: <strong>${h.commanded_evader_g}G Dikgen Fıçı Tonosu (${h.optimal_barrel_roll_angle_deg}&deg;)</strong><br>` +
+      `• Manevrasız PN Iskalama: <code>${h.unmaneuvered_pn_miss_m} m</code> &rarr; HJI + Cross-Eye Iskalama: <strong>${h.hji_saddle_point_terminal_miss_m} m</strong> (Ölümcül Yarıçap: ${h.warhead_lethal_radius_m} m)<br>` +
+      `• Platform Bekâsı: <strong>${h.platform_survival_guaranteed ? "GARANTİ ALTINDA (%100)" : "RİSKLİ"}</strong> (${h.countermeasure_sync})`;
+    appendMessage("kam", msg, data.hji_code);
+    fetchTelemetry();
+  } catch (err) {
+    appendMessage("kam", "❌ HJI füze kaçınma testi sırasında hata oluştu.");
+  }
+}
+
 // Modal Kontrolleri
 function openSettingsModal() {
   document.getElementById("settings-modal").style.display = "flex";
