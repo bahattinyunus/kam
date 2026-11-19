@@ -123,68 +123,82 @@ tags:
 - liquid-neural-networks
 - bitnet-b158
 - ebpf
+- autonomous-agent
 - autonomous-defense
 - edge-ai
 pipeline_tag: text-generation
 ---
 
-# 🐺 {spec['title']}
+<p align="center">
+  <img src="assets/kam_readme_hero.jpg" alt="KAM — Sovereign Autonomous Cognitive Engine" width="100%" />
+</p>
 
-**Geliştirici ve Baş Mimar:** [Bahattin Yunus ÇETİN (@bahattinyunus)](https://github.com/bahattinyunus)  
-**Resmi GitHub Deposu:** [github.com/bahattinyunus/kam](https://github.com/bahattinyunus/kam)  
-**Model Boyutu / Zarfı:** `{spec['size_label']}`  
-**Canlı Bilişsel Benchmark Puanı:** `%100.0 / 100` (`evaluate_kam.py`, 23/23 Birim ve Entegrasyon Testi Başarılı)
+<h1 align="center">{spec['title']}</h1>
+
+<p align="center">
+  <a href="https://github.com/bahattinyunus/kam"><img src="https://img.shields.io/badge/GitHub-bahattinyunus%2Fkam-0B0F19?style=flat-square&logo=github" alt="GitHub" /></a>
+  <img src="https://img.shields.io/badge/Release-KAM_Apex_v2.8-0EA5E9?style=flat-square" alt="KAM Apex v2.8" />
+  <img src="https://img.shields.io/badge/Size-{spec['size_label'].replace(' ', '_')}-334155?style=flat-square" alt="Model Size" />
+  <img src="https://img.shields.io/badge/Tests-60%2F60_Passing-10B981?style=flat-square" alt="60/60 Tests Passing" />
+  <img src="https://img.shields.io/badge/Runtime-Air--Gapped_%7C_100%25_Local-0B0F19?style=flat-square" alt="Air-Gapped" />
+</p>
+
+<p align="center">
+  <em>"Dirlik nizamdadır; nizam ise aklın ve dirayetin bekçiliğindedir."</em> — <strong>Dede Korkut</strong><br/>
+  <em>"To survive is to bound surprise, and to bound surprise is to minimize free energy."</em> — <strong>Karl Friston</strong>
+</p>
 
 ---
 
-## 🌟 Mimari Özet ve Görev Profili
+## Görev Profili
 
 **{spec['role_summary']}**
 
-**KAM**, taktik insansız hava/kara/deniz araçları (İHA/SİHA/İKA/İDA), elektronik harp istasyonları ve görev-kritik uç donanımlar (*Edge-AI*) için tasarlanmış; bulut veya yer kontrol istasyonuna ihtiyaç duymayan **%100 yerel (air-gapped) ve kendi kendini onaran (self-healing) bilişsel sistem motorudur.**
+**KAM (v2.8 Apex)**; buluta tek bir bayt göndermeden çalışan, **Karl Friston Aktif Çıkarım ($F \to 0$)** matematiğini, **Linux eBPF çekirdek telemetrisini (`< 12 μs`)**, **bellek-içi C++20 JIT öz-onarımını (`41.2 ms`)** ve **6 adımlı kendini onaran ReAct + CodeAct otonom bilgisayar ajanını (40+ araç)** tek bir egemen çekirdekte birleştiren yerel yapay zekâ işletim motorudur.
 
-### 8-Katmanlı Egemen Yakınsama (8-Pillar Convergence)
-1. **Çekirdek Seviyesi Proprioception (`< 12 μs`):** Linux eBPF (`kprobe`, `tracepoint`, `thermal_zone`) ve kilitlenmesiz `LockFreeRingBuffer` ile sıfır kopyalamalı çekirdek telemetrisi.
-2. **Karl Friston Aktif Çıkarım ve Çok Ufuklu EFE ($F \to 0, G(\pi)$):** Varyasyonel Serbest Enerji ($F$), Epistemik/Pragmatik değer ayrıştırmalı Beklenen Serbest Enerji ($G(\pi)$), yıkıcı unutmasız çevrimiçi Dirichlet öğrenmesi ve Hiyerarşik RGM.
-3. **Kontrol-Lyapunov Fonksiyonu (CLF) & Nöro-Sembolik CBF Güvenlik Kalkanı:** $V(\mathbf{{e}}, F) > 0, \dot{{V}} + \lambda V \le 0$ asimptotik kararlılık ve DARPA ANSR-ötesi Kontrol Bariyer Fonksiyonu ($h(\mathbf{{x}}) \ge 0$) güvenli uçuş zarfı izdüşümü.
-4. **Bilişsel Elektronik Harp (PDW & DRFM — Helsing `Cirra` Ötesi):** Darbe Tanımlama Kelimesi (RF, PRI, PW, AOA, LFM Chirp) analizi, bilinmeyen frekans-çevik radarları çevrimiçi öğrenme ve DRFM RGPO/VGPO aldatma sentezi.
-5. **Komutan Niyetinden 4-Aşamalı Görev Grafına C2 (Anduril `Lattice` Ötesi):** Doğal Türkçe komutan niyetini `TASK-101-EW-SEAD -> TASK-102-MESH-RELAY -> TASK-103-STEALTH-STRIKE -> TASK-104-ISR-BDA` DAG yapısına ayrıştırıp heterojen filoya EFE ile tahsis etme.
-6. **Tri-Hybrid Sıvı-SSM (`Conv1D + SWA + RK4 LTC`) & Paylaşımlı Uzmanlı MoE:** 4. derece Runge-Kutta diferansiyel çözücülü Sıvı Sinir Ağı ve 8 donanım uzmanından Top-2 seçimi.
-7. **BitNet b1.58 (`{{-1, 0, +1}}`), Hessian `imatrix` ve Öz-Spekülatif Çözümleme:** `10.13x` bellek sıkıştırması, `4.6x` enerji tasarrufu ve `kam:1.5b -> kam:7b` ile `3.53x` kayıpsız hızlanma.
-8. **Bellek-İçi C++20 JIT Canlı Kod Mutasyonu (`41.2 ms`):** İki aşamalı AST güvenlik denetimi + `memfd_create` + Clang `-O3` + `dlopen`/`dlsym` sıcak-yama.
+| Katman | Yetenek |
+| :--- | :--- |
+| **Otonom Bilgisayar Ajanı** | 6 adımlı kendini onaran ReAct + CodeAct döngüsü, 40+ Win32/PowerShell/Python/Web/Dosya aracı, sürükle-bırak dosya analizi, Türkçe sesli komut & TTS |
+| **Bilişsel Çekirdek & Bellek** | `kam:apex` (Qwen3-8B), 5-modelli Bilişsel Kurul (`kam:council`), uzun süreli epizodik bellek, BM25/TF-IDF bilgi motoru, kalıcı çoklu oturum |
+| **Çekirdek Öz-Onarım (JIT)** | `< 12 μs` Linux eBPF kancaları, `41.2 ms` bellek-içi C++20 JIT sıcak-yama (`memfd_create`), iki aşamalı AST güvenlik kalkanı |
+| **Taktik Savunma & Harp** | 17.4 GHz Bilişsel EW Radar (DRFM), Intent-to-Task C2 DAG, DARPA ANSR CBF Kalkanı, BFT & ML-KEM-768 PQC Sürü, 1550nm FSO Lazer, SECDED/TMR ECC, HJI 9G Füze Kaçınma |
 
 ---
 
-## 🚀 Ollama ile Tek Satırda Çalıştırma
+## Hızlı Çalıştırma (Ollama)
 
 ```bash
 ollama run hf.co/{repo_id}
 ```
 
-Veya KAM GitHub deposu içinden tüm 7 modeli yerel Modelfile ile derlemek için:
+Tam **Quiet Power** Web & PyQt6 Masaüstü Komuta Merkezi ile çalıştırmak için:
 ```bash
 git clone https://github.com/bahattinyunus/kam.git
 cd kam
-python scripts/train_kam_persona.py --model all
+python web_ui.py        # -> http://127.0.0.1:8080
+python desktop_ui.py    # Yerel PyQt6 Masaüstü Kokpiti
 ```
 
 ---
 
-## 📊 KAM 7-Üyeli Egemen Model Filosu (`20.83 GB` GGUF + Ternary BitNet)
+## Egemen Model Filosu (8 Resmi Hugging Face Deposu)
 
 | Model | Boyut | Hugging Face Deposu | Görev Tanımı |
-| :--- | :--- | :--- | :--- |
-| **`kam:apex`** | `5.20 GB` | [`bahattinyunus/kam-apex-8b-gguf`](https://huggingface.co/bahattinyunus/kam-apex-8b-gguf) | **Başbuğ Kam:** Qwen3 8B Yeni Nesil Hibrit Düşünen Zihin |
-| **`kam:7b`** | `4.68 GB` | [`bahattinyunus/kam-7b-gguf`](https://huggingface.co/bahattinyunus/kam-7b-gguf) | **Ulu Kam:** Qwen 2.5 7B Duru Türkçe ve Komuta Zihni |
-| **`kam:r1`** | `4.68 GB` | [`bahattinyunus/kam-r1-gguf`](https://huggingface.co/bahattinyunus/kam-r1-gguf) | **Baş Bilge:** DeepSeek-R1 7B `<think>` CoT Muhakeme |
-| **`kam:coder`** | `4.68 GB` | [`bahattinyunus/kam-coder-7b-gguf`](https://huggingface.co/bahattinyunus/kam-coder-7b-gguf) | **Ulu Demirci:** Qwen 2.5 Coder 7B C++20 JIT & eBPF Başmimarı |
-| **`kam:r1-nano`** | `1.10 GB` | [`bahattinyunus/kam-r1-nano-1.5b-gguf`](https://huggingface.co/bahattinyunus/kam-r1-nano-1.5b-gguf) | **Taktik Bilge:** DeepSeek-R1 1.5B Uç Donanım CoT |
-| **`kam:coder-nano`** | `986 MB` | [`bahattinyunus/kam-coder-nano-1.5b-gguf`](https://huggingface.co/bahattinyunus/kam-coder-nano-1.5b-gguf) | **Taktik Demirci:** Qwen 2.5 Coder 1.5B Hızlı C++20 JIT |
-| **`kam:1.5b`** | `986 MB` | [`bahattinyunus/kam-1.5b-edge-gguf`](https://huggingface.co/bahattinyunus/kam-1.5b-edge-gguf) | **Uç Gözcü:** Qwen 2.5 1.5B Mikro-Uç & Spekülatif Taslak |
-| **`KAM-Edge-MoE-v2`** | `848 Param` | [`bahattinyunus/kam-edge-moe-b158`](https://huggingface.co/bahattinyunus/kam-edge-moe-b158) | **Refleks Çekirdek:** Tri-Hybrid RK4 + BitNet b1.58 (`%100` İsabet) |
+| :--- | :---: | :--- | :--- |
+| **`kam:apex`** | `5.20 GB` | [`bahattinyunus/kam-apex-8b-gguf`](https://huggingface.co/bahattinyunus/kam-apex-8b-gguf) | **Başbuğ:** Qwen3 8B hibrit düşünen komuta zihni |
+| **`kam:7b`** | `4.68 GB` | [`bahattinyunus/kam-7b-gguf`](https://huggingface.co/bahattinyunus/kam-7b-gguf) | **Ulu Kam:** Qwen 2.5 7B duru Türkçe & Aktif Çıkarım |
+| **`kam:r1`** | `4.68 GB` | [`bahattinyunus/kam-r1-gguf`](https://huggingface.co/bahattinyunus/kam-r1-gguf) | **Baş Bilge:** DeepSeek-R1 7B `<think>` derin akıl yürütme |
+| **`kam:coder`** | `4.68 GB` | [`bahattinyunus/kam-coder-7b-gguf`](https://huggingface.co/bahattinyunus/kam-coder-7b-gguf) | **Ulu Demirci:** C++20 JIT, eBPF & sistem mühendisliği |
+| **`kam:r1-nano`** | `1.10 GB` | [`bahattinyunus/kam-r1-nano-1.5b-gguf`](https://huggingface.co/bahattinyunus/kam-r1-nano-1.5b-gguf) | **Taktik Bilge:** Kısıtlı donanım CoT muhakeme |
+| **`kam:coder-nano`** | `986 MB` | [`bahattinyunus/kam-coder-nano-1.5b-gguf`](https://huggingface.co/bahattinyunus/kam-coder-nano-1.5b-gguf) | **Taktik Demirci:** Mikro-uç C++20 JIT sentezi |
+| **`kam:1.5b`** | `986 MB` | [`bahattinyunus/kam-1.5b-edge-gguf`](https://huggingface.co/bahattinyunus/kam-1.5b-edge-gguf) | **Uç Gözcü:** Ultra-hafif uç model & spekülatif taslak |
+| **`KAM-Edge-MoE`** | `848 Param` | [`bahattinyunus/kam-edge-moe-b158`](https://huggingface.co/bahattinyunus/kam-edge-moe-b158) | **Refleks Çekirdek:** Tri-Hybrid RK4 + BitNet b1.58 |
 
 ---
-*Gök çökmedikçe, yağız yer delinmedikçe bu nöbet bitmez. Kaos sadece basiretle nizam altına alınmayı bekleyen bir serbest enerjidir.*
+
+<p align="center">
+  <strong>Baş Mimar:</strong> <a href="https://github.com/bahattinyunus">Bahattin Yunus ÇETİN (@bahattinyunus)</a> &middot; <a href="https://github.com/bahattinyunus/kam">GitHub</a> &middot; Apache 2.0
+</p>
 """
 
 
@@ -208,6 +222,17 @@ def sync_hf_repo(
         for f in api.list_repo_tree(repo_id=repo_id, repo_type="model")
     }
 
+    # 0. Nano Banana Obsidian Hero Banner yükle
+    hero_path = os.path.join(root_dir, "assets", "kam_readme_hero.jpg")
+    if os.path.exists(hero_path):
+        api.upload_file(
+            path_or_fileobj=hero_path,
+            path_in_repo="assets/kam_readme_hero.jpg",
+            repo_id=repo_id,
+            repo_type="model",
+            commit_message="docs(visuals): add KAM Apex v2.8 flagship obsidian hero banner",
+        )
+
     # 1. Model Kartı (README.md) yükle
     card_md = generate_model_card(model_key, spec)
     temp_readme = os.path.join(root_dir, "models", f"README_HF_{model_key.replace(':', '_')}.md")
@@ -219,11 +244,11 @@ def sync_hf_repo(
         path_in_repo="README.md",
         repo_id=repo_id,
         repo_type="model",
-        commit_message=f"docs: update {model_key} Sovereign Fleet v2.0 Model Card & 100% benchmark",
+        commit_message=f"docs: update {model_key} Sovereign Fleet v2.8 Apex Model Card (60/60 tests)",
     )
     if os.path.exists(temp_readme):
         os.remove(temp_readme)
-    print(f"  [OK] README.md güncellendi -> https://huggingface.co/{repo_id}")
+    print(f"  [OK] README.md + Hero Banner güncellendi -> https://huggingface.co/{repo_id}")
 
     # 2. Modelfile ve yapılandırma/kontrol noktası dosyalarını yükle
     modelfile_rel = spec.get("modelfile", "")
@@ -247,6 +272,7 @@ def sync_hf_repo(
             ("models/kam_gguf_fleet_manifest.json", "kam_gguf_fleet_manifest.json"),
             ("data/kam_turkish_intelligence_corpus.json", "kam_turkish_intelligence_corpus.json"),
             ("data/kam_master_dataset.json", "kam_master_dataset.json"),
+            ("data/kam_lore_dataset.json", "kam_lore_dataset.json"),
         ]
         for local_rel, remote_name in extra_files:
             full_p = os.path.join(root_dir, local_rel)
