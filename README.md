@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/kam_logo.png" alt="KAM" width="112" style="border-radius: 22px;" />
+  <img src="assets/kam_readme_hero.jpg" alt="KAM — Sovereign Autonomous Cognitive Engine" width="100%" />
 </p>
 
 <h1 align="center">K A M</h1>
@@ -36,33 +36,30 @@
 
 ---
 
-## Hızlı Başlangıç
+## Quiet Power Komuta Arayüzü
+
+<p align="center">
+  <img src="assets/kam_readme_cockpit.jpg" alt="KAM Quiet Power Command Center" width="100%" />
+</p>
 
 ```bash
 git clone https://github.com/bahattinyunus/kam.git
 cd kam
 ```
 
-### 1. Quiet Power Web Komuta Merkezi
-Çoklu oturum, sürükle-bırak dosya yükleme, canlı HTML/SVG önizleme, `Ctrl+K` komut paleti, 60 FPS osiloskop ve 15 kriz simülatörü:
-
-```bash
-python web_ui.py
-# -> http://127.0.0.1:8080
-```
-
-### 2. Yerel Masaüstü Uygulaması (PyQt6)
-Tarayıcı gerektirmeyen, sürükle-bırak destekli, canlı CPU/RAM/GPU telemetrili ve sesli (SAPI TTS) masaüstü kokpiti:
-
-```bash
-python desktop_ui.py
-```
-
-### 3. CLI & Doğrulama
-```bash
-python cli.py --help
-python -m unittest discover -s tests -v   # 60/60 OK
-```
+- **Web Komuta Merkezi** *(Çoklu oturum, sürükle-bırak dosya yükleme, canlı HTML/SVG önizleme, `Ctrl+K`, 60 FPS osiloskop)*:
+  ```bash
+  python web_ui.py        # -> http://127.0.0.1:8080
+  ```
+- **Yerel Masaüstü Uygulaması (PyQt6)** *(Sürükle-bırak, canlı CPU/RAM/GPU telemetri, SAPI TTS sesli okuma)*:
+  ```bash
+  python desktop_ui.py
+  ```
+- **CLI & Test Doğrulama**:
+  ```bash
+  python cli.py --help
+  python -m unittest discover -s tests -v   # 60/60 OK
+  ```
 
 ---
 
@@ -83,7 +80,11 @@ Tüm modeller %100 yerel Ollama / GGUF uyumludur ve **8 GB VRAM** (örn. RTX 506
 
 ---
 
-## Mimari Akış
+## Bilişsel Çekirdek Mimarisi
+
+<p align="center">
+  <img src="assets/kam_readme_architecture.jpg" alt="KAM Cognitive Core Architecture" width="100%" />
+</p>
 
 ```text
   [ Kullanıcı / Ses / Dosya / eBPF (<12 μs) ]
@@ -112,5 +113,6 @@ Tüm modeller %100 yerel Ollama / GGUF uyumludur ve **8 GB VRAM** (örn. RTX 506
 ---
 
 <p align="center">
+  <img src="assets/kam_logo.png" alt="KAM" width="44" style="border-radius: 10px;" /><br/>
   <strong>Baş Mimar:</strong> <a href="https://github.com/bahattinyunus">Bahattin Yunus ÇETİN (@bahattinyunus)</a> &middot; <a href="LICENSE">Apache 2.0</a>
 </p>
