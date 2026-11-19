@@ -668,10 +668,48 @@ class KamAutonomousAgent:
     çalışma zamanına, açık web araştırmasına ve 18 taktik savunma aracına doğrudan hükmeder.
     """
 
+    @staticmethod
+    def get_real_desktop_dir() -> str:
+        """
+        Windows'ta OneDrive yönlendirmesi dahil GERÇEK Masaüstü yolunu
+        Win32 SHGetFolderPathW(CSIDL_DESKTOPDIRECTORY=0x0010) ile çözer.
+        """
+        if sys.platform == "win32":
+            try:
+                buf = ctypes.create_unicode_buffer(260)
+                hr = ctypes.windll.shell32.SHGetFolderPathW(0, 0x0010, 0, 0, buf)
+                if hr == 0 and buf.value and os.path.isdir(buf.value):
+                    return buf.value
+            except Exception:
+                pass
+            home = os.path.expanduser("~")
+            for cand in (
+                os.path.join(home, "OneDrive", "Desktop"),
+                os.path.join(home, "OneDrive", "Masaüstü"),
+                os.path.join(home, "Desktop"),
+            ):
+                if os.path.isdir(cand):
+                    return cand
+        return os.path.join(os.path.expanduser("~"), "Desktop")
+
+    @staticmethod
+    def get_real_documents_dir() -> str:
+        if sys.platform == "win32":
+            try:
+                buf = ctypes.create_unicode_buffer(260)
+                hr = ctypes.windll.shell32.SHGetFolderPathW(0, 0x0005, 0, 0, buf)
+                if hr == 0 and buf.value and os.path.isdir(buf.value):
+                    return buf.value
+            except Exception:
+                pass
+        return os.path.join(os.path.expanduser("~"), "Documents")
+
     def __init__(self, workspace_root: Optional[str] = None):
         self.workspace_root = os.path.abspath(
             workspace_root or os.path.join(os.path.dirname(__file__), "..", "..")
         )
+        self.desktop_dir = self.get_real_desktop_dir()
+        self.documents_dir = self.get_real_documents_dir()
         self.mcp = McpServer()
         self.full_permissions = True
         self.permission_level = "SOVEREIGN_FULL_ADMIN_ACCESS"
@@ -700,7 +738,8 @@ class KamAutonomousAgent:
             "urllib": urllib,
             "host": self.host_bridge,
             "WORKSPACE": self.workspace_root,
-            "DESKTOP": os.path.join(os.path.expanduser("~"), "Desktop"),
+            "DESKTOP": self.desktop_dir,
+            "DOCUMENTS": self.documents_dir,
             "DOWNLOADS": os.path.join(os.path.expanduser("~"), "Downloads"),
         }
 
@@ -904,8 +943,46 @@ class KamAutonomousAgent:
     # 2. GERÇEK BİLGİSAYAR VE İŞLETİM SİSTEMİ ARAÇ İCRACILARI
     # ------------------------------------------------------------------
     def execute_tool(self, name: str, args: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        args = args or {}
+        args = dict(args) if isinstance(args, dict) else {}
         t0 = time.perf_counter()
+
+        # LLM'in <tool_call> içinde host.* veya kısa takma ad kullanmasını akıllıca yönlendir
+        raw_name = str(name or "").strip()
+        alias_map = {
+            "host.shell": "run_shell_command",
+            "shell": "run_shell_command",
+            "powershell": "run_shell_command",
+            "cmd": "run_shell_command",
+            "bash": "run_shell_command",
+            "host.sysinfo": "get_real_system_telemetry",
+            "sysinfo": "get_real_system_telemetry",
+            "host.list_dir": "list_directory",
+            "list_dir": "list_directory",
+            "ls": "list_directory",
+            "dir": "list_directory",
+            "host.read_file": "read_file",
+            "host.write_file": "write_file",
+            "host.edit_file": "edit_file",
+            "host.open_app": "launch_application",
+            "open_app": "launch_application",
+            "host.web_search": "web_research",
+            "host.smart_search": "smart_workspace_search",
+            "host.clipboard": "clipboard_manager",
+            "host.notify": "system_notification",
+            "python": "execute_python_code",
+        }
+        if raw_name in ("host.windows", "windows"):
+            name = "desktop_window_manager"
+            args.setdefault("action", "list_windows")
+        elif raw_name in ("host.screenshot", "screenshot"):
+            name = "desktop_window_manager"
+            args.setdefault("action", "screenshot")
+        else:
+            name = alias_map.get(raw_name, raw_name)
+
+        if name == "run_shell_command" and "command" not in args and "cmd" in args:
+            args["command"] = args.pop("cmd")
+
         try:
             if name == "run_shell_command":
                 res = self._tool_run_shell(args)
@@ -989,11 +1066,11 @@ class KamAutonomousAgent:
             return self.workspace_root
         expanded = os.path.expanduser(os.path.expandvars(raw_path.strip().strip('"').strip("'")))
         if expanded.lower() in ("masaustu", "masaüstü", "desktop"):
-            return os.path.join(os.path.expanduser("~"), "Desktop")
+            return self.desktop_dir
         if expanded.lower() in ("indirilenler", "downloads"):
             return os.path.join(os.path.expanduser("~"), "Downloads")
         if expanded.lower() in ("belgeler", "documents"):
-            return os.path.join(os.path.expanduser("~"), "Documents")
+            return self.documents_dir
         if os.path.isabs(expanded):
             return os.path.abspath(expanded)
         return os.path.abspath(os.path.join(self.workspace_root, expanded))
@@ -2326,7 +2403,7 @@ class KamAutonomousAgent:
         if write_match:
             fpath = write_match.group(1).strip()
             if "masaüstü" in p_low or "masaustu" in p_low:
-                fpath = os.path.join(os.path.expanduser("~"), "Desktop", os.path.basename(fpath))
+                fpath = os.path.join(self.desktop_dir, os.path.basename(fpath))
             content = write_match.group(2)
             _add_step(f"Dosya Yazılıyor: {fpath}", "write_file", {"path": fpath, "content": content})
 
@@ -2340,12 +2417,34 @@ class KamAutonomousAgent:
             fpath = read_match.group(1).strip()
             _add_step(f"Dosya Okunuyor: {fpath}", "read_file", {"path": fpath})
 
-        # 6. Dizin / Klasör Listeleme
-        if any(k in p_low for k in ("dosyaları listele", "klasörü listele", "dizini listele", "dosyaları göster", "klasör içeriği", "masaustundeki dosya", "masaüstündeki dosya", "indirilenleri listele")):
+        # 6. Dizin / Klasör Listeleme (Gerçek OneDrive/Shell32 Masaüstü Dahil!)
+        if any(
+            k in p_low
+            for k in (
+                "dosyaları listele",
+                "klasörleri listele",
+                "klasorleri listele",
+                "klasörleri göster",
+                "klasörü listele",
+                "dizini listele",
+                "dosyaları göster",
+                "klasör içeriği",
+                "masaustundeki dosya",
+                "masaüstündeki dosya",
+                "masaüstündeki klasör",
+                "masaüstünde klasör",
+                "masaüstünde ne var",
+                "masaüstünü listele",
+                "indirilenleri listele",
+                "belgeleri listele",
+            )
+        ):
             if "masaüstü" in p_low or "masaustu" in p_low:
                 target_dir = "desktop"
             elif "indirilen" in p_low:
                 target_dir = "downloads"
+            elif "belge" in p_low:
+                target_dir = "documents"
             else:
                 target_dir = self.workspace_root
             _add_step(f"Dizin Taranıyor: {target_dir}", "list_directory", {"path": target_dir})
@@ -2375,7 +2474,7 @@ class KamAutonomousAgent:
             if any(k in p_low for k in ("kaydet", "rapor oluştur", "dosyaya yaz")):
                 rep_file = re.search(r"([a-zA-Z0-9_\-]+\.(?:md|txt|json|html))", p_raw, re.IGNORECASE)
                 fname = rep_file.group(1) if rep_file else "kam_sistem_raporu.md"
-                dest = os.path.join(os.path.expanduser("~"), "Desktop", fname) if ("masaüstü" in p_low or "masaustu" in p_low) else fname
+                dest = os.path.join(self.desktop_dir, fname) if ("masaüstü" in p_low or "masaustu" in p_low) else fname
                 report_md = (
                     f"# KAM // OTONOM BİLGİSAYAR VE DONANIM DENETİM RAPORU\n"
                     f"- **Tarih / Saat:** {time.strftime('%Y-%m-%d %H:%M:%S')}\n"

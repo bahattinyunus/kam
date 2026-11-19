@@ -916,23 +916,39 @@ class UniversalLLMClient:
                     )
                     react_messages = prior_history + [{"role": "user", "content": enriched_user}]
                 elif is_kam_model and is_actionable:
+                    os_name = "Windows" if sys.platform == "win32" else sys.platform
+                    desktop_path = getattr(self.agent, "desktop_dir", os.path.join(os.path.expanduser("~"), "Desktop"))
+                    workspace_path = getattr(self.agent, "workspace_root", os.getcwd())
                     action_prompt = (
                         f"[KULLANICI EMİR VEYA GÖREVİ]:\n{user_prompt}\n\n"
+                        f"[GERÇEK ÇALIŞMA ORTAMI]:\n"
+                        f"- İşletim Sistemi: {os_name}\n"
+                        f"- Gerçek Masaüstü (DESKTOP): {desktop_path}\n"
+                        f"- Çalışma Dizini (WORKSPACE): {workspace_path}\n\n"
                         f"[EGEMEN OTONOM BİLGİSAYAR AJANI — CODEACT & REACT PROTOKOLÜ]:\n"
                         f"Bu bilgisayar üzerinde tam yetkiye (SOVEREIGN_FULL_ADMIN_ACCESS) sahipsin.\n"
                         f"Görevi gerçekten icra etmek için yanıtında doğrudan çalıştırılabilir Python `<codeact>` bloğu "
-                        f"veya `<tool_call>{{\"name\": \"...\", \"arguments\": {{...}}}}</tool_call>` üret.\n"
-                        f"`<codeact>` içinde `host` nesnesi ve yollar hazırdır: `WORKSPACE`, `DESKTOP`, `DOWNLOADS`, "
-                        f"`host.shell(cmd)`, `host.sysinfo()`, `host.windows()`, `host.focus(title)`, `host.click(x, y)`, "
-                        f"`host.move_mouse(x, y)`, `host.type_text(text, press_enter=True)`, `host.hotkey(keys)`, "
-                        f"`host.open_app(target)`, `host.write_file(path, text)`, `host.read_file(path)`, "
-                        f"`host.web_search(q)`, `host.fetch_url(url)`, `host.screenshot(path)`.\n"
-                        f"Kural: Varsayım yapma, doğrudan icra et; çıktı sana geri verilecek. Hata çıkarsa düzeltip tekrar dene. "
-                        f"Görev bitince araç çağırmadan kısa ve kanıtlı nihai yanıt ver."
+                        f"veya `<tool_call>{{\"name\": \"list_directory|run_shell_command|execute_python_code|...\", \"arguments\": {{...}}}}</tool_call>` üret.\n"
+                        f"`<codeact>` içinde `host` nesnesi ve gerçek yollar hazırdır: `WORKSPACE`, `DESKTOP`, `DOCUMENTS`, `DOWNLOADS`, "
+                        f"`host.shell(cmd)`, `host.sysinfo()`, `host.list_dir(path)`, `host.windows()`, `host.focus(title)`, `host.click(x, y)`, "
+                        f"`host.type_text(text, press_enter=True)`, `host.open_app(target)`, `host.write_file(path, text)`, `host.read_file(path)`, "
+                        f"`host.web_search(q)`, `host.screenshot(path)`.\n"
+                        f"Kurallar: ASLA uydurma Linux yolu (/home/user/Desktop vb.) kullanma; doğrudan `DESKTOP` değişkenini kullan. "
+                        f"Varsayım yapma, hemen icra et; çıktı sana geri verilecek. Düşünceni kısa tut ve Türkçe, net, kanıtlı nihai yanıt ver."
                     )
                     react_messages = prior_history + [{"role": "user", "content": action_prompt}]
                 elif is_kam_model:
-                    react_messages = prior_history + [{"role": "user", "content": user_prompt}]
+                    if self.agent_enabled and prior_history:
+                        desktop_path = getattr(self.agent, "desktop_dir", os.path.join(os.path.expanduser("~"), "Desktop"))
+                        grounded_follow = (
+                            f"{user_prompt}\n\n"
+                            f"[YEREL HÜKÜMRANLIK HATIRLATMASI]: Sen bu Windows bilgisayarında tam yetkiyle yerel çalışıyorsun "
+                            f"(Gerçek Masaüstü: {desktop_path}). ASLA 'bilgisayarındaki dosyalara erişemiyorum / sınırlarım nedeniyle göremiyorum' deme; "
+                            f"kullanıcı dosya, klasör veya sistem soruyorsa hemen `<codeact>` veya `<tool_call>` ile gerçek sisteme bak ve Türkçe yanıtla."
+                        )
+                        react_messages = prior_history + [{"role": "user", "content": grounded_follow}]
+                    else:
+                        react_messages = prior_history + [{"role": "user", "content": user_prompt}]
                 else:
                     react_messages = [{"role": "system", "content": system_instruction}] + prior_history + [
                         {"role": "user", "content": user_prompt}
