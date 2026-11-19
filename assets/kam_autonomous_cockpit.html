@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>KAM // OTONOM SİBER KOMUTA &amp; SİSTEM KOKPİTİ</title>
+<style>
+  body { background: #050811; color: #E2E8F0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 28px; }
+  .header { border-bottom: 1px solid #1E293B; padding-bottom: 16px; margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; }
+  .title { font-size: 22px; font-weight: 800; letter-spacing: 3px; color: #00E5FF; }
+  .badge { background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid #10B981; padding: 6px 14px; border-radius: 20px; font-family: Consolas, monospace; font-weight: 700; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
+  .card { background: #090E1A; border: 1px solid #1E293B; border-left: 3px solid #00E5FF; border-radius: 10px; padding: 18px; }
+  .card h3 { margin-top: 0; color: #00E5FF; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; }
+  .metric { font-size: 28px; font-weight: 800; color: #F8FAFC; font-family: Consolas, monospace; margin: 8px 0; }
+  .sub { color: #94A3B8; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="title">KAM // OTONOM SİBER KOMUTA &amp; SİSTEM KOKPİTİ</div>
+      <div class="sub">Dede Korkut Hikmeti &bull; Karl Friston Serbest Enerji (F &rarr; 0) &bull; Manus-Sınıfı Tam Yetkili AgentOS</div>
+    </div>
+    <div class="badge" id="clock">NÖBET AKTİF</div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>I. Bilgisayar & İşlemci</h3>
+      <div class="metric">dijitalseyyah</div>
+      <div class="sub">Windows 11 (10.0.26200)<br>Çekirdek: 32 Mantıksal İşlemci</div>
+    </div>
+    <div class="card">
+      <h3>II. Fiziksel RAM Belleği</h3>
+      <div class="metric">26.61 / 63.22 GB</div>
+      <div class="sub">Kullanım Oranı: %42</div>
+    </div>
+    <div class="card">
+      <h3>III. NVIDIA RTX / CUDA</h3>
+      <div class="metric">NVIDIA GeForce RTX 5060 Laptop GPU</div>
+      <div class="sub">Sıcaklık: 61.0 &deg;C | VRAM: 7778.0 MB</div>
+    </div>
+    <div class="card">
+      <h3>IV. KAM Kod Külliyatı</h3>
+      <div class="metric">26,274 Satır</div>
+      <div class="sub">130 Kaynak Dosya | 68 Sınıf | 430 Fonksiyon</div>
+    </div>
+  </div>
+  <script>
+    setInterval(() => {
+      document.getElementById('clock').innerText = 'CANLI NÖBET // ' + new Date().toLocaleTimeString('tr-TR');
+    }, 1000);
+  </script>
+</body>
+</html>

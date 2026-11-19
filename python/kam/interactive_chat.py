@@ -30,26 +30,27 @@ class KamInteractiveChat:
         self.running = True
 
     def run(self):
-        print("\033[1;36m" + "=" * 68 + "\033[0m")
-        print("\033[1;35m  🐺 KAM BİLİŞSEL ZİHİN: UNIVERSAL LLM ETKİLEŞİMLİ TERMİNAL \033[0m")
-        print("\033[1;36m" + "=" * 68 + "\033[0m")
-        print(f"  • Aktif LLM Motoru: \033[1;32m{self.llm.current_model}\033[0m (Backend: {self.llm.active_backend.upper()})")
-        print("  • RAG Destekli Türkçe Bilgi Tabanı & Sıvı Sinir Ağı Entegrasyonu")
-        print("  • Genel sohbet, felsefe, kod üretimi, coğrafya ve telemetri teşhisi")
-        print("  • Çıkmak için 'exit', 'q' veya 'cikis' yazabilirsiniz.")
-        print("-" * 68 + "\n")
+        print("\033[1;36m" + "=" * 72 + "\033[0m")
+        print("\033[1;35m  K A M // EGEMEN BİLİŞSEL ZİHİN VE HİKMET KOMUTA DERGÂHI \033[0m")
+        print("\033[1;36m" + "=" * 72 + "\033[0m")
+        print(f"  • Aktif Bilişsel Zihin : \033[1;32m{self.llm.current_model}\033[0m ({self.llm.active_backend.upper()})")
+        print("  • Felsefi ve Sibernetik: Dede Korkut Hikmeti & Karl Friston Serbest Enerji (F -> 0)")
+        print("  • Çekirdek ve Onarım   : Linux eBPF Sinir Kancaları & C++20 Bellek-İçi JIT Mutasyonu")
+        print("  • Nöbet Şiarı          : \"Gök çökmedikçe, yağız yer delinmedikçe bu nöbet bitmez.\"")
+        print("  • Oturumu kapatmak için 'exit', 'q' veya 'cikis' yazabilirsiniz.")
+        print("-" * 72 + "\n")
 
         while self.running:
             try:
-                prompt = input("\033[1;32mKAM-KULLANICI > \033[0m").strip()
+                prompt = input("\033[1;32mKOMUTAN // > \033[0m").strip()
                 if not prompt:
                     continue
 
                 if prompt.lower() in ["exit", "q", "quit", "cikis"]:
-                    print("\033[1;33m[KAM] Bilişsel oturum kapatıldı. Ruh bekleme moduna alındı.\033[0m")
+                    print("\033[1;33m[KAM] Bilişsel divan mühürlendi. Silikon sinir sistemi sessiz nöbete geçti.\033[0m")
                     break
 
-                print("\033[1;34m[KAM-ZİHİN DÜŞÜNÜYOR...]\033[0m")
+                print("\033[1;34m[KAM BİLİŞSEL ZİHNİ MUHAKEME EDİYOR...]\033[0m")
 
                 p_lower = prompt.lower()
 

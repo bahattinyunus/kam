@@ -36,6 +36,7 @@ from kam.actuator_reconfigurator import ActuatorFaultReconfigurator
 from kam.covert_fso_comm import FsoLinkParameters, CovertFsoLaserTransceiver
 from kam.radiation_ecc_scrubber import RadiationHardenedMemoryScrubber
 from kam.differential_game_evasion import MissileEngagementState, DifferentialGameMissileEvasion
+from kam.autonomous_agent import KamAutonomousAgent, HostSafetyShield
 
 class TestKam(unittest.TestCase):
     def test_active_inference_normal_and_anomaly(self):
@@ -559,6 +560,544 @@ class TestKam(unittest.TestCase):
         self.assertGreater(hji["hji_saddle_point_terminal_miss_m"], hji["warhead_lethal_radius_m"] * 2.5)
         self.assertLess(hji["unmaneuvered_pn_miss_m"], hji["warhead_lethal_radius_m"])
         self.assertEqual(len(hji["optimal_evasion_accel_mps2"]), 3)
+
+    def test_autonomous_computer_agent_and_safety_shield(self):
+        import tempfile
+        agent = KamAutonomousAgent()
+        tools = agent.list_agent_tools()
+        self.assertGreaterEqual(len(tools), 12)
+
+        # 1. Gerçek bilgisayar telemetrisi
+        sys_info = agent.execute_tool("get_real_system_telemetry")
+        self.assertEqual(sys_info["status"], "success")
+        self.assertIn("hostname", sys_info)
+        self.assertGreaterEqual(sys_info["cpu_logical_cores"], 1)
+
+        # 2. Güvenlik kalkanı yıkıcı komutları engellemeli
+        safe_ok, _ = HostSafetyShield.verify_command("git status")
+        self.assertTrue(safe_ok)
+        unsafe_ok, _ = HostSafetyShield.verify_command("rm -rf /")
+        self.assertFalse(unsafe_ok)
+        blocked_res = agent.execute_tool("run_shell_command", {"command": "Format-Volume -DriveLetter C"})
+        self.assertEqual(blocked_res["status"], "blocked_by_safety_shield")
+
+        # 3. Canlı Python kodu icrası
+        py_res = agent.execute_tool("execute_python_code", {"code": "print(sum(i*i for i in range(1, 6)))"})
+        self.assertEqual(py_res["status"], "success")
+        self.assertEqual(py_res["stdout"], "55")
+
+        # 4. Dosya yazma, düzenleme ve okuma
+        with tempfile.TemporaryDirectory() as tmpdir:
+            test_file = os.path.join(tmpdir, "kam_agent_test.txt")
+            w_res = agent.execute_tool("write_file", {"path": test_file, "content": "Kut ve Dirlik nöbeti."})
+            self.assertEqual(w_res["status"], "success")
+            e_res = agent.execute_tool("edit_file", {"path": test_file, "target": "nöbeti", "replacement": "kaimdir"})
+            self.assertEqual(e_res["status"], "success")
+            r_res = agent.execute_tool("read_file", {"path": test_file})
+            self.assertIn("Kut ve Dirlik kaimdir.", r_res["content"])
+
+        # 5. Doğal Türkçe emir refleks icrası, <tool_call> ve <codeact> ayrıştırma
+        direct = agent.detect_and_execute_direct_intent("Bilgisayarın gerçek sistem durumunu ve RAM kullanımını denetle")
+        self.assertGreaterEqual(len(direct), 1)
+        self.assertEqual(direct[0]["tool"], "get_real_system_telemetry")
+
+        # 6. Manus-AI Stateful CodeAct (oturumlar arası değişken koruma ve host.* köprüsü)
+        agent.execute_tool("execute_python_code", {"code": "kam_persistent_var = 42"})
+        stateful_res = agent.execute_tool("execute_python_code", {"code": "print(kam_persistent_var + int(host.sysinfo()['cpu_logical_cores'] >= 1))"})
+        self.assertEqual(stateful_res["stdout"], "43")
+
+        # 7. UFO² Sınıfı Win32 Fare Konumu ve Batarya/Güç Denetimi
+        mouse_pos = agent.execute_tool("mouse_control", {"action": "position"})
+        self.assertIn("screen_width", mouse_pos)
+        self.assertGreater(mouse_pos["screen_width"], 0)
+        bat_res = agent.execute_tool("os_hardware_control", {"action": "battery"})
+        self.assertEqual(bat_res["status"], "success")
+
+        # 8. Çok Adımlı Zincirleme Görev Planı (Mission Plan DAG)
+        multi_steps = agent.detect_and_execute_direct_intent(
+            "Fare konumunu, ekran çözünürlüğünü ve batarya güç durumunu göster."
+        )
+        self.assertGreaterEqual(len(multi_steps), 2)
+        plan_card = KamAutonomousAgent.format_mission_plan_card(multi_steps)
+        self.assertIn("MANUS-SINIFI OTONOM GÖREV PLANI", plan_card)
+
+        parsed_calls = KamAutonomousAgent.extract_tool_calls(
+            'İcra ediyorum:\n<tool_call>{"name": "execute_python_code", "arguments": {"code": "2+2"}}</tool_call>\n'
+            '<codeact>print(host.sysinfo()["hostname"])</codeact>'
+        )
+        self.assertEqual(len(parsed_calls), 2)
+        self.assertEqual(parsed_calls[0]["name"], "execute_python_code")
+        self.assertEqual(parsed_calls[1]["name"], "execute_python_code")
+
+        # 9. Tam Yetki Matrisi, Tüm Disk Sürücüleri ve Kalıcı Epizodik Hafıza
+        perm_res = agent.execute_tool("os_hardware_control", {"action": "permissions"})
+        self.assertTrue(perm_res["full_permissions_granted"])
+        self.assertEqual(perm_res["permission_tier"], "SOVEREIGN_FULL_ADMIN_ACCESS")
+        drives_res = agent.execute_tool("os_hardware_control", {"action": "drives"})
+        self.assertEqual(drives_res["status"], "success")
+        self.assertGreaterEqual(len(drives_res["drives"]), 1)
+
+        mem_store = agent.remember_fact("Komutanın birincil hedefi tam otonom sistem hakimiyetidir.")
+        self.assertEqual(mem_store["status"], "success")
+        mem_recall = agent.recall_memories("hakimiyet")
+        self.assertGreaterEqual(len(mem_recall["memories"]), 1)
+
+        # 10. Kod Külliyatı Analizi, Dosya Güç İşlemleri (mkdir/zip) ve İnteraktif HTML5 Kokpit Üretimi
+        cb_res = agent.execute_tool("analyze_codebase", {})
+        self.assertEqual(cb_res["status"], "success")
+        self.assertGreater(cb_res["total_lines_of_code"], 1000)
+        self.assertGreater(cb_res["python_classes"], 10)
+
+        with tempfile.TemporaryDirectory() as tmpdir2:
+            sub_folder = os.path.join(tmpdir2, "kam_hq")
+            mk_res = agent.execute_tool("file_power_ops", {"action": "mkdir", "source": sub_folder})
+            self.assertEqual(mk_res["status"], "success")
+            webapp_out = os.path.join(sub_folder, "cockpit.html")
+            wa_res = agent.execute_tool("build_interactive_webapp", {"output_path": webapp_out, "launch": False})
+            self.assertEqual(wa_res["status"], "success")
+            self.assertTrue(os.path.isfile(webapp_out))
+            zip_res = agent.execute_tool("file_power_ops", {"action": "zip", "source": sub_folder})
+            self.assertEqual(zip_res["status"], "success")
+            self.assertTrue(os.path.isfile(zip_res["archive_path"]))
+
+    def test_extract_tool_calls_and_codeact_edge_cases(self):
+        # 1. <think> içindeki hayalet araç çağrıları yoksayılmalı, belge sırası korunmalı
+        sample = (
+            '<think>Belki <tool_call>{"name": "run_shell_command", "arguments": {"command": "echo ghost"}}</tool_call></think>\n'
+            'Adım 1:\n'
+            '<TOOL_CALL id="1">\n```json\n{"name": "list_directory", "arguments": {"path": ".",},}\n```\n</TOOL_CALL>\n'
+            'Adım 2:\n'
+            '<CodeAct lang="python">\n```python\nprint(21 * 2)\n```\n</CodeAct>'
+        )
+        calls = KamAutonomousAgent.extract_tool_calls(sample)
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(calls[0]["name"], "list_directory")
+        self.assertEqual(calls[0]["arguments"], {"path": "."})
+        self.assertEqual(calls[1]["name"], "execute_python_code")
+        self.assertEqual(calls[1]["arguments"]["code"], "print(21 * 2)")
+
+        # 2. Çevre metinli dengeli JSON + stringified arguments kurtarma
+        noisy = (
+            '<tool_call>Çağrı: {"name": "execute_python_code", '
+            '"arguments": "{\\"code\\": \\"print(9)\\"}"} bitti.</tool_call>'
+        )
+        noisy_calls = KamAutonomousAgent.extract_tool_calls(noisy)
+        self.assertEqual(len(noisy_calls), 1)
+        self.assertEqual(noisy_calls[0]["name"], "execute_python_code")
+        self.assertEqual(noisy_calls[0]["arguments"], {"code": "print(9)"})
+
+        # 3. Kapatılmamış <codeact> kurtarma
+        truncated = "Hemen çalıştırıyorum:\n<codeact>\nx = 10\nprint(x + 5)"
+        trunc_calls = KamAutonomousAgent.extract_tool_calls(truncated)
+        self.assertEqual(len(trunc_calls), 1)
+        self.assertEqual(trunc_calls[0]["name"], "execute_python_code")
+        self.assertIn("print(x + 5)", trunc_calls[0]["arguments"]["code"])
+
+        # 4. include_fenced_code=True: py/python/powershell ve def bloğu dahil
+        fenced = (
+            "```py\ndef kare(n):\n    return n * n\nprint(kare(6))\n```\n"
+            "```powershell\nGet-Date\n```"
+        )
+        self.assertEqual(KamAutonomousAgent.extract_tool_calls(fenced, include_fenced_code=False), [])
+        fenced_calls = KamAutonomousAgent.extract_tool_calls(fenced, include_fenced_code=True)
+        self.assertEqual(len(fenced_calls), 2)
+        self.assertEqual(fenced_calls[0]["name"], "execute_python_code")
+        self.assertIn("def kare", fenced_calls[0]["arguments"]["code"])
+        self.assertEqual(fenced_calls[1]["name"], "run_shell_command")
+        self.assertEqual(fenced_calls[1]["arguments"]["command"], "Get-Date")
+
+    def test_react_multi_step_self_healing_and_loop_guard(self):
+        import threading
+        from unittest.mock import patch
+        from kam.real_llm import UniversalLLMClient
+
+        client = UniversalLLMClient(ollama_url="http://127.0.0.1:9")
+        client.set_model("kam:apex")
+
+        # Senaryo A: Bozuk <tool_call> öz-onarım -> geçerli <codeact> -> nihai yanıt
+        steps_a = iter([
+            ['<tool_call>{"name": "execute_python_code"'],  # kapatılmamış & bozuk
+            ['<codeact>print(6 * 7)</codeact>'],
+            ['Hesaplama tamamlandı: sonuç 42.'],
+        ])
+        with patch.object(client, "check_ollama_alive", return_value=True), \
+             patch.object(client, "_stream_ollama_step", side_effect=lambda *a, **kw: next(steps_a)):
+            out_a = "".join(client.generate_stream("Özel matematiksel test çalıştır"))
+        self.assertIn("42", out_a)
+        self.assertIn("Hesaplama tamamlandı", out_a)
+
+        # Senaryo B: Python çalışma zamanı hatası -> öz-onarım -> başarılı icra
+        client.conversation_history.clear()
+        recorded_prompts = []
+        steps_b = iter([
+            ['<codeact>print(1 / 0)</codeact>'],
+            ['<codeact>print(10 // 2)</codeact>'],
+            ['Hata onarıldı, sonuç 5.'],
+        ])
+
+        def _fake_stream_b(url, target_model, messages, is_actionable, abort_event=None):
+            recorded_prompts.append(messages[-1]["content"])
+            return next(steps_b)
+
+        with patch.object(client, "check_ollama_alive", return_value=True), \
+             patch.object(client, "_stream_ollama_step", side_effect=_fake_stream_b):
+            out_b = "".join(client.generate_stream("Bölme testi yap"))
+        self.assertIn("Hata onarıldı, sonuç 5.", out_b)
+        self.assertTrue(any("Hata tespit edildi" in p for p in recorded_prompts))
+
+        # Senaryo C: Aynı araç+argüman tekrarında sonsuz döngü koruması + araçsız nihai sentez
+        client.conversation_history.clear()
+        steps_c = iter([
+            ['<codeact>print("dup_guard")</codeact>'],
+            ['<codeact>print("dup_guard")</codeact>'],
+            ['<codeact>print("dup_guard")</codeact>'],
+            ['Döngü sonlandırıldı, özet sunuldu.'],
+        ])
+        call_count = {"n": 0}
+
+        def _fake_stream_c(*a, **kw):
+            call_count["n"] += 1
+            return next(steps_c)
+
+        with patch.object(client, "check_ollama_alive", return_value=True), \
+             patch.object(client, "_stream_ollama_step", side_effect=_fake_stream_c):
+            out_c = "".join(client.generate_stream("Tekrar testi"))
+        self.assertEqual(call_count["n"], 4)
+        self.assertIn("Döngü sonlandırıldı", out_c)
+
+        # Senaryo D: abort_event ile erken iptal -> conversation_history dengeli kalmalı
+        client.conversation_history.clear()
+        abort_ev = threading.Event()
+
+        def _aborting_stream(*a, **kw):
+            yield "Parça 1 "
+            abort_ev.set()
+            yield "Parça 2"
+
+        with patch.object(client, "check_ollama_alive", return_value=True), \
+             patch.object(client, "_stream_ollama_step", side_effect=_aborting_stream):
+            out_d = "".join(client.generate_stream("İptal testi", abort_event=abort_ev))
+        self.assertIn("Parça 1", out_d)
+        # İptal edilmeden önce başlayan istek için tarihçe dengesiz (tekil user) kalmamalı
+        if client.conversation_history:
+            self.assertEqual(client.conversation_history[-1]["role"], "assistant")
+
+    def test_model_selection_persistence_and_context_budget(self):
+        from unittest.mock import patch, MagicMock
+        from kam.real_llm import UniversalLLMClient
+
+        # _match_model_name: kam:r1 asla kam:r1-nano:latest ile eşleşmemeli
+        installed = ["kam:apex:latest", "kam:7b:latest", "kam:r1-nano:latest", "kam:coder:latest"]
+        self.assertIsNone(UniversalLLMClient._match_model_name(installed, "kam:r1"))
+        self.assertEqual(UniversalLLMClient._match_model_name(installed, "kam:apex"), "kam:apex:latest")
+        self.assertEqual(UniversalLLMClient._match_model_name(installed, "kam:coder"), "kam:coder:latest")
+
+        fake_tags = json.dumps({"models": [{"name": m} for m in installed]}).encode("utf-8")
+
+        def _fake_urlopen(req, timeout=1.5):
+            cm = MagicMock()
+            resp = MagicMock()
+            resp.status = 200
+            resp.read.return_value = fake_tags
+            cm.__enter__.return_value = resp
+            cm.__exit__.return_value = False
+            return cm
+
+        with patch("urllib.request.urlopen", side_effect=_fake_urlopen):
+            client = UniversalLLMClient(ollama_url="http://127.0.0.1:11434")
+            self.assertEqual(client.current_model, "kam:apex:latest")
+
+            for chosen, expected_backend in [
+                ("kam:council", "ollama"),
+                ("kam:coder", "ollama"),
+                ("kam:r1", "ollama"),
+                ("kam:7b", "ollama"),
+                ("gemini-2.0-flash", "gemini"),
+                ("kam-1-liquid-moe", "local_fallback"),
+            ]:
+                client.set_model(chosen)
+                self.assertTrue(client.check_ollama_alive(force_refresh=True))
+                self.assertEqual(client.current_model, chosen)
+                self.assertEqual(client.active_backend, expected_backend)
+
+        # 16K bağlam bütçesi kırpma testi
+        huge_msgs = [{"role": "system", "content": "Sistem talimatı"}]
+        for i in range(60):
+            huge_msgs.append({"role": "user" if i % 2 == 0 else "assistant", "content": f"Tur {i}: " + ("A" * 2500)})
+        huge_msgs.append({"role": "user", "content": "Son soru"})
+        trimmed = UniversalLLMClient._trim_messages_to_budget(huge_msgs, max_context_tokens=4096, reserve_output_tokens=512)
+        self.assertEqual(trimmed[0]["role"], "system")
+        self.assertEqual(trimmed[-1]["content"], "Son soru")
+        total_est = sum(UniversalLLMClient._estimate_tokens(m["content"]) for m in trimmed)
+        self.assertLessEqual(total_est, 4096)
+
+    def test_is_actionable_computer_query_tr_and_en(self):
+        # Türkçe eylem komutları
+        tr_actionable = [
+            "/run git status",
+            "/py print(1+1)",
+            "Masaüstünde rapor.txt dosyası oluştur",
+            "Bilgisayarın GPU ve VRAM kullanımını göster",
+            "Ekran görüntüsü al ve kaydet",
+            "Chrome tarayıcısını aç",
+            "Panoyu oku",
+            "Klasördeki dosyaları listele",
+        ]
+        for q in tr_actionable:
+            self.assertTrue(KamAutonomousAgent.is_actionable_computer_query(q), f"Expected True for TR query: {q}")
+
+        # İngilizce eylem komutları
+        en_actionable = [
+            "run pytest on tests",
+            "list files in current directory",
+            "check system info and battery",
+            "open calculator",
+            "take a screenshot",
+            "analyze codebase lines of code",
+            "kill process notepad",
+            "read file README.md",
+        ]
+        for q in en_actionable:
+            self.assertTrue(KamAutonomousAgent.is_actionable_computer_query(q), f"Expected True for EN query: {q}")
+
+        # Eylem gerektirmeyen sohbet/hikmet soruları
+        non_actionable = [
+            "",
+            "   ",
+            "Dede Korkut kimdir?",
+            "Merhaba, nasılsın?",
+            "What is the philosophy of Stoicism?",
+        ]
+        for q in non_actionable:
+            self.assertFalse(KamAutonomousAgent.is_actionable_computer_query(q), f"Expected False for query: {q}")
+
+    def test_host_safety_shield_hardened_patterns(self):
+        dangerous = [
+            "Remove-Item -Recurse -Force C:\\",
+            "del /f /s /q C:\\Windows\\System32",
+            "bcdedit /delete {default}",
+            "vssadmin delete shadows /all",
+            "Clear-Disk -Number 0",
+            "format C:",
+            "mkfs.ext4 /dev/sda1",
+        ]
+        for cmd in dangerous:
+            ok, _ = HostSafetyShield.verify_command(cmd)
+            self.assertFalse(ok, f"Expected HostSafetyShield to block: {cmd}")
+
+        for safe_cmd in ("git status", "python -m unittest", "dir", "Get-Process"):
+            ok, _ = HostSafetyShield.verify_command(safe_cmd)
+            self.assertTrue(ok, f"Expected HostSafetyShield to allow: {safe_cmd}")
+
+    def test_cognitive_core_routing_and_rag_precision(self):
+        # "ast" alt dizisi artık "hastane" / "rastgele" gibi kelimeleri kam:coder'a yönlendirmemeli
+        c_hosp = CognitiveCouncilRouter.select_specialist_model("Hastane randevusu ve rastgele bir sohbet")
+        self.assertEqual(c_hosp["selected_model"], "kam:7b")
+
+        # Türkçe İ/I normalizasyonu ("İstanbul" -> "istanbul", "i stanbul" olmamalı)
+        ke = LocalKnowledgeEngine()
+        self.assertEqual(ke.normalize("İstanbul"), "istanbul")
+
+        # Bilgisayar eylem komutları yanlış-pozitif RAG tetiklememeli
+        self.assertIsNone(ke.query("Masaüstünde yeni dosya oluştur ve python çalıştır"))
+
+    def test_desktop_ui_import_and_format_html_text(self):
+        try:
+            from kam.desktop_app import KamDesktopWindow, LLMStreamWorker
+        except ImportError as exc:
+            self.skipTest(f"PyQt6 unavailable in test environment: {exc}")
+
+        self.assertTrue(hasattr(LLMStreamWorker, "cancel"))
+        raw = (
+            "🏛️ [BİLİŞSEL KURUL YÖNLENDİRMESİ // SEÇİLEN UZMAN: KAM:CODER | GÖREV ROLÜ: CODER]\n"
+            "🧭 [MANUS-SINIFI OTONOM GÖREV PLANI // 2 ADIMLI ZİNCİRLEME İCRA]\n"
+            "⚡ [OTONOM AJAN İCRASI // EXECUTE_PYTHON_CODE | DURUM: SUCCESS | 4.2 ms]\n"
+            "<think>Önce doğrulama yapalım.</think>\n"
+            "<codeact>print('ok')</codeact>\n"
+            "```python\nx = 1 + 2\n```\n"
+            "Sonuç **hazır** ve `x = 3` değerinde. <script>alert(1)</script>"
+        )
+        html_out = KamDesktopWindow._format_html_text(None, raw)
+        self.assertIn("CODEACT // OTONOM PYTHON İCRASI", html_out)
+        self.assertIn("CoT AKIL YÜRÜTME ZİNCİRİ", html_out)
+        self.assertIn("<b style='color:#F8FAFC;'>hazır</b>", html_out)
+        self.assertIn("x = 3", html_out)
+        # XSS kaçışı doğrulanmalı
+        self.assertNotIn("<script>", html_out)
+        self.assertIn("&lt;script&gt;", html_out)
+        # Açılan ve kapanan <div> / <b> etiketleri dengeli olmalı
+        self.assertEqual(html_out.count("<div"), html_out.count("</div>"))
+        self.assertEqual(html_out.count("<b"), html_out.count("</b>"))
+
+    def test_sprint1_agent_os_mastery_tools(self):
+        import tempfile
+        from unittest.mock import patch, MagicMock
+
+        agent = KamAutonomousAgent()
+        tool_names = {t["name"] for t in agent.list_agent_tools()}
+        self.assertIn("smart_workspace_search", tool_names)
+        self.assertIn("clipboard_manager", tool_names)
+        self.assertIn("system_notification", tool_names)
+
+        # 1. smart_workspace_search: .git / __pycache__ / node_modules / ikili dosya atlanmalı
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with open(os.path.join(tmpdir, "alpha.py"), "w", encoding="utf-8") as f:
+                f.write("line1\nKAM_NEEDLE_777 = 'Dirlik'\nline3\n")
+            with open(os.path.join(tmpdir, "notes.txt"), "w", encoding="utf-8") as f:
+                f.write("KAM_NEEDLE_777 in txt\n")
+            with open(os.path.join(tmpdir, "blob.bin"), "wb") as f:
+                f.write(b"\x00\x01KAM_NEEDLE_777\x00")
+            for ignored in (".git", "__pycache__", "node_modules"):
+                ig_dir = os.path.join(tmpdir, ignored)
+                os.makedirs(ig_dir, exist_ok=True)
+                with open(os.path.join(ig_dir, "skip.py"), "w", encoding="utf-8") as f:
+                    f.write("KAM_NEEDLE_777\n")
+
+            res_all = agent.execute_tool("smart_workspace_search", {"query": r"KAM_NEEDLE_\d+", "path": tmpdir, "context_lines": 1})
+            self.assertEqual(res_all["status"], "success")
+            self.assertEqual(res_all["total_matches"], 2)
+            self.assertTrue(all(":" in m["location"] for m in res_all["matches"]))
+
+            res_py = agent.execute_tool("smart_workspace_search", {"query": "KAM_NEEDLE_777", "path": tmpdir, "file_pattern": "*.py"})
+            self.assertEqual(res_py["status"], "success")
+            self.assertEqual(res_py["total_matches"], 1)
+            self.assertTrue(res_py["matches"][0]["file"].endswith("alpha.py"))
+
+            # Boş sorgu hata döndürmeli
+            res_empty = agent.execute_tool("smart_workspace_search", {"query": ""})
+            self.assertEqual(res_empty["status"], "error")
+
+            # host.smart_search CodeAct köprüsü çalışmalı
+            bridge_res = agent.execute_tool(
+                "execute_python_code",
+                {"code": f"r = host.smart_search('KAM_NEEDLE_777', path={tmpdir!r}, file_pattern='*.py'); print(r['total_matches'])"},
+            )
+            self.assertEqual(bridge_res["status"], "success")
+            self.assertEqual(bridge_res["stdout"], "1")
+
+        # 2. clipboard_manager: geçersiz eylem hatası + UTF-8/Türkçe/çok-satırlı set/get (-EncodedCommand)
+        bad_cb = agent.execute_tool("clipboard_manager", {"action": "invalid_op"})
+        self.assertEqual(bad_cb["status"], "error")
+
+        sample_clip = "Türkçe şğüöçıİ\n'tek tırnak' ve satır 2"
+        fake_proc = MagicMock(returncode=0, stdout=sample_clip, stderr="")
+        with patch("kam.autonomous_agent.subprocess.run", return_value=fake_proc) as mock_run:
+            set_res = agent.execute_tool("clipboard_manager", {"action": "set", "text": sample_clip})
+            self.assertEqual(set_res["status"], "success")
+            self.assertEqual(set_res["action"], "set")
+            called_cmd = mock_run.call_args[0][0]
+            self.assertIn("-EncodedCommand", called_cmd)
+
+            get_res = agent.execute_tool("clipboard_manager", {"action": "get"})
+            self.assertEqual(get_res["status"], "success")
+            self.assertEqual(get_res["text"], sample_clip)
+
+        # 3. system_notification: boş mesaj reddi + bloklamayan Popen bildirimi
+        bad_notif = agent.execute_tool("system_notification", {"title": "KAM", "message": ""})
+        self.assertEqual(bad_notif["status"], "error")
+
+        with patch("kam.autonomous_agent.subprocess.Popen") as mock_popen:
+            ok_notif = agent.execute_tool("system_notification", {"title": "KAM Nöbeti", "message": "Dirlik sağlandı."})
+            self.assertEqual(ok_notif["status"], "success")
+            self.assertTrue(ok_notif["non_blocking"])
+            mock_popen.assert_called_once()
+            popen_cmd = mock_popen.call_args[0][0]
+            self.assertIn("-EncodedCommand", popen_cmd)
+
+    def test_sprint1_session_title_episodic_memory_and_attached_files(self):
+        import tempfile
+        from unittest.mock import patch
+        from kam.real_llm import UniversalLLMClient
+
+        # 1. generate_session_title
+        self.assertEqual(UniversalLLMClient.generate_session_title(""), "Yeni Oturum")
+        self.assertEqual(
+            UniversalLLMClient.generate_session_title("[EKLİ DOSYA: data/uploads/rapor.txt]"),
+            "Dosya: rapor.txt",
+        )
+        t_tr = UniversalLLMClient.generate_session_title("merhaba, istanbul tarihini özetle")
+        self.assertTrue(t_tr.startswith("İ"), f"Expected Turkish capital İ, got: {t_tr}")
+        t_long = UniversalLLMClient.generate_session_title("a" * 10 + " " + "kelime " * 15, max_len=36)
+        self.assertLessEqual(len(t_long), 36)
+        self.assertTrue(t_long.endswith("..."))
+
+        # 2. Epizodik bellek çıkarımı & generate_stream enjeksiyonu
+        client = UniversalLLMClient(ollama_url="http://127.0.0.1:9")
+        client.set_model("kam:apex")
+        client.agent.episodic_memory = [
+            {"id": 1, "category": "tercih", "note": "Mimar Python testlerinde unittest kullanmayı tercih eder."},
+            {"id": 2, "category": "donanım", "note": "İş istasyonunda RTX 5060 8GB VRAM ve 64GB RAM bulunur."},
+            {"id": 3, "category": "proje", "note": "KAM çekirdeği C++20 ve eBPF ringbuffer mimarisini kullanır."},
+            {"id": 4, "category": "donanım", "note": "İşlemci Ryzen 9 8945HX olarak yapılandırılmıştır."},
+        ]
+        hits = client._retrieve_episodic_memories("RTX 5060 VRAM donanım ve RAM durumu nedir?", top_k=3)
+        self.assertGreaterEqual(len(hits), 1)
+        self.assertLessEqual(len(hits), 3)
+        self.assertTrue(any("RTX 5060" in h for h in hits))
+        self.assertEqual(client._retrieve_episodic_memories("xqz alakasız zzz", top_k=3), [])
+
+        captured_messages = []
+        with patch.object(client, "check_ollama_alive", return_value=True), \
+             patch.object(
+                 client,
+                 "_stream_ollama_step",
+                 side_effect=lambda url, model, msgs, is_actionable, abort_event=None: (
+                     captured_messages.append(msgs),
+                     iter(["Anlaşıldı."]),
+                 )[1],
+             ):
+            out = "".join(client.generate_stream("RTX 5060 VRAM bilgimi hatırla"))
+        self.assertIn("Anlaşıldı.", out)
+        self.assertTrue(any("RTX 5060" in m["content"] for m in captured_messages[0]))
+
+        # 3. [EKLİ DOSYA: <yol>] metin okuma, ikili dosya tespiti ve path traversal koruması
+        with tempfile.TemporaryDirectory() as tmpdir:
+            txt_path = os.path.join(tmpdir, "ornek.txt")
+            with open(txt_path, "w", encoding="utf-8") as f:
+                f.write("Kut ve Dirlik 12345")
+            bin_path = os.path.join(tmpdir, "blob.bin")
+            with open(bin_path, "wb") as f:
+                f.write(b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR")
+
+            clean_p, ctx_txt = client._extract_attached_files_context(f"[EKLİ DOSYA: {txt_path}] Bunu özetle")
+            self.assertEqual(clean_p, "Bunu özetle")
+            self.assertIsNotNone(ctx_txt)
+            self.assertIn("Kut ve Dirlik 12345", ctx_txt)
+
+            _, ctx_bin = client._extract_attached_files_context(f"[EKLİ DOSYA: {bin_path}] İncele")
+            self.assertIsNotNone(ctx_bin)
+            self.assertIn("İKİLİ DOSYA", ctx_bin)
+
+            _, ctx_trav1 = client._extract_attached_files_context("[EKLİ DOSYA: ../../etc/passwd] Oku")
+            self.assertIn("ENGELLENDİ", ctx_trav1)
+            _, ctx_trav2 = client._extract_attached_files_context(r"[EKLİ DOSYA: ..\..\Windows\win.ini] Oku")
+            self.assertIn("ENGELLENDİ", ctx_trav2)
+
+    def test_sprint1_bm25_knowledge_ranking_and_routing_matrix(self):
+        # 1. BM25/TF-IDF nadir terim ağırlığı ve skor sıralaması
+        ke = LocalKnowledgeEngine()
+        rare_idf = ke.get_term_idf("ebpf")
+        common_idf = ke.get_term_idf("kam")
+        self.assertGreater(rare_idf, 0.0)
+        self.assertGreater(rare_idf, common_idf)
+
+        scored = ke.score_entries("Karl Friston serbest enerji ilkesi nedir?", top_k=3)
+        self.assertGreaterEqual(len(scored), 1)
+        self.assertIn("Friston", scored[0]["entry"]["answer"])
+        if len(scored) >= 2:
+            self.assertGreaterEqual(scored[0]["score"], scored[1]["score"])
+        self.assertEqual(ke.score_entries("Masaüstünde dosya oluştur ve python çalıştır"), [])
+
+        # 2. CognitiveCouncilRouter.explain_routing_matrix()
+        matrix = CognitiveCouncilRouter.explain_routing_matrix()
+        self.assertEqual(matrix["council_name"], "KAM-Sovereign-Cognitive-Council")
+        self.assertEqual(matrix["total_specialists"], 5)
+        self.assertEqual(matrix["thermal_throttle_threshold_c"], 85.0)
+        self.assertEqual(matrix["low_ram_threshold_mb"], 2048)
+        specialist_ids = {s["model_id"] for s in matrix["specialists"]}
+        self.assertEqual(specialist_ids, {"kam:coder", "kam:r1", "kam:r1-nano", "kam:1.5b", "kam:7b"})
+        self.assertIn("coding", matrix["category_routes"])
+        self.assertIn("computer_use", matrix["category_routes"])
 
 if __name__ == "__main__":
     unittest.main()

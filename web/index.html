@@ -3,429 +3,509 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAM // Bilişsel Zihin ve Otonom Sistem Motoru</title>
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#07090e">
+  <title>KAM // Egemen Otonom Zihin</title>
   <link rel="icon" type="image/svg+xml" href="kam_logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Arka Plan Atmosferik Işıma -->
-  <div class="ambient-glow glow-1"></div>
-  <div class="ambient-glow glow-2"></div>
+  <!-- Tekil, Sakin Üst Atmosfer Işıması -->
+  <div class="ambient-halo"></div>
 
-  <!-- Üst Gezinme Çubuğu (Iconic Header) -->
+  <!-- SADE ÜST BAR (Minimalist Header) -->
   <header class="app-header">
     <div class="header-left">
-      <div class="brand-badge" title="KAM: Bilişsel Zihin ve Otonom Sistem Motoru">
-        <img src="kam_logo.png" alt="KAM" class="brand-badge-img">
-      </div>
-      <div class="brand-text">
+      <button type="button" id="btn-sessions" class="ghost-btn icon-only" onclick="toggleSessionsDrawer()" title="Oturum Geçmişi" aria-label="Oturum Geçmişi">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+          <line x1="9" y1="4" x2="9" y2="20"></line>
+        </svg>
+      </button>
+      <div class="brand-identity" onclick="resetToHomeView()" title="KAM // Egemen Otonom Zihin">
+        <img src="kam_logo.png" alt="KAM" class="brand-logo">
         <span class="brand-name">KAM</span>
-        <span class="brand-version">CORE v2.5</span>
+      </div>
+      <div class="live-pill" id="status-pill" onclick="toggleTelemetryDrawer()" title="Sistem Telemetrisi ve Durum">
+        <span class="status-dot" id="header-status-dot"></span>
+        <span id="system-status-text">Hazır</span>
+        <span class="pill-sep">&middot;</span>
+        <span id="header-val-tools">39 Araç</span>
+        <span class="pill-sep hide-sm">&middot;</span>
+        <span class="hide-sm">S <strong id="val-entropy">%3</strong></span>
       </div>
     </div>
 
-    <!-- Orta Gösterge: Dirlik ve Model Durumu -->
-    <div class="header-center">
-      <div class="status-indicator-pill" id="status-pill">
-        <span class="status-dot"></span>
-        <span id="system-status-text">DİRLİK VE NİZAM</span>
-        <span class="pill-divider">&bull;</span>
-        <span class="pill-metric">Entropi: <strong id="val-entropy">%3</strong></span>
-      </div>
-    </div>
-
-    <!-- Sağ Eylemler -->
     <div class="header-right">
-      <button class="nav-btn model-pill-btn" onclick="openSettingsModal()" title="Aktif Modeli Seç / Yapılandır">
-        <span id="active-model-text">kam:7b</span>
-        <span class="btn-arrow">&#9662;</span>
+      <button type="button" class="ghost-btn model-btn" onclick="openSettingsModal()" title="Aktif Modeli Değiştir">
+        <span id="active-model-text">kam:apex</span>
+        <span class="caret">&#9662;</span>
       </button>
 
-      <button class="nav-btn hud-toggle-btn" onclick="toggleTelemetryDrawer()" title="Telemetri ve Kriz Masasını Aç/Kapat">
-        <span class="btn-label">Telemetri &amp; Kriz</span>
+      <button type="button" class="ghost-btn hide-sm" onclick="openCommandPalette()" title="Komut Paleti (Ctrl+K)">
+        <span>Komutlar</span>
+        <kbd>Ctrl K</kbd>
       </button>
 
-      <button class="nav-btn icon-only-btn" onclick="clearChat()" title="Sohbeti Temizle">
-        <span>TEMİZLE</span>
+      <button type="button" class="ghost-btn" onclick="toggleTelemetryDrawer()" title="Telemetri, Kriz Simülatörü ve C++20 JIT">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        <span class="hide-sm">Sistem</span>
+      </button>
+
+      <button type="button" class="ghost-btn icon-only" onclick="clearChat()" title="Yeni Sohbet" aria-label="Yeni Sohbet">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
       </button>
     </div>
   </header>
 
-  <!-- Ana Görüş Alanı (Centered Chat Canvas) -->
+  <!-- ANA SADE KOMUTA TUVALİ (Centered Minimalist Canvas) -->
   <main class="chat-viewport">
     <div class="chat-container">
 
-      <!-- Karşılama ve İkonik Hero Bölümü -->
+      <!-- Sakin, İkonik Boş Ekran (Welcome Hero) -->
       <section class="welcome-hero" id="welcome-hero">
-        <div class="hero-crest">
-          <div class="crest-ring"></div>
-          <div class="crest-glow"></div>
-          <img src="kam_logo.png" alt="KAM Sovereign Mark" class="hero-crest-img">
+        <div class="hero-emblem">
+          <img src="kam_logo.png" alt="KAM" class="hero-emblem-img">
         </div>
-        <h1 class="hero-title">KAM BİLİŞSEL ZİHİN</h1>
+        <h1 class="hero-title">Emrinizdeyim.</h1>
         <p class="hero-subtitle">
-          Dede Korkut hikmeti, <strong>Karl Friston Serbest Enerji Prensibi</strong> ve <strong>Linux eBPF</strong> çekirdek kancalarıyla silikonda birleşti.
+          RTX 5060 GPU &middot; 64 GB RAM &middot; Tam Yetkili Otonom Bilgisayar Ajanı
         </p>
-        <div class="hero-meta">
-          <span>Baş Mimar: <strong>Bahattin Yunus ÇETİN</strong> (@bahattinyunus)</span>
-          <span class="dot">&bull;</span>
-          <span>NVIDIA RTX 5060 GPU (%100 CUDA)</span>
-          <span class="dot">&bull;</span>
-          <span>Air-Gapped Otonom Çekirdek</span>
-        </div>
 
-        <!-- 4 İkonik Başlangıç Kartı -->
-        <div class="starter-cards-grid">
-          <div class="starter-card" onclick="sendPrompt('Neden adın KAM ve varoluşsal felsefen nedir?')">
-            <div class="card-icon">I</div>
-            <div class="card-content">
-              <h3>Öz Kimlik ve Hikmet</h3>
-              <p>Adın neden KAM ve Dede Korkut geleneğinden gelen dirlik felsefen nedir?</p>
-            </div>
-          </div>
-
-          <div class="starter-card" onclick="sendPrompt('Karl Friston serbest enerji prensibini bir mühendise mantıklı, matematiksel ve net açıkla.')">
-            <div class="card-icon">II</div>
-            <div class="card-content">
-              <h3>Friston Serbest Enerjisi</h3>
-              <p>Varyasyonel serbest enerji (F) ve KL-diverjansı sistemi nasıl dengede tutar?</p>
-            </div>
-          </div>
-
-          <div class="starter-card" onclick="sendPrompt('Bir SİHA 3 boyutta düşman radarını aşarak nasıl yol planlaması yapar? Düşünerek adım adım açıkla.')">
-            <div class="card-icon">III</div>
-            <div class="card-content">
-              <h3>Derin Akıl Yürütme</h3>
-              <p>3B otonom İHA rota optimizasyonunu zincirleme düşünceyle analiz et.</p>
-            </div>
-          </div>
-
-          <div class="starter-card" onclick="sendPrompt('Uç sistemler için C++20 ile sıfır bellek sızıntılı ve deterministik çalışan bir Memory Arena kodu yaz.')">
-            <div class="card-icon">IV</div>
-            <div class="card-content">
-              <h3>C++20 Uç Mühendislik</h3>
-              <p>Dinamik bellek tahsisinden kaçınan deterministik Memory Arena sınıfı üret.</p>
-            </div>
-          </div>
+        <div class="quick-chips">
+          <button class="quick-chip" onclick="sendPrompt('Bilgisayarın gerçek donanım, fiziksel RAM, disk ve GPU durumunu denetle.')">
+            Donanım &amp; GPU denetle
+          </button>
+          <button class="quick-chip" onclick="sendPrompt('Masaüstündeki açık pencereleri ve çalışan süreçleri listele.')">
+            Açık pencereler &amp; süreçler
+          </button>
+          <button class="quick-chip" onclick="sendPrompt('Projeyi analiz et ve toplam kaç dosya ve kaç satır kod olduğunu göster.')">
+            Kod külliyatını analiz et
+          </button>
+          <button class="quick-chip" onclick="sendPrompt('Bana canlı HTML dashboard gösterge paneli oluştur ve ekranda aç.')">
+            Canlı kokpit üret ve aç
+          </button>
         </div>
       </section>
 
-      <!-- Mesaj Akışı -->
-      <div class="chat-stream" id="chat-history">
-      </div>
+      <!-- Sohbet Akışı -->
+      <div class="chat-stream" id="chat-history"></div>
     </div>
   </main>
 
-  <!-- Yüzen Giriş Adası (Floating Input Island) -->
+  <!-- SADE YÜZEN KOMUT ÇUBUĞU (Floating Minimalist Input Bar) -->
   <div class="input-island-wrapper">
     <div class="input-island">
-      <div class="input-actions-left">
-        <button class="island-action-btn" onclick="openSettingsModal()" title="Model Değiştir">
-          <span class="pill-dot"></span>
-          <span id="island-model-label">kam:7b</span>
-        </button>
-      </div>
+      <div class="attached-files-bar" id="attached-files-bar" style="display: none;"></div>
+      <input type="file" id="file-upload-input" hidden>
 
-      <textarea 
-        id="chat-input" 
-        rows="1" 
-        placeholder="KAM Bilişsel Zihnine danışın, derin akıl yürütme başlatın veya C++20 kodu isteyin..." 
+      <textarea
+        id="chat-input"
+        rows="1"
+        placeholder="Ne yapmamı istersin? Herhangi bir görev, kod, dosya veya sistem komutu..."
         onkeydown="handleKeyDown(event)"
         oninput="autoResizeTextarea(this)"></textarea>
 
-      <div class="input-actions-right">
-        <button class="btn-send" onclick="submitMessage()" title="Gönder (Enter)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="19" x2="12" y2="5"></line>
-            <polyline points="5 12 12 5 19 12"></polyline>
-          </svg>
-        </button>
+      <div class="input-bottom-bar">
+        <div class="input-meta-left">
+          <button type="button" id="btn-attach" class="input-icon-btn" title="Dosya Ekle (veya sürükleyip bırak)" aria-label="Dosya Ekle">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+            </svg>
+          </button>
+          <button type="button" id="btn-voice" class="input-icon-btn" onclick="toggleVoiceInput()" title="Sesli Giriş (Türkçe)" aria-label="Sesli Giriş">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+          </button>
+          <button type="button" class="mini-pill" onclick="openSettingsModal()" title="Modeli Değiştir">
+            <span class="mini-dot"></span>
+            <span id="island-model-label">kam:apex</span>
+          </button>
+          <button type="button" class="mini-pill" onclick="quickSwitchModel('kam:council')" title="5-Modelli Bilişsel Kurul Modu">
+            Kurul
+          </button>
+          <button type="button" class="mini-pill hide-sm" onclick="openCommandPalette()" title="Komut Paleti (Ctrl+K)">
+            Ctrl K
+          </button>
+        </div>
+
+        <div class="input-actions-right">
+          <button type="button" id="btn-stop" class="btn-stop" onclick="stopGeneration()" title="Üretimi Durdur (Esc)" aria-label="Üretimi Durdur" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <rect x="6" y="6" width="12" height="12" rx="2.5"></rect>
+            </svg>
+          </button>
+
+          <button type="button" id="btn-send" class="btn-send" onclick="submitMessage()" title="Gönder (Enter)" aria-label="Gönder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="19" x2="12" y2="5"></line>
+              <polyline points="5 12 12 5 19 12"></polyline>
+            </svg>
+          </button>
+        </div>
       </div>
-    </div>
-    <div class="input-caption">
-      <span>KAM CORE v2.5</span>
-      <span class="dot">&bull;</span>
-      <span>Shift + Enter yeni satır</span>
-      <span class="dot">&bull;</span>
-      <span>Air-Gapped Autonomous Cognitive Engine</span>
     </div>
   </div>
 
-  <!-- BİLİŞSEL TELEMETRİ VE KRİZ PANELİ (Slide-Over HUD Drawer) -->
+  <!-- GİZLİ SİSTEM, TELEMETRİ, 15 KRİZ & C++20 JIT ÇEKMECESİ (Slide-Over Drawer) -->
   <div class="hud-drawer-backdrop" id="hud-backdrop" onclick="toggleTelemetryDrawer()"></div>
-  <aside class="hud-drawer" id="hud-drawer">
+  <aside class="hud-drawer" id="hud-drawer" aria-label="Sistem ve Telemetri">
     <div class="drawer-header">
-      <div class="drawer-title-group">
-        <div>
-          <h2>BİLİŞSEL TELEMETRİ VE KRİZ MASASI</h2>
-          <p>Donanım Düğümleri, eBPF Kancaları ve Aktif Çıkarım Metrikleri</p>
-        </div>
+      <div>
+        <h2>SİSTEM &amp; TELEMETRİ</h2>
+        <p id="drawer-host-sub">RTX 5060 CUDA &middot; Win32 UIA &middot; eBPF</p>
       </div>
-      <button class="drawer-close-btn" onclick="toggleTelemetryDrawer()" title="Kapat (Esc)">&#10005;</button>
+      <button type="button" class="drawer-close-btn" onclick="toggleTelemetryDrawer()" title="Kapat (Esc)" aria-label="Çekmeceyi Kapat">&#10005;</button>
+    </div>
+
+    <div class="drawer-tabs">
+      <button class="drawer-tab active" onclick="switchDrawerTab('telemetry', this)">Telemetri &amp; Kriz</button>
+      <button class="drawer-tab" onclick="switchDrawerTab('jit', this)">C++20 JIT &amp; Kayıt</button>
+      <button class="drawer-tab" onclick="switchDrawerTab('console', this)">Savunma &amp; Filo</button>
     </div>
 
     <div class="drawer-content">
-      <!-- Canlı Metrikler -->
-      <div class="hud-section">
-        <h3 class="hud-section-title">I. Dirlik ve Entropi Dengesi</h3>
-        <div class="metric-hud-grid">
-          <div class="metric-hud-card">
-            <span class="metric-hud-label">Sistem Entropisi (S)</span>
-            <div class="metric-hud-val" id="drawer-val-entropy">%3</div>
-            <div class="progress-bar-container">
-              <div class="progress-fill" id="bar-entropy" style="width: 3%; background: var(--emerald-glow);"></div>
+      <!-- SEKME 1: OSİLOSKOP, METRİKLER VE 15 KRİZ -->
+      <div class="drawer-tab-pane active" id="drawer-pane-telemetry">
+        <div class="hud-section">
+          <div class="osc-header">
+            <span class="hud-section-title" style="margin:0;">Canlı Osiloskop // F(t) &amp; S(t)</span>
+            <span class="mono-val" id="osc-live-readout">V(x)=0.012</span>
+          </div>
+          <canvas id="telemetry-oscilloscope" width="440" height="96"></canvas>
+        </div>
+
+        <div class="hud-section">
+          <div class="metric-hud-grid">
+            <div class="metric-hud-card">
+              <span class="metric-hud-label">Entropi S(t)</span>
+              <div class="metric-hud-val" id="drawer-val-entropy">%3</div>
+              <div class="progress-bar-container">
+                <div class="progress-fill" id="bar-entropy" style="width: 3%; background: var(--emerald-glow);"></div>
+              </div>
+            </div>
+            <div class="metric-hud-card">
+              <span class="metric-hud-label">Serbest Enerji F(t)</span>
+              <div class="metric-hud-val" id="val-free-energy">0.080 nats</div>
+              <div class="progress-bar-container">
+                <div class="progress-fill" id="bar-free-energy" style="width: 8%; background: var(--cyan-glow);"></div>
+              </div>
+            </div>
+            <div class="metric-hud-card">
+              <span class="metric-hud-label">NPU / GPU Sıcaklığı</span>
+              <div class="metric-hud-val" id="val-npu-temp">48.2°C</div>
+              <div class="progress-bar-container">
+                <div class="progress-fill" id="bar-npu-temp" style="width: 48%; background: var(--amber-glow);"></div>
+              </div>
+            </div>
+            <div class="metric-hud-card">
+              <span class="metric-hud-label">eBPF Akışı</span>
+              <div class="metric-hud-val" id="val-ebpf-events">3,420 /s</div>
+              <div class="progress-bar-container">
+                <div class="progress-fill" id="bar-ebpf-events" style="width: 65%; background: var(--purple-glow);"></div>
+              </div>
             </div>
           </div>
 
-          <div class="metric-hud-card">
-            <span class="metric-hud-label">Varyasyonel Serbest Enerji (F)</span>
-            <div class="metric-hud-val" id="val-free-energy">0.080 nats</div>
-            <div class="progress-bar-container">
-              <div class="progress-fill" id="bar-free-energy" style="width: 8%; background: var(--cyan-glow);"></div>
-            </div>
+          <div class="active-channel-banner">
+            <span>Aktif Hat</span>
+            <strong id="val-active-channel">UART-2 (Birincil)</strong>
           </div>
-
-          <div class="metric-hud-card">
-            <span class="metric-hud-label">Silikon Sıcaklığı (NPU)</span>
-            <div class="metric-hud-val" id="val-npu-temp">48.2°C</div>
-            <div class="progress-bar-container">
-              <div class="progress-fill" id="bar-npu-temp" style="width: 48%; background: var(--amber-glow);"></div>
-            </div>
+          <div class="active-channel-banner" style="margin-top:6px;">
+            <span>Fare &amp; Ekran</span>
+            <strong id="sidebar-cursor-info">(0, 0) // 1920x1080</strong>
           </div>
+        </div>
 
-          <div class="metric-hud-card">
-            <span class="metric-hud-label">eBPF Çekirdek Akışı</span>
-            <div class="metric-hud-val" id="val-ebpf-events">3,420 /s</div>
-            <div class="progress-bar-container">
-              <div class="progress-fill" id="bar-ebpf-events" style="width: 65%; background: var(--purple-glow);"></div>
+        <div class="hud-section">
+          <h3 class="hud-section-title">Otonom İş Akışları</h3>
+          <div class="workflows-list" id="workflows-list"></div>
+        </div>
+
+        <div class="hud-section">
+          <h3 class="hud-section-title">Donanım Düğümleri</h3>
+          <div class="node-hud-list">
+            <div class="node-hud-row">
+              <span>UART-2 Telemetri</span>
+              <span class="node-status-tag tag-online" id="tag-uart">ONLINE</span>
+            </div>
+            <div class="node-hud-row">
+              <span>SDR 868MHz Radyo</span>
+              <span class="node-status-tag tag-online" id="tag-sdr">STANDBY</span>
+            </div>
+            <div class="node-hud-row">
+              <span>CAN-0 Veriyolu</span>
+              <span class="node-status-tag tag-online" id="tag-can">ONLINE</span>
+            </div>
+            <div class="node-hud-row">
+              <span>NVIDIA RTX 5060 CUDA</span>
+              <span class="node-status-tag tag-online" id="tag-npu">ONLINE</span>
             </div>
           </div>
         </div>
 
-        <div class="active-channel-banner">
-          <span>Aktif Taşıyıcı Hat:</span>
-          <strong id="val-active-channel">UART-2 (Birincil Sinir Bağı)</strong>
+        <div class="hud-section">
+          <h3 class="hud-section-title">Kriz Simülatörü (15 Senaryo)</h3>
+          <div class="crisis-grid">
+            <button class="crisis-card-btn" onclick="triggerCrisis('uav_uart_cut'); toggleTelemetryDrawer();">
+              <span class="crisis-title">UART-2 Kopuşu</span>
+              <span class="crisis-desc">SDR 868MHz JIT</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('ew_jamming'); toggleTelemetryDrawer();">
+              <span class="crisis-title">Elektronik Harp</span>
+              <span class="crisis-desc">FHSS Sıçrama</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('thermal_spike'); toggleTelemetryDrawer();">
+              <span class="crisis-title">92.4°C Termal Pik</span>
+              <span class="crisis-desc">INT4-AWQ Modu</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('can_spoof'); toggleTelemetryDrawer();">
+              <span class="crisis-title">CAN-0 Spoofing</span>
+              <span class="crisis-desc">eBPF Karantina</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('gnss_spoof'); toggleTelemetryDrawer();">
+              <span class="crisis-title">GNSS Spoofing</span>
+              <span class="crisis-desc">Optik Akış EKF</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('swarm_loss'); toggleTelemetryDrawer();">
+              <span class="crisis-title">Sürü Lideri Kaybı</span>
+              <span class="crisis-desc">Markov Raft</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('ew_radar_threat'); toggleTelemetryDrawer();">
+              <span class="crisis-title">LPI Radar Tehdidi</span>
+              <span class="crisis-desc">DRFM Aldatma</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('cbf_envelope_breach'); toggleTelemetryDrawer();">
+              <span class="crisis-title">CBF Zarf İhlali</span>
+              <span class="crisis-desc">Güvenli RTL</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('intent_c2_mission'); toggleTelemetryDrawer();">
+              <span class="crisis-title">Komutan Niyeti</span>
+              <span class="crisis-desc">C2 DAG Tahsisi</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('byzantine_swarm_attack'); toggleTelemetryDrawer();">
+              <span class="crisis-title">Bizans İhaneti</span>
+              <span class="crisis-desc">BFT &amp; Kyber-768</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('trn_terrain_lock'); toggleTelemetryDrawer();">
+              <span class="crisis-title">Pasif TRN/TERCOM</span>
+              <span class="crisis-desc">0W DEM Kilidi</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('kinetic_actuator_jam'); toggleTelemetryDrawer();">
+              <span class="crisis-title">Kanatçık Sıkışması</span>
+              <span class="crisis-desc">Sözde-Ters Mikser</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('emcon_fso_switch'); toggleTelemetryDrawer();">
+              <span class="crisis-title">EMCON-Sıfır Lazer</span>
+              <span class="crisis-desc">1550nm FSO 0W</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('radiation_seu_bitflip'); toggleTelemetryDrawer();">
+              <span class="crisis-title">Kozmik Bit-Flip</span>
+              <span class="crisis-desc">SECDED &amp; TMR</span>
+            </button>
+            <button class="crisis-card-btn" onclick="triggerCrisis('sam_missile_lock'); toggleTelemetryDrawer();">
+              <span class="crisis-title">SAM Füze Kilidi</span>
+              <span class="crisis-desc">HJI 9G Kaçınma</span>
+            </button>
+          </div>
+
+          <button type="button" class="btn-reset-balance" onclick="resetSystem()">
+            Dengeyi Sıfırla (Entropi %3)
+          </button>
+          <a href="/api/export_chat" download="kam_sohbet.md" class="btn-export-chat" title="Mevcut sohbeti Markdown olarak indir">
+            Sohbeti Dışa Aktar (.md)
+          </a>
         </div>
       </div>
 
-      <!-- Donanım Düğümleri -->
-      <div class="hud-section">
-        <h3 class="hud-section-title">II. Donanım Düğümleri ve Veri Yolları</h3>
-        <div class="node-hud-list">
-          <div class="node-hud-row">
-            <span class="node-name">UART-2 Telemetri Bağı</span>
-            <span class="node-status-tag tag-online" id="tag-uart">ONLINE</span>
+      <!-- SEKME 2: C++20 JIT MÜFETTİŞİ VE eBPF KAYDI -->
+      <div class="drawer-tab-pane" id="drawer-pane-jit">
+        <div class="hud-section">
+          <div class="jit-header-row">
+            <h3 class="hud-section-title" style="margin:0;">C++20 JIT Sıcak-Yama</h3>
+            <button class="mini-copy-btn" onclick="copyJitInspectorCode()">Kopyala</button>
           </div>
-          <div class="node-hud-row">
-            <span class="node-name">SDR 868MHz Bilişsel Radyo</span>
-            <span class="node-status-tag tag-online" id="tag-sdr">STANDBY</span>
+          <div class="ast-verification-banner" id="jit-ast-banner">
+            <span id="jit-ast-text">AST SANDBOX: DOĞRULANDI // 0 İHLAL (41.2 ms)</span>
           </div>
-          <div class="node-hud-row">
-            <span class="node-name">IMU &amp; 6-DOF EKF Ataletsel Füzyon</span>
-            <span class="node-status-tag tag-online">ONLINE</span>
+          <pre class="jit-inspector-box"><code id="jit-inspector-code">// KAM Bellek-İçi C++20 JIT Sıcak-Yama (sdr_fallback_node.cpp)
+#include &lt;cstdint&gt;
+extern "C" int kam_hotpatch_entry(const uint8_t* frame, size_t len) noexcept {
+    constexpr uint32_t carrier_hz = 868'000'000;
+    return (frame != nullptr &amp;&amp; len &gt; 0) ? 0 : -1;
+}</code></pre>
+        </div>
+
+        <div class="hud-section">
+          <div class="jit-header-row">
+            <h3 class="hud-section-title" style="margin:0;">Çekirdek Kaydı (eBPF)</h3>
+            <button class="mini-copy-btn" onclick="clearKernelLog()">Temizle</button>
           </div>
-          <div class="node-hud-row">
-            <span class="node-name">CAN-0 Taşıt Veriyolu</span>
-            <span class="node-status-tag tag-online" id="tag-can">ONLINE</span>
-          </div>
-          <div class="node-hud-row">
-            <span class="node-name">NVIDIA RTX 5060 / Orin NPU</span>
-            <span class="node-status-tag tag-online" id="tag-npu">ONLINE (CUDA %100)</span>
-          </div>
+          <div class="kernel-log-box" id="kernel-log-stream"></div>
         </div>
       </div>
 
-      <!-- Kaos ve Kriz Simülatörü -->
-      <div class="hud-section">
-        <h3 class="hud-section-title">III. Kriz Simülatörü ve Otonom Onarım</h3>
-        <div class="crisis-grid">
-          <button class="crisis-card-btn" onclick="triggerCrisis('uav_uart_cut'); toggleTelemetryDrawer();">
-            <span class="crisis-title">UART Kopuşu</span>
-            <span class="crisis-desc">JIT SDR 868MHz geçişi</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('ew_jamming'); toggleTelemetryDrawer();">
-            <span class="crisis-title">Elektronik Harp</span>
-            <span class="crisis-desc">FHSS spektral sıçrama</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('thermal_spike'); toggleTelemetryDrawer();">
-            <span class="crisis-title">92°C Termal Pik</span>
-            <span class="crisis-desc">Dinamik INT4-AWQ modu</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('can_spoof'); toggleTelemetryDrawer();">
-            <span class="crisis-title">CAN Spoofing</span>
-            <span class="crisis-desc">eBPF paket karantinası</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('gnss_spoof'); toggleTelemetryDrawer();">
-            <span class="crisis-title">GNSS Spoofing</span>
-            <span class="crisis-desc">Optik Akış + EKF</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('swarm_loss'); toggleTelemetryDrawer();">
-            <span class="crisis-title">Sürü Lideri Kaybı</span>
-            <span class="crisis-desc">Markov Raft Lideri</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('ew_radar_threat'); toggleTelemetryDrawer();">
-            <span class="crisis-title">LPI Radar Tehdidi</span>
-            <span class="crisis-desc">DRFM Aldatıcı Karıştırma</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('cbf_envelope_breach'); toggleTelemetryDrawer();">
-            <span class="crisis-title">CBF Zarf İhlali</span>
-            <span class="crisis-desc">Nöro-Sembolik RTL İzdüşüm</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('intent_c2_mission'); toggleTelemetryDrawer();">
-            <span class="crisis-title">Komutan Niyeti (C2)</span>
-            <span class="crisis-desc">DAG Filo Dağıtımı</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('byzantine_swarm_attack'); toggleTelemetryDrawer();">
-            <span class="crisis-title">Bizans Sürü İhaneti</span>
-            <span class="crisis-desc">BFT Karantina &amp; ML-KEM-768</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('trn_terrain_lock'); toggleTelemetryDrawer();">
-            <span class="crisis-title">Pasif TRN/TERCOM</span>
-            <span class="crisis-desc">0W DEM Arazi Korelasyonu</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('kinetic_actuator_jam'); toggleTelemetryDrawer();">
-            <span class="crisis-title">Kanatçık Sıkışması</span>
-            <span class="crisis-desc">Sözde-Ters Kontrol Mikseri</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('emcon_fso_switch'); toggleTelemetryDrawer();">
-            <span class="crisis-title">EMCON-Sıfır Lazer</span>
-            <span class="crisis-desc">1550nm FSO 0W RF Köprüsü</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('radiation_seu_bitflip'); toggleTelemetryDrawer();">
-            <span class="crisis-title">Kozmik/EMP Bit-Flip</span>
-            <span class="crisis-desc">SECDED &amp; TMR Bellek Onarımı</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="triggerCrisis('sam_missile_lock'); toggleTelemetryDrawer();">
-            <span class="crisis-title">SAM Füze Kilidi</span>
-            <span class="crisis-desc">HJI 9G Kaçınma &amp; Cross-Eye</span>
-          </button>
-        </div>
-
-        <button class="btn-reset-balance" onclick="resetSystem()">
-          Dirlik ve Dengeyi Sıfırla (Entropi %3)
-        </button>
-      </div>
-
-      <!-- Bilişsel Savunma & İleri Uç Yetenekleri -->
-      <div class="hud-section">
-        <h3 class="hud-section-title">IV. Bilişsel Savunma ve Görev Konsolu</h3>
-        <div class="crisis-grid">
-          <button class="crisis-card-btn" onclick="testEwRadar()">
-            <span class="crisis-title">Bilişsel EW Radar</span>
-            <span class="crisis-desc">17.4 GHz LPI PDW analizi</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="testC2Intent()">
-            <span class="crisis-title">Intent-to-Task C2</span>
-            <span class="crisis-desc">S-400 vadi taarruz DAG</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="testSafetyShield()">
-            <span class="crisis-title">CBF Uçuş Kalkanı</span>
-            <span class="crisis-desc">Bariyer fonksiyon kontrolü</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="testBftSwarm()">
-            <span class="crisis-title">BFT &amp; PQC Sürü</span>
-            <span class="crisis-desc">Kyber-768 &amp; Hain İzolasyonu</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="testTrnLocalize()">
-            <span class="crisis-title">TRN Arazi Kilidi</span>
-            <span class="crisis-desc">GPS-Kör DEM Eşleştirme</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="testActuatorReconfig()">
-            <span class="crisis-title">Sözde-Ters Eyleyici</span>
-            <span class="crisis-desc">Hasarlı Kanatçık Telafisi</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="testFsoLaserLink()">
-            <span class="crisis-title">1550nm FSO Lazer</span>
-            <span class="crisis-desc">EMCON-Sıfır 0W Optik Ağ</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="testRadiationScrubber()">
-            <span class="crisis-title">SECDED &amp; TMR ECC</span>
-            <span class="crisis-desc">Hamming(72,64) Bit-Flip Onarımı</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="testHjiMissileEvasion()">
-            <span class="crisis-title">HJI Füze Kaçınma</span>
-            <span class="crisis-desc">Isaacs Diferansiyel Oyun 9G</span>
-          </button>
-
-          <button class="crisis-card-btn" onclick="showFleetManifest()">
-            <span class="crisis-title">Egemen Model Filosu</span>
-            <span class="crisis-desc">8 Model (20.8GB) HF Hub</span>
-          </button>
+      <!-- SEKME 3: BİLİŞSEL SAVUNMA & EGEMEN FİLO -->
+      <div class="drawer-tab-pane" id="drawer-pane-console">
+        <div class="hud-section">
+          <h3 class="hud-section-title">Savunma &amp; Görev Modülleri</h3>
+          <div class="crisis-grid">
+            <button class="crisis-card-btn defense-variant" onclick="testEwRadar()">
+              <span class="crisis-title">Bilişsel EW Radar</span>
+              <span class="crisis-desc">17.4 GHz LPI PDW</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testC2Intent()">
+              <span class="crisis-title">Intent-to-Task C2</span>
+              <span class="crisis-desc">S-400 DAG Tahsisi</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testSafetyShield()">
+              <span class="crisis-title">CBF Uçuş Kalkanı</span>
+              <span class="crisis-desc">Bariyer İzdüşümü</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testBftSwarm()">
+              <span class="crisis-title">BFT &amp; PQC Sürü</span>
+              <span class="crisis-desc">ML-KEM-768 Kyber</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testTrnLocalize()">
+              <span class="crisis-title">TRN Arazi Kilidi</span>
+              <span class="crisis-desc">0W DEM Eşleştirme</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testActuatorReconfig()">
+              <span class="crisis-title">Sözde-Ters Mikser</span>
+              <span class="crisis-desc">Kanatçık Telafisi</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testFsoLaserLink()">
+              <span class="crisis-title">1550nm FSO Lazer</span>
+              <span class="crisis-desc">0W RF Optik Ağ</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testRadiationScrubber()">
+              <span class="crisis-title">SECDED &amp; TMR ECC</span>
+              <span class="crisis-desc">Bit-Flip Onarımı</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testHjiMissileEvasion()">
+              <span class="crisis-title">HJI Füze Kaçınma</span>
+              <span class="crisis-desc">Isaacs 9G Manevra</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testTacticalRoute()">
+              <span class="crisis-title">3B SİHA Rota</span>
+              <span class="crisis-desc">A* Radar Gölgeleme</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="testLyapunovStability()">
+              <span class="crisis-title">Lyapunov CLF</span>
+              <span class="crisis-desc">V(x) Kararlılık</span>
+            </button>
+            <button class="crisis-card-btn defense-variant" onclick="showFleetManifest()">
+              <span class="crisis-title">Egemen Model Filosu</span>
+              <span class="crisis-desc">8 Model (20.8 GB)</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </aside>
 
-  <!-- LLM / API Ayarları Modalı -->
-  <div id="settings-modal" class="modal-overlay" style="display: none;">
+  <!-- KOMUT PALETİ (Ctrl+K Spotlight) -->
+  <div id="cmd-palette-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Komut Paleti" style="display: none;" onclick="if(event.target===this) closeCommandPalette()">
+    <div class="cmd-palette-card">
+      <div class="cmd-search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          id="cmd-palette-input"
+          placeholder="Komut, araç, savunma modülü veya model ara..."
+          oninput="filterCommandPalette(this.value)"
+          onkeydown="handleCommandPaletteKey(event)">
+        <kbd>ESC</kbd>
+      </div>
+      <div class="cmd-palette-list" id="cmd-palette-list"></div>
+    </div>
+  </div>
+
+  <!-- MODEL & API AYARLARI MODALI -->
+  <div id="settings-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Bilişsel Zihin Seçimi" style="display: none;" onclick="if(event.target===this) closeSettingsModal()">
     <div class="modal-glass-card">
       <div class="modal-header">
-        <div class="modal-title-group">
-          <h3>Bilişsel Zihin ve Model Yapılandırması</h3>
-        </div>
-        <button class="modal-close" onclick="closeSettingsModal()">&#10005;</button>
+        <h3>Bilişsel Zihin Seçimi</h3>
+        <button type="button" class="modal-close" onclick="closeSettingsModal()" aria-label="Kapat">&#10005;</button>
       </div>
       <div class="modal-body">
-        <p class="modal-desc">
-          KAM; yerel <strong>kam:7b (Duru Türkçe Bilişsel Zihin)</strong>, <strong>kam:r1 (DeepSeek-R1 Akıl Yürütme)</strong> veya hibrit <strong>Google Gemini</strong> motorlarını destekler.
-        </p>
-
         <div class="form-group">
-          <label class="form-label">Aktif Model Seçimi:</label>
+          <label class="form-label">Aktif Model</label>
           <select id="modal-model-select" class="form-select">
-            <option value="kam:apex">kam:apex (Qwen3 8B Başbuğ — Hibrit Düşünen Komuta Zihni - 5.20 GB)</option>
-            <option value="kam:7b">kam:7b (Qwen 2.5 7B Ulu Kam — Duru Türkçe Bilişsel Zihin - 4.68 GB)</option>
-            <option value="kam:r1">kam:r1 (DeepSeek-R1 7B Baş Bilge — Derin CoT Akıl Yürütme - 4.68 GB)</option>
-            <option value="kam:coder">kam:coder (Qwen 2.5 Coder 7B Ulu Demirci — C++20 JIT & eBPF - 4.68 GB)</option>
-            <option value="kam:coder-nano">kam:coder-nano (Qwen 2.5 Coder 1.5B Taktik Demirci - 986 MB)</option>
-            <option value="kam:r1-nano">kam:r1-nano (DeepSeek-R1 1.5B Taktik Bilge CoT - 1.10 GB)</option>
-            <option value="kam:1.5b">kam:1.5b (Qwen 2.5 1.5B Uç Gözcü & Spekülatif Taslak - 986 MB)</option>
-            <option value="kam:edge-moe-b158">kam:edge-moe-b158 (Tri-Hybrid RK4 Liquid-SSM BitNet b1.58)</option>
-            <option value="deepseek-r1:7b">deepseek-r1:7b (Ollama Yerel)</option>
-            <option value="qwen2.5:7b">qwen2.5:7b (Ollama Standart 7B)</option>
+            <option value="kam:apex">kam:apex (Qwen3 8B — Hibrit Düşünen Komuta Zihni · %100 GPU)</option>
+            <option value="kam:council">kam:council (5-Modelli Otonom Bilişsel Kurul)</option>
+            <option value="kam:7b">kam:7b (Qwen 2.5 7B — Duru Türkçe Zihin)</option>
+            <option value="kam:coder">kam:coder (Qwen 2.5 Coder 7B — Kod &amp; Sistem Mühendisi)</option>
+            <option value="kam:r1">kam:r1 (DeepSeek-R1 7B — Derin Akıl Yürütme)</option>
+            <option value="kam:coder-nano">kam:coder-nano (1.5B Hızlı Kod)</option>
+            <option value="kam:r1-nano">kam:r1-nano (1.5B Hızlı CoT)</option>
+            <option value="kam:1.5b">kam:1.5b (1.5B Hafif Uç Model)</option>
             <option value="gemini-1.5-flash">gemini-1.5-flash (Google Gemini Bulut)</option>
-            <option value="kam-1-liquid-moe">kam-1-liquid-moe (Dahili Nöral Çekirdek)</option>
+            <option value="kam-1-liquid-moe">kam-1-liquid-moe (Offline Çekirdek)</option>
           </select>
         </div>
 
-        <div class="form-group" style="margin-top: 16px;">
-          <label class="form-label">Google Gemini API Key (İsteğe Bağlı):</label>
-          <input type="password" id="modal-gemini-key" class="form-input" placeholder="AIzaSy... (Gemini hibrit modu için)">
-          <small class="form-hint">Key girilirse Gemini 1.5/2.0 modelleri hibrit olarak devreye girer.</small>
+        <div class="form-group" style="margin-top: 14px;">
+          <label class="form-label">Google Gemini API Key (İsteğe Bağlı)</label>
+          <input type="password" id="modal-gemini-key" class="form-input" placeholder="AIzaSy...">
         </div>
 
         <div class="modal-footer">
           <button class="btn-ghost" onclick="closeSettingsModal()">İptal</button>
-          <button class="btn-primary" onclick="saveSettings()">Kaydet ve Uygula</button>
+          <button class="btn-primary" onclick="saveSettings()">Uygula</button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- SOL SLIDE-OVER OTURUM GEÇMİŞİ ÇEKMECESİ (Sessions Drawer) -->
+  <div class="sessions-drawer-backdrop" id="sessions-backdrop" onclick="toggleSessionsDrawer()"></div>
+  <aside class="sessions-drawer" id="sessions-drawer" aria-label="Oturum Geçmişi">
+    <div class="drawer-header">
+      <div>
+        <h2>OTURUMLAR</h2>
+        <p>Kalıcı yerel sohbet geçmişi</p>
+      </div>
+      <div class="drawer-header-actions">
+        <button type="button" id="btn-new-session" class="btn-new-session" onclick="createNewSession()" title="Yeni Oturum Başlat">+ Yeni</button>
+        <button type="button" class="drawer-close-btn" onclick="toggleSessionsDrawer()" title="Kapat (Esc)" aria-label="Oturum Çekmecesini Kapat">&#10005;</button>
+      </div>
+    </div>
+    <div class="sessions-list" id="sessions-list"></div>
+  </aside>
+
+  <!-- SAĞ CANLI ÖNİZLEME / ARTIFACT ÇEKMECESİ (Live Preview Drawer) -->
+  <div class="preview-drawer-backdrop" id="preview-backdrop" onclick="closePreviewDrawer()"></div>
+  <aside class="preview-drawer" id="preview-drawer" aria-label="Canlı Önizleme">
+    <div class="drawer-header">
+      <div class="preview-header-meta">
+        <h2 id="preview-title">CANLI ÖNİZLEME</h2>
+        <p>Korumalı Sandbox (allow-scripts)</p>
+      </div>
+      <button type="button" class="drawer-close-btn" onclick="closePreviewDrawer()" title="Kapat (Esc)" aria-label="Önizlemeyi Kapat">&#10005;</button>
+    </div>
+    <div class="preview-body">
+      <iframe id="preview-iframe" class="preview-iframe" sandbox="allow-scripts" title="KAM Canlı Önizleme"></iframe>
+    </div>
+  </aside>
+
+  <!-- SADE BİLDİRİM TOAST KONTEYNERİ -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <script src="app.js"></script>
 </body>

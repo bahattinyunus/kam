@@ -49,6 +49,8 @@ kaggle.json
 
 # Kaggle Ham Veri Setleri (Büyük Dosyalar)
 data/kaggle/
+data/kam_sessions.json
+data/uploads/
 *.jsonl
 
 

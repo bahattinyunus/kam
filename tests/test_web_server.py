@@ -225,5 +225,333 @@ class TestWebServer(unittest.TestCase):
             self.assertTrue(data["hji_result"]["platform_survival_guaranteed"])
             self.assertIn("hji_evasion_maneuver.cpp", data["hji_code"])
 
+    def test_autonomous_agent_api(self):
+        url_tools = f"http://127.0.0.1:{self.port}/api/agent_tools"
+        with urllib.request.urlopen(urllib.request.Request(url_tools)) as resp:
+            self.assertEqual(resp.status, 200)
+            tools_data = json.loads(resp.read().decode("utf-8"))
+            self.assertGreaterEqual(tools_data["total_tools"], 12)
+
+        url_exec = f"http://127.0.0.1:{self.port}/api/agent_execute"
+        payload = json.dumps({
+            "tool": "execute_python_code",
+            "arguments": {"code": "print(7 * 8)"},
+        }).encode("utf-8")
+        req = urllib.request.Request(url_exec, data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            self.assertEqual(resp.status, 200)
+            exec_data = json.loads(resp.read().decode("utf-8"))
+            self.assertEqual(exec_data["result"]["status"], "success")
+            self.assertEqual(exec_data["result"]["stdout"], "56")
+
+    def test_malformed_json_post_returns_http_400(self):
+        import urllib.error
+
+        # 1. Bozuk JSON gövdesi -> HTTP 400
+        for route in ("/api/chat", "/api/config", "/api/crisis"):
+            url = f"http://127.0.0.1:{self.port}{route}"
+            req = urllib.request.Request(
+                url,
+                data=b"{broken json payload",
+                headers={"Content-Type": "application/json"},
+            )
+            with self.assertRaises(urllib.error.HTTPError) as ctx:
+                urllib.request.urlopen(req)
+            self.assertEqual(ctx.exception.code, 400)
+            err_body = json.loads(ctx.exception.read().decode("utf-8"))
+            self.assertIn("error", err_body)
+
+        # 2. JSON nesnesi (dict) olmayan dizi gövdesi -> HTTP 400
+        req_arr = urllib.request.Request(
+            f"http://127.0.0.1:{self.port}/api/config",
+            data=b"[1, 2, 3]",
+            headers={"Content-Type": "application/json"},
+        )
+        with self.assertRaises(urllib.error.HTTPError) as ctx_arr:
+            urllib.request.urlopen(req_arr)
+        self.assertEqual(ctx_arr.exception.code, 400)
+
+        # 3. Geçersiz UTF-8 baytları -> HTTP 400
+        req_utf = urllib.request.Request(
+            f"http://127.0.0.1:{self.port}/api/chat",
+            data=b"\xff\xfe\xfd",
+            headers={"Content-Type": "application/json"},
+        )
+        with self.assertRaises(urllib.error.HTTPError) as ctx_utf:
+            urllib.request.urlopen(req_utf)
+        self.assertEqual(ctx_utf.exception.code, 400)
+
+    def test_export_chat_markdown_and_json(self):
+        orig_history = list(KamWebHandler.llm_client.conversation_history)
+        try:
+            KamWebHandler.llm_client.conversation_history = [
+                {"role": "user", "content": "İstanbul'un fethi ve Kutadgu Bilig"},
+                {"role": "assistant", "content": "Dirlik ve nizam kaimdir."},
+            ]
+            url_md = f"http://127.0.0.1:{self.port}/api/export_chat"
+            with urllib.request.urlopen(urllib.request.Request(url_md)) as resp:
+                self.assertEqual(resp.status, 200)
+                self.assertIn("text/markdown", resp.headers.get("Content-Type", ""))
+                self.assertIn("kam_chat_export.md", resp.headers.get("Content-Disposition", ""))
+                md_body = resp.read().decode("utf-8")
+                self.assertIn("# KAM Konuşma Kaydı", md_body)
+                self.assertIn("İstanbul'un fethi ve Kutadgu Bilig", md_body)
+                self.assertIn("Dirlik ve nizam kaimdir.", md_body)
+
+            url_json = f"http://127.0.0.1:{self.port}/api/export_chat?format=json"
+            with urllib.request.urlopen(urllib.request.Request(url_json)) as resp:
+                self.assertEqual(resp.status, 200)
+                j_data = json.loads(resp.read().decode("utf-8"))
+                self.assertEqual(j_data["message_count"], 2)
+                self.assertIn("markdown", j_data)
+                self.assertIn("Dirlik ve nizam kaimdir.", j_data["markdown"])
+        finally:
+            KamWebHandler.llm_client.conversation_history = orig_history
+
+    def test_config_validation_and_gemini_key_preservation(self):
+        import urllib.error
+
+        orig_key = KamWebHandler.llm_client.gemini_api_key
+        orig_model = KamWebHandler.llm_client.current_model
+        orig_backend = KamWebHandler.llm_client.active_backend
+        try:
+            KamWebHandler.llm_client.gemini_api_key = "secret-gemini-key-xyz"
+
+            # Boş gemini_key gönderildiğinde mevcut anahtar silinmemeli
+            req_keep = urllib.request.Request(
+                f"http://127.0.0.1:{self.port}/api/config",
+                data=json.dumps({"model": "kam:apex", "gemini_key": ""}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req_keep) as resp:
+                self.assertEqual(resp.status, 200)
+                cfg = json.loads(resp.read().decode("utf-8"))
+                self.assertEqual(cfg["current_model"], "kam:apex")
+            self.assertEqual(KamWebHandler.llm_client.gemini_api_key, "secret-gemini-key-xyz")
+
+            # Geçersiz model tipi -> HTTP 400
+            req_bad = urllib.request.Request(
+                f"http://127.0.0.1:{self.port}/api/config",
+                data=json.dumps({"model": 12345}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+            )
+            with self.assertRaises(urllib.error.HTTPError) as ctx:
+                urllib.request.urlopen(req_bad)
+            self.assertEqual(ctx.exception.code, 400)
+
+            # Açık clear_gemini_key=True ile anahtar temizlenebilmeli
+            req_clear = urllib.request.Request(
+                f"http://127.0.0.1:{self.port}/api/config",
+                data=json.dumps({"clear_gemini_key": True}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req_clear) as resp:
+                self.assertEqual(resp.status, 200)
+            self.assertEqual(KamWebHandler.llm_client.gemini_api_key, "")
+        finally:
+            KamWebHandler.llm_client.gemini_api_key = orig_key
+            KamWebHandler.llm_client.set_model(orig_model)
+            KamWebHandler.llm_client.active_backend = orig_backend
+
+    def test_models_and_enriched_telemetry_api(self):
+        with urllib.request.urlopen(urllib.request.Request(f"http://127.0.0.1:{self.port}/api/models")) as resp:
+            self.assertEqual(resp.status, 200)
+            m_data = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("models", m_data)
+            names = [m["name"] for m in m_data["models"]]
+            self.assertIn("kam:council", names)
+            self.assertIn("kam-1-liquid-moe", names)
+
+        with urllib.request.urlopen(urllib.request.Request(f"http://127.0.0.1:{self.port}/api/telemetry")) as resp:
+            self.assertEqual(resp.status, 200)
+            t_data = json.loads(resp.read().decode("utf-8"))
+            self.assertIn("host_stats", t_data)
+            self.assertIsInstance(t_data["host_stats"], dict)
+            self.assertIn("cpu_percent", t_data)
+            self.assertIn("ram_percent", t_data)
+
+    def test_sessions_crud_activate_and_auto_sync_api(self):
+        import tempfile
+        import urllib.error
+        from kam.web_server import _SessionStore
+
+        orig_store = KamWebHandler.session_store
+        orig_history = list(KamWebHandler.llm_client.conversation_history)
+        try:
+            with tempfile.TemporaryDirectory() as tmpdir:
+                sess_file = os.path.join(tmpdir, "test_sessions.json")
+                KamWebHandler.session_store = _SessionStore(sess_file)
+                KamWebHandler.llm_client.conversation_history.clear()
+
+                # 1. GET /api/sessions -> en az 1 varsayılan oturum + active_id
+                with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/api/sessions") as resp:
+                    self.assertEqual(resp.status, 200)
+                    listed = json.loads(resp.read().decode("utf-8"))
+                    self.assertIn("active_id", listed)
+                    self.assertGreaterEqual(len(listed["sessions"]), 1)
+
+                # 2. POST /api/sessions -> yeni oturum A oluştur
+                req_a = urllib.request.Request(
+                    f"http://127.0.0.1:{self.port}/api/sessions",
+                    data=json.dumps({"title": "Oturum Alfa"}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req_a) as resp:
+                    self.assertEqual(resp.status, 200)
+                    sess_a = json.loads(resp.read().decode("utf-8"))
+                    sid_a = sess_a["id"]
+                    self.assertEqual(sess_a["title"], "Oturum Alfa")
+
+                # 3. /api/chat sonrası otomatik senkronizasyon
+                req_chat = urllib.request.Request(
+                    f"http://127.0.0.1:{self.port}/api/chat",
+                    data=json.dumps({"message": "tr nin başkenti neresi"}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req_chat) as resp:
+                    self.assertEqual(resp.status, 200)
+                    chat_data = json.loads(resp.read().decode("utf-8"))
+                    self.assertIn("Ankara", chat_data["reply"])
+
+                # Oturum A mesajlarını GET /api/sessions/<id> ile doğrula
+                with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/api/sessions/{sid_a}") as resp:
+                    self.assertEqual(resp.status, 200)
+                    fetched_a = json.loads(resp.read().decode("utf-8"))
+                    self.assertGreaterEqual(fetched_a["message_count"], 2)
+                    self.assertTrue(os.path.isfile(sess_file))
+
+                # 4. Oturum B oluştur -> geçmiş temizlenmeli, ardından Oturum A'yı tekrar aktive et
+                req_b = urllib.request.Request(
+                    f"http://127.0.0.1:{self.port}/api/sessions",
+                    data=json.dumps({"title": "Oturum Beta"}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req_b) as resp:
+                    sess_b = json.loads(resp.read().decode("utf-8"))
+                    sid_b = sess_b["id"]
+                self.assertEqual(len(KamWebHandler.llm_client.conversation_history), 0)
+
+                req_act = urllib.request.Request(
+                    f"http://127.0.0.1:{self.port}/api/sessions/{sid_a}/activate",
+                    data=b"{}",
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req_act) as resp:
+                    self.assertEqual(resp.status, 200)
+                    act_data = json.loads(resp.read().decode("utf-8"))
+                    self.assertEqual(act_data["active_id"], sid_a)
+                    self.assertGreaterEqual(len(KamWebHandler.llm_client.conversation_history), 2)
+
+                # 5. DELETE /api/sessions/<sid_b> -> silme + bulunamayan oturum 404
+                req_del = urllib.request.Request(
+                    f"http://127.0.0.1:{self.port}/api/sessions/{sid_b}",
+                    method="DELETE",
+                )
+                with urllib.request.urlopen(req_del) as resp:
+                    self.assertEqual(resp.status, 200)
+                    del_data = json.loads(resp.read().decode("utf-8"))
+                    self.assertEqual(del_data["deleted_id"], sid_b)
+
+                with self.assertRaises(urllib.error.HTTPError) as ctx_404:
+                    urllib.request.urlopen(f"http://127.0.0.1:{self.port}/api/sessions/{sid_b}")
+                self.assertEqual(ctx_404.exception.code, 404)
+        finally:
+            KamWebHandler.session_store = orig_store
+            KamWebHandler.llm_client.conversation_history[:] = orig_history
+
+    def test_upload_valid_path_traversal_400_and_oversize_413(self):
+        import tempfile
+        import urllib.error
+
+        orig_uploads_dir = KamWebHandler.uploads_dir
+        try:
+            with tempfile.TemporaryDirectory() as tmpdir:
+                KamWebHandler.uploads_dir = tmpdir
+                url = f"http://127.0.0.1:{self.port}/api/upload"
+
+                # 1. Geçerli dosya yükleme
+                content = "KAM Otonom Sistem Raporu — Türkçe şğüöçıİ"
+                req_ok = urllib.request.Request(
+                    url,
+                    data=json.dumps({"filename": "rapor_01.txt", "content": content}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req_ok) as resp:
+                    self.assertEqual(resp.status, 200)
+                    up = json.loads(resp.read().decode("utf-8"))
+                    self.assertEqual(up["status"], "ok")
+                    self.assertEqual(up["path"], "data/uploads/rapor_01.txt")
+                    self.assertEqual(up["size_bytes"], len(content.encode("utf-8")))
+                    self.assertIn("Türkçe", up["preview"])
+                saved_file = os.path.join(tmpdir, "rapor_01.txt")
+                self.assertTrue(os.path.isfile(saved_file))
+
+                # 2. Path traversal, ayırıcı ve ayrılmış Windows cihaz adı -> HTTP 400
+                for bad_name in ("../evil.txt", "../../etc/passwd", "sub/file.txt", r"sub\file.txt", "CON.txt", ""):
+                    req_bad = urllib.request.Request(
+                        url,
+                        data=json.dumps({"filename": bad_name, "content": "x"}).encode("utf-8"),
+                        headers={"Content-Type": "application/json"},
+                    )
+                    with self.assertRaises(urllib.error.HTTPError, msg=f"Expected 400 for {bad_name!r}") as ctx:
+                        urllib.request.urlopen(req_bad)
+                    self.assertEqual(ctx.exception.code, 400)
+
+                # 3. 2 MB üzeri içerik -> HTTP 413
+                big_content = "A" * (2 * 1024 * 1024 + 64)
+                req_big = urllib.request.Request(
+                    url,
+                    data=json.dumps({"filename": "huge.txt", "content": big_content}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with self.assertRaises(urllib.error.HTTPError) as ctx_413:
+                    urllib.request.urlopen(req_big)
+                self.assertEqual(ctx_413.exception.code, 413)
+        finally:
+            KamWebHandler.uploads_dir = orig_uploads_dir
+
+    def test_workflows_get_and_post_api(self):
+        import urllib.error
+
+        # 1. GET /api/workflows -> 3 yerleşik otonom iş akışı
+        with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/api/workflows") as resp:
+            self.assertEqual(resp.status, 200)
+            wf_list = json.loads(resp.read().decode("utf-8"))
+            wf_ids = {w["id"] for w in wf_list["workflows"]}
+            self.assertEqual(wf_ids, {"system_health_audit", "repo_code_audit", "network_security_scan"})
+
+        # 2. POST /api/workflows -> repo_code_audit icrası
+        req_run = urllib.request.Request(
+            f"http://127.0.0.1:{self.port}/api/workflows",
+            data=json.dumps({"workflow": "repo_code_audit"}).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req_run) as resp:
+            self.assertEqual(resp.status, 200)
+            wf_res = json.loads(resp.read().decode("utf-8"))
+            self.assertEqual(wf_res["status"], "ok")
+            self.assertEqual(wf_res["workflow"], "repo_code_audit")
+            self.assertEqual(len(wf_res["steps"]), 2)
+            self.assertIn("summary", wf_res)
+
+        # 3. Bilinmeyen iş akışı -> HTTP 404; boş -> HTTP 400
+        req_404 = urllib.request.Request(
+            f"http://127.0.0.1:{self.port}/api/workflows",
+            data=json.dumps({"workflow": "nonexistent_wf"}).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        with self.assertRaises(urllib.error.HTTPError) as ctx_404:
+            urllib.request.urlopen(req_404)
+        self.assertEqual(ctx_404.exception.code, 404)
+
+        req_400 = urllib.request.Request(
+            f"http://127.0.0.1:{self.port}/api/workflows",
+            data=json.dumps({"workflow": ""}).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        with self.assertRaises(urllib.error.HTTPError) as ctx_400:
+            urllib.request.urlopen(req_400)
+        self.assertEqual(ctx_400.exception.code, 400)
+
 if __name__ == "__main__":
     unittest.main()

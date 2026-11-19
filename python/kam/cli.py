@@ -27,6 +27,8 @@ from .actuator_reconfigurator import ActuatorFaultReconfigurator
 from .covert_fso_comm import CovertFsoLaserTransceiver
 from .radiation_ecc_scrubber import RadiationHardenedMemoryScrubber
 from .differential_game_evasion import DifferentialGameMissileEvasion
+from .autonomous_agent import KamAutonomousAgent
+from .real_llm import UniversalLLMClient
 
 def main():
     parser = argparse.ArgumentParser(
@@ -155,8 +157,36 @@ def main():
         action="store_true",
         help="MCP (Model Context Protocol) sunucu modunu başlat"
     )
+    parser.add_argument(
+        "--agent", "-a",
+        type=str,
+        nargs="?",
+        const="Bilgisayarın gerçek donanım, fiziksel RAM, disk ve GPU durumunu denetle.",
+        help="KAM Otonom Bilgisayar Ajanı üzerinden gerçek işletim sistemi, dosya, kabuk veya masaüstü emrini icra et"
+    )
+    parser.add_argument(
+        "--agent-tools",
+        action="store_true",
+        help="KAM Otonom Bilgisayar Ajanının hükmettiği tüm gerçek işletim sistemi ve savunma araçlarını listele"
+    )
 
     args = parser.parse_args()
+
+    if args.agent_tools:
+        agent = KamAutonomousAgent()
+        print(json.dumps({
+            "agent": "KAM Egemen Otonom Bilgisayar ve Sistem Ajanı (ReAct + Direct Reflex)",
+            "total_host_tools": len(agent.list_agent_tools()),
+            "tools": agent.list_agent_tools(),
+        }, indent=2, ensure_ascii=False))
+        return
+
+    if args.agent is not None:
+        llm = UniversalLLMClient(agent_enabled=True)
+        for chunk in llm.generate_stream(args.agent):
+            print(chunk, end="", flush=True)
+        print()
+        return
 
     if args.gui:
         run_gui()
